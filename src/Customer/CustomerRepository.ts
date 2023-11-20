@@ -1,19 +1,48 @@
 import prisma from "../PrismaClient.js";
+import {ICustomer, IPagination} from "../../shared.types.js";
 
 
-export default class CustomerRepository {
+export default class CustomerRepository implements IPagination<ICustomer>{
     constructor() {}
 
-
-    public async getCustomers(limit: number, offset: number, sortBy: string, sortDir: string) {
-        const orderByValue = {
-            [sortBy]: sortDir.toLowerCase()
-        }
+    public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string): Promise<ICustomer[]> {
 
         return prisma.customer.findMany({
             skip: offset,
             take: limit,
-            orderBy: orderByValue
+            orderBy: {
+                [sortBy]: sortDir.toLowerCase()
+            }
+        })
+    }
+
+    public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string): Promise<ICustomer[]> {
+
+        return prisma.customer.findMany({
+            skip: offset,
+            take: limit,
+            orderBy: {
+                [sortBy]: sortDir.toLowerCase()
+            },
+            where: {
+                OR: [
+                    {
+                        firstName: {
+                            contains: searchValue,
+                        },
+                    },
+                    {
+                        lastName: {
+                            contains: searchValue,
+                        },
+                    },
+                    {
+                        address: {
+                            contains: searchValue
+                        }
+                    }
+                ]
+            }
         })
     }
 }

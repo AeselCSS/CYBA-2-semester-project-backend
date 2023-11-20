@@ -12,22 +12,20 @@ export default class CustomerService extends Pagination{
         const customerRepository = new CustomerRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        if (searchValue && filterBy) {
-            //TODO return Gå ind i repository allpagination
+        /*if (searchValue && filterBy) {
             //return
         }
 
 
         if (filterBy) {
             //return
-        }
+        }*/
 
         if (searchValue) {
-            //return
+            return customerRepository.getAllItemsSearchPagination(pageSize, this.offset, sortBy, sortDir, searchValue);
         }
 
-        //TODO search og filter er ikke defineret. return kun pagination med sort
-        return customerRepository.getCustomers(pageSize, this.offset, sortBy, sortDir)
+        return customerRepository.getAllItemsPagination(pageSize, this.offset, sortBy, sortDir);
     }
 
     protected override calculateOffset(pageSize: number, pageNum: number) {
