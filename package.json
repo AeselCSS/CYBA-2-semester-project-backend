@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "build:digitalocean": "npm install --production=false && npm run build && npm ci",
-    "dev": "concurrently \"tsc -w -p .\" \"dotenv -e .env.development node --watch dist/server.js\"",
+    "dev": "concurrently \"tsc -w\" \"dotenv -e .env.development node --watch dist/server.js\"",
     "start": "node ./dist/server.js"
   },
   "keywords": [],
