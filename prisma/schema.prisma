@@ -6,6 +6,152 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+// models
+model Customer {
+  id        String   @id @unique
+  role      Role
+  firstName String
+  lastName  String
+  address   String
+  city      String
+  zip       Int
+  phone     Int
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cars      Car[]
+  orders    Order[]
+}
+
+model Car {
+  id                   Int      @id @default(autoincrement())
+  customerId           String
+  registrationNumber   String
+  vinNumber            String
+  brand                String
+  model                String
+  modelVariant         String
+  firstRegistration    DateTime
+  mileage              Int
+  lastInspectionDate   DateTime
+  lastInspectionResult String
+  lastInspectionKind   String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  customer             Customer @relation(fields: [customerId], references: [id])
+  orders               Order[]
+}
+
+model Employee {
+  id                   String                @id @unique
+  role                 Role
+  department           Department
+  firstName            String
+  lastName             String
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  taskInstances        TaskInstance[]
+  taskInstanceComments TaskInstanceComment[]
+}
+
+model Order {
+  id             Int            @id @default(autoincrement())
+  status         Status
+  orderStartDate DateTime
+  carId          Int
+  customerId     String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  car            Car            @relation(fields: [carId], references: [id])
+  customer       Customer       @relation(fields: [customerId], references: [id])
+  taskInstances  TaskInstance[]
+}
+
+model Task {
+  id            Int            @id @default(autoincrement())
+  name          String
+  description   String
+  taskInstances TaskInstance[]
+  taskSubtasks  TaskSubtask[]
+}
+
+model Subtask {
+  id               Int               @id @default(autoincrement())
+  name             String
+  time             Float             @db.Float
+  description      String
+  taskSubtasks     TaskSubtask[]
+  subtaskInstances SubtaskInstance[]
+}
+
+model TaskSubtask {
+  taskId        Int
+  subtaskId     Int
+  subtaskNumber Int
+  task          Task    @relation(fields: [taskId], references: [id])
+  subtask       Subtask @relation(fields: [subtaskId], references: [id])
+
+  @@id([taskId, subtaskId])
+}
+
+model TaskInstance {
+  id                   Int                   @id @default(autoincrement())
+  status               Status
+  taskId               Int
+  employeeId           String?
+  orderId              Int
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  task                 Task                  @relation(fields: [taskId], references: [id])
+  employee             Employee?             @relation(fields: [employeeId], references: [id])
+  order                Order                 @relation(fields: [orderId], references: [id])
+  subtaskInstances     SubtaskInstance[]
+  taskInstanceComments TaskInstanceComment[]
+}
+
+model SubtaskInstance {
+  id             Int          @id @default(autoincrement())
+  status         Status
+  taskInstanceId Int
+  subtaskId      Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  taskInstance   TaskInstance @relation(fields: [taskInstanceId], references: [id])
+  subtask        Subtask      @relation(fields: [subtaskId], references: [id])
+}
+
+model TaskInstanceComment {
+  id             Int          @id @default(autoincrement())
+  comment        String
+  employeeId     String
+  taskInstanceId Int
+  createdAt      DateTime     @default(now())
+  employee       Employee     @relation(fields: [employeeId], references: [id])
+  taskInstance   TaskInstance @relation(fields: [taskInstanceId], references: [id])
+}
+
+// enums
+enum Status {
+  AWAITING_CUSTOMER
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+enum Role {
+  CUSTOMER
+  EMPLOYEE
+  ADMIN
+}
+
+enum Department {
+  MECHANICAL_WORKSHOP
+  BODY_WORKSHOP
+  PAINT_SHOP
+  ADMINISTRATION
 }
