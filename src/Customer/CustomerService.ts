@@ -1,5 +1,6 @@
 import Pagination from "../Pagination.js";
 import CustomerRepository from "./CustomerRepository.js";
+import {queryType} from "../../shared.types.js";
 
 
 export default class CustomerService extends Pagination{
@@ -8,19 +9,11 @@ export default class CustomerService extends Pagination{
         super()
     }
 
-    public async getAllCustomers({sortBy, sortDir, pageSize, pageNum, searchValue, filterBy}: any) {
+    public async getAllCustomers({sortBy, sortDir, pageSize, pageNum, searchValue}: queryType) {
         const customerRepository = new CustomerRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        /*if (searchValue && filterBy) {
-            //return
-        }
-
-
-        if (filterBy) {
-            //return
-        }*/
-
+        //If searchValue is defined
         if (searchValue) {
             return customerRepository.getAllItemsSearchPagination(pageSize, this.offset, sortBy, sortDir, searchValue);
         }
@@ -28,7 +21,4 @@ export default class CustomerService extends Pagination{
         return customerRepository.getAllItemsPagination(pageSize, this.offset, sortBy, sortDir);
     }
 
-    protected override calculateOffset(pageSize: number, pageNum: number) {
-        super.calculateOffset(pageSize, pageNum);
-    }
 }

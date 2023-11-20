@@ -5,8 +5,8 @@ export default class CustomerController {
     constructor() {}
 
 
-    public async getAllCustomersExecutor(request: Request<{},{},{},{sortDir: string, sortBy: string, pageNum: string, pageSize: string, searchValue?: string, filterBy?: string, }>, response: Response) {
-        const {sortDir, sortBy, pageNum, pageSize, searchValue, filterBy} = request.query;
+    public async getAllCustomersExecutor(request: Request<{},{},{},{sortDir: string, sortBy: string, pageNum: string, pageSize: string, searchValue?: string}>, response: Response) {
+        const {sortDir, sortBy, pageNum, pageSize, searchValue} = request.query;
 
         try {
             if (!sortDir || !sortBy || !pageNum || !pageSize) throw new Error("Queries missing");
@@ -17,7 +17,6 @@ export default class CustomerController {
                 pageSize: parseInt(pageSize),
                 pageNum: parseInt(pageNum),
                 searchValue: searchValue,
-                filterBy: filterBy
             }
 
             const customerService = new CustomerService();

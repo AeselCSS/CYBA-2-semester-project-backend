@@ -7,3 +7,13 @@ export interface IPagination<T>{
 }
 
 
+export type queryType = {
+    sortDir: string,
+    sortBy: string,
+    pageNum: number,
+    pageSize: number,
+    searchValue?: string,
+    filterBy?: string
+}
+
+

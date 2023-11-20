@@ -1,12 +1,12 @@
 import prisma from "../PrismaClient.js";
 import {IPagination} from "../../shared.types.js";
-import {ICustomer} from "../../models.types.js";
+import {Customer} from "@prisma/client";
 
 
-export default class CustomerRepository implements IPagination<ICustomer>{
+export default class CustomerRepository implements IPagination<Customer>{
     constructor() {}
 
-    public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string): Promise<ICustomer[]> {
+    public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string): Promise<Customer[]> {
 
         return prisma.customer.findMany({
             skip: offset,
@@ -17,7 +17,7 @@ export default class CustomerRepository implements IPagination<ICustomer>{
         })
     }
 
-    public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string): Promise<ICustomer[]> {
+    public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string): Promise<Customer[]> {
 
         return prisma.customer.findMany({
             skip: offset,
