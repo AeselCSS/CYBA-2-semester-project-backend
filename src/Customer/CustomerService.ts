@@ -1,6 +1,5 @@
 import Pagination from "../Pagination.js";
 import CustomerRepository from "./CustomerRepository.js";
-import {QueryType} from "../../shared.types.js";
 
 
 

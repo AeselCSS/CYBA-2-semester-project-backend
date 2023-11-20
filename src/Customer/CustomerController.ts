@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import CustomerService from "./CustomerService.js";
-import {ReqParams, ReqQuery} from "../../shared.types.js";
+
 
 
 export default class CustomerController {

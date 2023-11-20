@@ -6,7 +6,7 @@ interface IPagination<T>{
     getAllItemsAllPagination?: (limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: string) => Promise<ResultPagination<T>>
 }
 //Controller
-export type ReqQuery = {
+type ReqQuery = {
     sortDir: string,
     sortBy: string,
     pageNum: string,
@@ -15,14 +15,14 @@ export type ReqQuery = {
     filterBy?: string
 }
 
-export type ReqParams = {
+type ReqParams = {
     id: string
 }
 //Controller slut
 
 //Service
 
-export type QueryType = {
+type QueryType = {
     sortDir: string,
     sortBy: string,
     pageNum: number,
@@ -40,7 +40,7 @@ type MetaData = {
     totalCount: number
 }
 
-export type ResultPagination<T> = {
+type ResultPagination<T> = {
     data?: T[],
     metaData?: MetaData
 }
