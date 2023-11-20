@@ -6,16 +6,4 @@ export interface IPagination<T>{
     getAllItemsAllPagination?: (limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: string) => Promise<T[]>
 }
 
-export interface ICustomer {
-    id: string;
-    role: string;
-    firstName: string;
-    lastName: string;
-    address: string;
-    city: string;
-    zip: number;
-    phone: number;
-    email: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
+

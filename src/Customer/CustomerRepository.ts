@@ -1,5 +1,6 @@
 import prisma from "../PrismaClient.js";
-import {ICustomer, IPagination} from "../../shared.types.js";
+import {IPagination} from "../../shared.types.js";
+import {ICustomer} from "../../models.types.js";
 
 
 export default class CustomerRepository implements IPagination<ICustomer>{
