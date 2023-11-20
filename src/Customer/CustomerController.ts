@@ -1,11 +1,13 @@
 import {Request, Response} from "express";
 import CustomerService from "./CustomerService.js";
+import {ReqParams, ReqQuery} from "../../shared.types.js";
+
 
 export default class CustomerController {
     constructor() {}
 
 
-    public async getAllCustomersExecutor(request: Request<{},{},{},{sortDir: string, sortBy: string, pageNum: string, pageSize: string, searchValue?: string}>, response: Response) {
+    public async getAllCustomersExecutor(request: Request<ReqParams,{},{},ReqQuery>, response: Response) {
         const {sortDir, sortBy, pageNum, pageSize, searchValue} = request.query;
 
         try {

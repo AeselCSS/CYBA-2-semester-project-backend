@@ -1,25 +1,37 @@
 import prisma from "../PrismaClient.js";
-import {IPagination} from "../../shared.types.js";
 import {Customer} from "@prisma/client";
+import {IPagination, ResultPagination} from "../../shared.types.js";
 
 
 export default class CustomerRepository implements IPagination<Customer>{
     constructor() {}
 
-    public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string): Promise<Customer[]> {
+    public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string): Promise<ResultPagination<Customer>> {
 
-        return prisma.customer.findMany({
+        const result: ResultPagination<Customer>  = {}
+
+        result.data = await prisma.customer.findMany({
             skip: offset,
             take: limit,
             orderBy: {
                 [sortBy]: sortDir.toLowerCase()
             }
         })
+
+        result.metaData = {
+            limit,
+            offset,
+            totalCount: await prisma.customer.count()
+        }
+
+        return result;
     }
 
-    public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string): Promise<Customer[]> {
+    public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string): Promise<ResultPagination<Customer>> {
 
-        return prisma.customer.findMany({
+        const result: ResultPagination<Customer>  = {}
+
+        result.data = await prisma.customer.findMany({
             skip: offset,
             take: limit,
             orderBy: {
@@ -45,5 +57,13 @@ export default class CustomerRepository implements IPagination<Customer>{
                 ]
             }
         })
+
+        result.metaData = {
+            limit,
+            offset,
+            totalCount: await prisma.customer.count()
+        }
+
+        return result;
     }
 }

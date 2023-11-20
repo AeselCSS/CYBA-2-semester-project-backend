@@ -1,13 +1,28 @@
 
-export interface IPagination<T>{
-    getAllItemsPagination: (limit: number, offset: number, sortBy: string, sortDir: string) => Promise<T[]>,
-    getAllItemsSearchPagination: (limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string) => Promise<T[]>,
-    getAllItemsFilterPagination?: (limit: number, offset: number, sortBy: string, sortDir: string, filterBy: string) => Promise<T[]>,
-    getAllItemsAllPagination?: (limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: string) => Promise<T[]>
+interface IPagination<T>{
+    getAllItemsPagination: (limit: number, offset: number, sortBy: string, sortDir: string) => Promise<ResultPagination<T>>,
+    getAllItemsSearchPagination: (limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string) => Promise<ResultPagination<T>>,
+    getAllItemsFilterPagination?: (limit: number, offset: number, sortBy: string, sortDir: string, filterBy: string) => Promise<ResultPagination<T>>,
+    getAllItemsAllPagination?: (limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: string) => Promise<ResultPagination<T>>
+}
+//Controller
+export type ReqQuery = {
+    sortDir: string,
+    sortBy: string,
+    pageNum: string,
+    pageSize: string,
+    searchValue?: string,
+    filterBy?: string
 }
 
+export type ReqParams = {
+    id: string
+}
+//Controller slut
 
-export type queryType = {
+//Service
+
+export type QueryType = {
     sortDir: string,
     sortBy: string,
     pageNum: number,
@@ -16,4 +31,19 @@ export type queryType = {
     filterBy?: string
 }
 
+//Service slut
+
+//Repository
+type MetaData = {
+    limit: number,
+    offset: number,
+    totalCount: number
+}
+
+export type ResultPagination<T> = {
+    data?: T[],
+    metaData?: MetaData
+}
+
+//Repository slut
 
