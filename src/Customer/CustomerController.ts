@@ -58,7 +58,7 @@ export default class CustomerController {
         const id = request.params.id;
 
         try {
-            if (!id) throw new Error("Id is not a number");
+            if (!id) throw new Error("Id is missing");
             if (
                 !request.body.firstName ||
                 !request.body.lastName ||
@@ -78,6 +78,25 @@ export default class CustomerController {
             const customerService = new CustomerService();
             const result = await customerService.updateSingleCustomer(id, customerProps);
             response.status(200).json(result);
+        } catch (error: any) {
+            if (error instanceof Error) {
+                response.status(404).json({ message: error.message });
+            } else {
+                response.status(500).json({ message: error.message });
+            }
+        }
+    }
+
+    public async deleteSingleCustomerExecutor(request: Request<ReqParams, {}, {}, {}>, response: Response) {
+        const id = request.params.id;
+
+        try {
+            if (!id) throw new Error("Id is missing");
+
+            const customerService = new CustomerService()
+            const result = await customerService.deleteSingleCustomer(id);
+            
+            response.status(204).json(result);
         } catch (error: any) {
             if (error instanceof Error) {
                 response.status(404).json({ message: error.message });

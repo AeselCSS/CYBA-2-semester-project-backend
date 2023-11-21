@@ -98,8 +98,44 @@ export default class CustomerRepository implements IPagination<Customer> {
                 email,
                 phone,
                 zip,
-                role
+                role,
             },
+        });
+    }
+
+    public async deleteSingleCustomer(id: string) {
+        
+        //Guard. Throws if given an id that does not exist
+        await prisma.customer.findFirstOrThrow({
+            where: {
+                id: id,
+            },
+        });
+
+        await prisma.$transaction(async (prisma) => {
+            await prisma.car.updateMany({
+                where: {
+                    customerId: id,
+                },
+                data: {
+                    customerId: "DELETED",
+                },
+            });
+
+            await prisma.order.updateMany({
+                where: {
+                    customerId: id,
+                },
+                data: {
+                    customerId: "DELETED",
+                },
+            });
+
+            await prisma.customer.delete({
+                where: {
+                    id: id,
+                },
+            });
         });
     }
 }

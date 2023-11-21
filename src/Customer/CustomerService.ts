@@ -29,4 +29,9 @@ export default class CustomerService extends Pagination {
 
         return customerRepository.updateSingleCustomer(id, customerProps);
     }
+
+    public async deleteSingleCustomer(id: string) {
+        const customerRepository = new CustomerRepository();
+        return customerRepository.deleteSingleCustomer(id);
+    }
 }
