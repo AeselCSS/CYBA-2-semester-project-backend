@@ -1,26 +1,37 @@
-import {Employee} from "@prisma/client";
+import { Department, Employee } from "@prisma/client";
 import prisma from "../Database/PrismaClient.js";
 
-export default class EmployeeRepository implements IPagination<Employee>{
-
+export default class EmployeeRepository implements IPagination<Employee> {
     constructor() {}
 
     public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string) {
-        return prisma.employee.findMany({
+        const result: ResultPagination<Employee> = {};
+
+        result.data = await prisma.employee.findMany({
             skip: offset,
             take: limit,
             orderBy: {
-                [sortBy]: sortDir.toLowerCase()
-            }
-        })
+                [sortBy]: sortDir.toLowerCase(),
+            },
+        });
+
+        result.metaData = {
+            limit,
+            offset,
+            totalCount: await prisma.employee.count(),
+        };
+
+        return result;
     }
 
     public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string) {
-        return prisma.employee.findMany({
+        const result: ResultPagination<Employee> = {};
+
+        result.data = await prisma.employee.findMany({
             skip: offset,
             take: limit,
             orderBy: {
-                [sortBy]: sortDir.toLowerCase()
+                [sortBy]: sortDir.toLowerCase(),
             },
             where: {
                 OR: [
@@ -33,29 +44,118 @@ export default class EmployeeRepository implements IPagination<Employee>{
                         lastName: {
                             contains: searchValue,
                         },
-                    }
-                ]
-            }
-        })
+                    },
+                ],
+            },
+        });
+
+        result.metaData = {
+            limit,
+            offset,
+            totalCount: await prisma.employee.count({
+                where: {
+                    OR: [
+                        {
+                            firstName: {
+                                contains: searchValue,
+                            },
+                        },
+                        {
+                            lastName: {
+                                contains: searchValue,
+                            },
+                        },
+                    ],
+                },
+            }),
+        };
+
+        return result;
     }
 
-    public async getAllItemsFilterPagination(limit: number, offset: number, sortBy: string, sortDir: string, filterBy: string) {
-        return prisma.employee.findMany({
+    public async getAllItemsFilterPagination(limit: number, offset: number, sortBy: string, sortDir: string, filterBy: Department) {
+        const result: ResultPagination<Employee> = {};
+
+        result.data = await prisma.employee.findMany({
             skip: offset,
             take: limit,
             orderBy: {
-                [sortBy]: sortDir.toLowerCase()
-            }
-        })
+                [sortBy]: sortDir.toLowerCase(),
+            },
+            where: {
+                department: filterBy,
+            },
+        });
+
+        result.metaData = {
+            limit,
+            offset,
+            totalCount: await prisma.employee.count({
+                where: {
+                    department: filterBy,
+                },
+            }),
+        };
+
+        return result;
     }
 
-    public async getAllItemsAllPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: string) {
-        return prisma.employee.findMany({
+    public async getAllItemsAllPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: Department) {
+        const result: ResultPagination<Employee> = {};
+
+        result.data = await prisma.employee.findMany({
             skip: offset,
             take: limit,
             orderBy: {
-                [sortBy]: sortDir.toLowerCase()
-            }
-        })
+                [sortBy]: sortDir.toLowerCase(),
+            },
+            where: {
+                OR: [
+                    {
+                        firstName: {
+                            contains: searchValue,
+                        },
+                    },
+                    {
+                        lastName: {
+                            contains: searchValue,
+                        },
+                    },
+                ],
+                AND: [
+                    {
+                        department: filterBy,
+                    },
+                ],
+            },
+        });
+
+        result.metaData = {
+            limit,
+            offset,
+            totalCount: await prisma.employee.count({
+                where: {
+                    OR: [
+                        {
+                            firstName: {
+                                contains: searchValue,
+                            },
+                        },
+                        {
+                            lastName: {
+                                contains: searchValue,
+                            },
+                        },
+                    ],
+                    AND: [
+                        {
+                            department: filterBy,
+                        },
+                    ],
+                },
+            }),
+        };
+
+        return result;
     }
 }
