@@ -158,4 +158,63 @@ export default class EmployeeRepository implements IPagination<Employee> {
 
         return result;
     }
+
+    public async getSingleEmployee(id: string) {
+        return prisma.employee.findUniqueOrThrow({
+            where: {
+                id: id,
+            },
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                role: true,
+                department: true,
+                taskInstances: {
+                    select: {
+                        id: true,
+                        status: true,
+                        order: {
+                            select: {
+                                id: true,
+                                car: {
+                                    select: {
+                                        registrationNumber: true,
+                                        customer: {
+                                            select: {
+                                                firstName: true,
+                                                lastName: true,
+                                                phone: true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        task: {
+                            select: {
+                                id: true,
+                                name: true,
+                                description: true
+                            }
+                        }
+                    }
+                }
+            },
+        });
+    }
 }
+
+
+// return prisma.employee.findUniqueOrThrow({
+//     where: {
+//         id: id,
+//     },
+//     include: {
+//         taskInstances: {
+//             include: {
+//                 subtaskInstances: true,
+//             },
+//         },
+//     },
+// });

@@ -25,4 +25,10 @@ export default class EmployeeService extends Pagination {
 
         return employeeRepository.getAllItemsPagination(pageSize, this.offset, sortBy, sortDir)
     }
+
+    public async getSingleEmployee(id: string) {
+        const employeeRepository = new EmployeeRepository();
+
+        return await employeeRepository.getSingleEmployee(id);
+    }
 }
