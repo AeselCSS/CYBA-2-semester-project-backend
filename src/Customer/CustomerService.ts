@@ -24,4 +24,10 @@ export default class CustomerService extends Pagination{
         return customerRepository.getAllItemsPagination(pageSize, this.offset, sortBy, sortDir);
     }
 
+    public async getSingleCustomer(id: string) {
+        const customerRepository = new CustomerRepository()
+
+        return customerRepository.getSingleCustomer(id);
+    }
+
 }

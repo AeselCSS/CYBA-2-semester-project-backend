@@ -1,14 +1,11 @@
-import {Request, Response} from "express";
+import { Request, Response } from "express";
 import CustomerService from "./CustomerService.js";
-
-
 
 export default class CustomerController {
     constructor() {}
 
-
-    public async getAllCustomersExecutor(request: Request<ReqParams,{},{},ReqQuery>, response: Response) {
-        const {sortDir, sortBy, pageNum, pageSize, searchValue} = request.query;
+    public async getAllCustomersExecutor(request: Request<{}, {}, {}, ReqQuery>, response: Response) {
+        const { sortDir, sortBy, pageNum, pageSize, searchValue } = request.query;
 
         try {
             if (!sortDir || !sortBy || !pageNum || !pageSize) throw new Error("Queries missing");
@@ -19,7 +16,7 @@ export default class CustomerController {
                 pageSize: parseInt(pageSize),
                 pageNum: parseInt(pageNum),
                 searchValue: searchValue,
-            }
+            };
 
             const customerService = new CustomerService();
             const result = await customerService.getAllCustomers(queries);
@@ -27,9 +24,28 @@ export default class CustomerController {
             response.status(200).json(result);
         } catch (error: any) {
             if (error instanceof Error) {
-                response.status(404).json({message: error.message})
+                response.status(404).json({ message: error.message });
             } else {
-                response.status(500).json({message: error.message})
+                response.status(500).json({ message: error.message });
+            }
+        }
+    }
+
+    public async getSingleCustomerExecutor(request: Request<ReqParams, {}, {}, {}>, response: Response) {
+        const id = request.params.id;
+
+        try {
+            if (!id) throw new Error("Id is not a number");
+
+            const customerService = new CustomerService();
+            const result = await customerService.getSingleCustomer(id);
+            
+            response.status(200).json(result);
+        } catch (error: any) {
+            if (error instanceof Error) {
+                response.status(404).json({ message: error.message });
+            } else {
+                response.status(500).json({ message: error.message });
             }
         }
     }

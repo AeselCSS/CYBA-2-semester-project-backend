@@ -1,40 +1,48 @@
 import prisma from "../Database/PrismaClient.js";
-import {Customer} from "@prisma/client";
+import { Customer } from "@prisma/client";
 
-
-export default class CustomerRepository implements IPagination<Customer>{
+export default class CustomerRepository implements IPagination<Customer> {
     constructor() {}
 
-    public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string): Promise<ResultPagination<Customer>> {
-
-        const result: ResultPagination<Customer>  = {}
+    public async getAllItemsPagination(
+        limit: number,
+        offset: number,
+        sortBy: string,
+        sortDir: string
+    ): Promise<ResultPagination<Customer>> {
+        const result: ResultPagination<Customer> = {};
 
         result.data = await prisma.customer.findMany({
             skip: offset,
             take: limit,
             orderBy: {
-                [sortBy]: sortDir.toLowerCase()
-            }
-        })
+                [sortBy]: sortDir.toLowerCase(),
+            },
+        });
 
         result.metaData = {
             limit,
             offset,
-            totalCount: await prisma.customer.count()
-        }
+            totalCount: await prisma.customer.count(),
+        };
 
         return result;
     }
 
-    public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string): Promise<ResultPagination<Customer>> {
-
-        const result: ResultPagination<Customer>  = {}
+    public async getAllItemsSearchPagination(
+        limit: number,
+        offset: number,
+        sortBy: string,
+        sortDir: string,
+        searchValue: string
+    ): Promise<ResultPagination<Customer>> {
+        const result: ResultPagination<Customer> = {};
 
         result.data = await prisma.customer.findMany({
             skip: offset,
             take: limit,
             orderBy: {
-                [sortBy]: sortDir.toLowerCase()
+                [sortBy]: sortDir.toLowerCase(),
             },
             where: {
                 OR: [
@@ -50,19 +58,27 @@ export default class CustomerRepository implements IPagination<Customer>{
                     },
                     {
                         address: {
-                            contains: searchValue
-                        }
-                    }
-                ]
-            }
-        })
+                            contains: searchValue,
+                        },
+                    },
+                ],
+            },
+        });
 
         result.metaData = {
             limit,
             offset,
-            totalCount: await prisma.customer.count()
-        }
+            totalCount: await prisma.customer.count(),
+        };
 
         return result;
+    }
+
+    public async getSingleCustomer(id: string) {
+        return await prisma.customer.findUniqueOrThrow({
+            where: {
+                id: id,
+            },
+        });
     }
 }
