@@ -217,7 +217,6 @@ export default class EmployeeRepository implements IPagination<Employee> {
     }
 }
 
-
 // return prisma.employee.findUniqueOrThrow({
 //     where: {
 //         id: id,

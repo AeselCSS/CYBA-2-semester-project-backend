@@ -56,8 +56,6 @@ export default class EmployeeController {
     public async createEmployeeExecutor(request: Request<{}, {}, EmployeeReqBody, {}>, response: Response) {
         const { department, role, firstName, lastName, id } = request.body;
         
-        
-        
         try {
             if (!department || !role || !firstName || !lastName || !id) throw new Error("Employee property is missing")
             
