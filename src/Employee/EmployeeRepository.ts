@@ -1,4 +1,4 @@
-import { Department, Employee } from "@prisma/client";
+import { Department, Employee, Role } from "@prisma/client";
 import prisma from "../Database/PrismaClient.js";
 
 export default class EmployeeRepository implements IPagination<Employee> {
@@ -184,24 +184,36 @@ export default class EmployeeRepository implements IPagination<Employee> {
                                             select: {
                                                 firstName: true,
                                                 lastName: true,
-                                                phone: true
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                                                phone: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
                         },
                         task: {
                             select: {
                                 id: true,
                                 name: true,
-                                description: true
-                            }
-                        }
-                    }
-                }
+                                description: true,
+                            },
+                        },
+                    },
+                },
             },
         });
+    }
+
+    public async createEmployee(id: string, firstName: string, lastName: string, department: Department, role: Role) {
+        return prisma.employee.create({
+            data: {
+                id,
+                firstName,
+                lastName,
+                department,
+                role
+            }
+        })
     }
 }
 

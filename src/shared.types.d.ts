@@ -18,6 +18,14 @@ type ReqQuery = {
 type ReqParams = {
     id: string
 }
+
+type EmployeeReqBody = {
+    id: string;
+    role: Role;
+    department: Department;
+    firstName: string;
+    lastName: string;
+};
 //Controller slut
 
 //Service

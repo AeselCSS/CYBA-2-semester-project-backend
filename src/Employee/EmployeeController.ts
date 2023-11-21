@@ -39,11 +39,33 @@ export default class EmployeeController {
 
         try {
             if (!id) throw new Error("Id missing");
-            
+
             const employeeService = new EmployeeService();
-            const result = await employeeService.getSingleEmployee(id)
+            const result = await employeeService.getSingleEmployee(id);
 
             response.status(200).json(result);
+        } catch (error: any) {
+            if (error instanceof Error) {
+                response.status(404).json({ message: error.message });
+            } else {
+                response.status(500).json({ message: error.message });
+            }
+        }
+    }
+
+    public async createEmployeeExecutor(request: Request<{}, {}, EmployeeReqBody, {}>, response: Response) {
+        const { department, role, firstName, lastName, id } = request.body;
+        
+        
+        
+        try {
+            if (!department || !role || !firstName || !lastName || !id) throw new Error("Employee property is missing")
+            
+
+            const employeeService = new EmployeeService();
+            const result = await employeeService.createEmployee(firstName, lastName, department, role, id)
+
+            response.status(201).json(result);
         } catch (error: any) {
             if (error instanceof Error) {
                 response.status(404).json({ message: error.message });

@@ -7,3 +7,5 @@ const employeeConstroller = new EmployeeController();
 employeeRouter.get("/employees", employeeConstroller.getAllEmployeesExecutor)
 
 employeeRouter.get("/employees/:id", employeeConstroller.getSingleEmployeeExecutor)
+
+employeeRouter.post("/employees", employeeConstroller.createEmployeeExecutor)

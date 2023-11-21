@@ -1,5 +1,6 @@
 import EmployeeRepository from "./EmployeeRepository.js";
 import Pagination from "../Utility/Pagination.js";
+import { Department, Role } from "@prisma/client";
 
 
 export default class EmployeeService extends Pagination {
@@ -30,5 +31,11 @@ export default class EmployeeService extends Pagination {
         const employeeRepository = new EmployeeRepository();
 
         return await employeeRepository.getSingleEmployee(id);
+    }
+
+    public async createEmployee(firstName: string, lastName: string, department: Department, role: Role, id: string) {
+        const employeeRepository = new EmployeeRepository();
+
+        return await employeeRepository.createEmployee(id, firstName, lastName, department, role);
     }
 }
