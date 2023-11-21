@@ -111,7 +111,7 @@ export default class CarController {
         }
     }
 
-    public async updateMilageOnCarExecuter(
+    public async updateMileageOnCarExecuter(
         // TODO: vær sikker på hvorvidt Id skal med i updatedCar objektet
         request: Request<ReqParams, {}, UpdatedCar, ReqQuery>,
         response: Response
