@@ -81,4 +81,25 @@ export default class CustomerRepository implements IPagination<Customer> {
             },
         });
     }
+
+    public async updateSingleCustomer(
+        id: string,
+        { firstName, lastName, address, city, email, phone, zip, role }: CustomerProps
+    ) {
+        return await prisma.customer.update({
+            where: {
+                id: id,
+            },
+            data: {
+                firstName,
+                lastName,
+                address,
+                city,
+                email,
+                phone,
+                zip,
+                role
+            },
+        });
+    }
 }

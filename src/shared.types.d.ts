@@ -18,6 +18,22 @@ type ReqQuery = {
 type ReqParams = {
     id: string
 }
+
+type CustomerReqBody = {
+    firstName: string;
+    lastName: string;
+    address: string;
+    city: string;
+    zip: number;
+    phone: number;
+    email: string;
+};
+
+type CustomerProps = CustomerReqBody & {
+    role: Role
+}
+
+
 //Controller slut
 
 //Service

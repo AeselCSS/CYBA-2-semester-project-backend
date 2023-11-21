@@ -6,3 +6,4 @@ const customerController = new CustomerController();
 
 customerRouter.get("/customers", customerController.getAllCustomersExecutor);
 customerRouter.get("/customers/:id", customerController.getSingleCustomerExecutor);
+customerRouter.put("/customers/:id", customerController.updateSingleCustomerExecutor);
