@@ -12,7 +12,7 @@ carRouter
 carRouter
     .route('/car/:id')
     .get(carController.getCarByIdExecuter)
-    .put(carController.updateMilageOnCarExecuter)
+    .put(carController.updateMileageOnCarExecuter)
     .delete(carController.deleteCarExecuter);
 
 export default carRouter;
