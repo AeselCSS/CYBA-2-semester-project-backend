@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
 import errorHandler from '../Utility/errorHandler.js';
 import CarService from './CarService.js';
-import {Car} from "@prisma/client";
-
-
+import { Car } from '@prisma/client';
 
 export default class CarController {
     constructor() {}
@@ -46,7 +44,9 @@ export default class CarController {
             if (!id) throw new Error('Id missing');
 
             const carService = new CarService();
-            const result: Car | null = await carService.getCarById(parseInt(id));
+            const result: Car | null = await carService.getCarById(
+                parseInt(id)
+            );
             if (!result) throw new Error('Car not found');
 
             response.status(200).json(result);
@@ -59,10 +59,35 @@ export default class CarController {
         request: Request<ReqParams, {}, NewCar, ReqQuery>,
         response: Response
     ) {
-        const {registrationNumber, vinNumber, model, brand, modelVariant, customerId, firstRegistration, mileage, lastInspectionDate, lastInspectionKind, lastInspectionResult} = request.body;
+        const {
+            registrationNumber,
+            vinNumber,
+            model,
+            brand,
+            modelVariant,
+            customerId,
+            firstRegistration,
+            mileage,
+            lastInspectionDate,
+            lastInspectionKind,
+            lastInspectionResult,
+        } = request.body;
 
         try {
-            if (!registrationNumber || !vinNumber || !model || !brand || !modelVariant || !customerId || !firstRegistration || !mileage || !lastInspectionDate || !lastInspectionKind || !lastInspectionResult) throw new Error('Missing data');
+            if (
+                !registrationNumber ||
+                !vinNumber ||
+                !model ||
+                !brand ||
+                !modelVariant ||
+                !customerId ||
+                !firstRegistration ||
+                !mileage ||
+                !lastInspectionDate ||
+                !lastInspectionKind ||
+                !lastInspectionResult
+            )
+                throw new Error('Missing data');
 
             const newCar: NewCar = {
                 registrationNumber,
@@ -75,7 +100,7 @@ export default class CarController {
                 mileage,
                 lastInspectionDate,
                 lastInspectionKind,
-                lastInspectionResult
+                lastInspectionResult,
             };
             const carService = new CarService();
             const result: Car = await carService.createCar(newCar);
@@ -86,21 +111,51 @@ export default class CarController {
         }
     }
 
-    public async updateCarExecuter( // TODO: vær sikker på hvorvidt Id skal med i updatedCar objektet
+    public async updateMilageOnCarExecuter(
+        // TODO: vær sikker på hvorvidt Id skal med i updatedCar objektet
         request: Request<ReqParams, {}, UpdatedCar, ReqQuery>,
         response: Response
     ) {
         const { id } = request.params;
-        const {registrationNumber, vinNumber, model, brand, modelVariant, customerId, firstRegistration, mileage, lastInspectionDate, lastInspectionKind, lastInspectionResult} = request.body;
+        const {
+            registrationNumber,
+            vinNumber,
+            model,
+            brand,
+            modelVariant,
+            customerId,
+            firstRegistration,
+            mileage,
+            lastInspectionDate,
+            lastInspectionKind,
+            lastInspectionResult,
+        } = request.body;
 
         try {
-            if (!id || !registrationNumber || !vinNumber || !model || !brand || !modelVariant || !customerId || !firstRegistration || !mileage || !lastInspectionDate || !lastInspectionKind || !lastInspectionResult) throw new Error('Missing data');
+            if (
+                !id ||
+                !registrationNumber ||
+                !vinNumber ||
+                !model ||
+                !brand ||
+                !modelVariant ||
+                !customerId ||
+                !firstRegistration ||
+                !mileage ||
+                !lastInspectionDate ||
+                !lastInspectionKind ||
+                !lastInspectionResult
+            )
+                throw new Error('Missing data');
 
             const updatedCar: UpdatedCar = {
-                ...request.body
+                ...request.body,
             };
             const carService = new CarService();
-            const result: Car = await carService.updateCar(parseInt(id), updatedCar);
+            const result: Car = await carService.updateCar(
+                parseInt(id),
+                updatedCar
+            );
 
             response.status(200).json(result);
         } catch (error: any) {
@@ -120,10 +175,11 @@ export default class CarController {
             const carService = new CarService();
             const result = await carService.deleteCar(parseInt(id));
             if (!result) throw new Error('Car not found');
-            response.status(200).json({message: `Car with id: ${id} deleted`} );
+            response
+                .status(200)
+                .json({ message: `Car with id: ${id} deleted` });
         } catch (error: any) {
             errorHandler(error, response);
         }
     }
 }
-
