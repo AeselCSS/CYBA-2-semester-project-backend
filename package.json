@@ -1,41 +1,41 @@
 {
-  "name": "cyba-2-semester-project-backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "build:digitalocean": "npm install --production=false && npm run build && npm ci",
-    "dev": "concurrently \"tsc -w\" \"dotenv -e .env.development nodemon dist/server.js\"",
-    "migrate": "dotenv -e .env.development prisma migrate dev --name init",
-    "start": "dotenv -e .env.development node ./dist/server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@prisma/client": "^5.6.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "dotenv-cli": "^7.3.0",
-    "express": "^4.18.2"
-  },
-  "devDependencies": {
-    "@types/cors": "^2.8.15",
-    "@types/express": "^4.17.20",
-    "@types/jest": "^29.5.8",
-    "@types/node": "^20.8.10",
-    "@types/supertest": "^2.0.16",
-    "concurrently": "^8.2.1",
-    "jest": "^29.7.0",
-    "jest-ts-webcompat-resolver": "^1.0.0",
-    "nodemon": "^3.0.1",
-    "prisma": "^5.6.0",
-    "supertest": "^6.3.3",
-    "ts-jest": "^29.1.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
-  }
+    "name": "cyba-2-semester-project-backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc",
+        "build:digitalocean": "npm install --production=false && npm run build && npm ci",
+        "dev": "concurrently \"tsc -w\" \"dotenv -e .env.development nodemon dist/server.js\"",
+        "migrate": "dotenv -e .env.development prisma migrate dev --name init",
+        "start": "dotenv -e .env.development node ./dist/server.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@prisma/client": "^5.6.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "dotenv-cli": "^7.3.0",
+        "express": "^4.18.2"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.15",
+        "@types/express": "^4.17.20",
+        "@types/jest": "^29.5.8",
+        "@types/node": "^20.8.10",
+        "@types/supertest": "^2.0.16",
+        "concurrently": "^8.2.1",
+        "jest": "^29.7.0",
+        "jest-ts-webcompat-resolver": "^1.0.0",
+        "nodemon": "^3.0.1",
+        "prisma": "^5.6.0",
+        "supertest": "^6.3.3",
+        "ts-jest": "^29.1.1",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.2.2"
+    }
 }
