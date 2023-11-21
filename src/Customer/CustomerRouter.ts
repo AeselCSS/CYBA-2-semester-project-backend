@@ -8,3 +8,4 @@ customerRouter.get("/customers", customerController.getAllCustomersExecutor);
 customerRouter.get("/customers/:id", customerController.getSingleCustomerExecutor);
 customerRouter.put("/customers/:id", customerController.updateSingleCustomerExecutor);
 customerRouter.delete("/customers/:id", customerController.deleteSingleCustomerExecutor);
+customerRouter.post("/customers", customerController.createCustomerExecutor);

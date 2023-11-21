@@ -20,6 +20,7 @@ type ReqParams = {
 }
 
 type CustomerReqBody = {
+    id: string;
     firstName: string;
     lastName: string;
     address: string;
@@ -28,10 +29,6 @@ type CustomerReqBody = {
     phone: number;
     email: string;
 };
-
-type CustomerProps = CustomerReqBody & {
-    role: Role
-}
 
 
 //Controller slut

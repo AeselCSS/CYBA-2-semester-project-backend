@@ -1,5 +1,6 @@
 import prisma from "../Database/PrismaClient.js";
 import { Customer } from "@prisma/client";
+import { Role } from "@prisma/client";
 
 export default class CustomerRepository implements IPagination<Customer> {
     constructor() {}
@@ -87,36 +88,12 @@ export default class CustomerRepository implements IPagination<Customer> {
                             },
                         },
                     ],
-                }
+                },
             }),
         };
 
         return result;
     }
-
-    // public async getPaginationCount(searchValue: string) {
-    //     return prisma.customer.count({
-    //         where: {
-    //             OR: [
-    //                 {
-    //                     firstName: {
-    //                         contains: searchValue,
-    //                     },
-    //                 },
-    //                 {
-    //                     lastName: {
-    //                         contains: searchValue,
-    //                     },
-    //                 },
-    //                 {
-    //                     address: {
-    //                         contains: searchValue,
-    //                     },
-    //                 },
-    //             ],
-    //         }
-    //     })
-    // }
 
     public async getSingleCustomer(id: string) {
         return await prisma.customer.findUniqueOrThrow({
@@ -128,7 +105,7 @@ export default class CustomerRepository implements IPagination<Customer> {
 
     public async updateSingleCustomer(
         id: string,
-        { firstName, lastName, address, city, email, phone, zip, role }: CustomerProps
+        { firstName, lastName, address, city, email, phone, zip }: CustomerReqBody
     ) {
         return await prisma.customer.update({
             where: {
@@ -142,13 +119,12 @@ export default class CustomerRepository implements IPagination<Customer> {
                 email,
                 phone,
                 zip,
-                role,
+                role: Role.CUSTOMER,
             },
         });
     }
 
     public async deleteSingleCustomer(id: string) {
-
         //Guard. Throws if given an id that does not exist
         await prisma.customer.findFirstOrThrow({
             where: {
@@ -180,6 +156,24 @@ export default class CustomerRepository implements IPagination<Customer> {
                     id: id,
                 },
             });
+        });
+    }
+
+    public async createCustomer(
+        { firstName, lastName, address, city, email, phone, zip, id }: CustomerReqBody
+    ) {
+        return await prisma.customer.create({
+            data: {
+                id,
+                firstName,
+                lastName,
+                address,
+                city,
+                email,
+                phone,
+                zip,
+                role: Role.CUSTOMER,
+            },
         });
     }
 }

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import CustomerService from "./CustomerService.js";
-import { Role } from "@prisma/client";
 
 export default class CustomerController {
     constructor() {}
@@ -70,13 +69,8 @@ export default class CustomerController {
             )
                 throw new Error("Customer property is missing");
 
-            const customerProps = {
-                ...request.body,
-                role: Role.CUSTOMER,
-            };
-
             const customerService = new CustomerService();
-            const result = await customerService.updateSingleCustomer(id, customerProps);
+            const result = await customerService.updateSingleCustomer(id, request.body);
             response.status(200).json(result);
         } catch (error: any) {
             if (error instanceof Error) {
@@ -93,10 +87,30 @@ export default class CustomerController {
         try {
             if (!id) throw new Error("Id is missing");
 
-            const customerService = new CustomerService()
+            const customerService = new CustomerService();
             const result = await customerService.deleteSingleCustomer(id);
-            
+
             response.status(204).json(result);
+        } catch (error: any) {
+            if (error instanceof Error) {
+                response.status(404).json({ message: error.message });
+            } else {
+                response.status(500).json({ message: error.message });
+            }
+        }
+    }
+
+    public async createCustomerExecutor(request: Request<{}, {}, CustomerReqBody, {}>, response: Response) {
+        const { id, firstName, lastName, address, city, email, phone, zip } = request.body;
+
+        try {
+            if (!id || !firstName || !lastName || !address || !city || !email || !phone || !zip)
+            throw new Error("Missing customer property");
+
+            const customerService = new CustomerService();
+            const result = await customerService.createCustomer(request.body);
+
+            response.status(201).json(result)
         } catch (error: any) {
             if (error instanceof Error) {
                 response.status(404).json({ message: error.message });
