@@ -68,11 +68,55 @@ export default class CustomerRepository implements IPagination<Customer> {
         result.metaData = {
             limit,
             offset,
-            totalCount: await prisma.customer.count(),
+            totalCount: await prisma.customer.count({
+                where: {
+                    OR: [
+                        {
+                            firstName: {
+                                contains: searchValue,
+                            },
+                        },
+                        {
+                            lastName: {
+                                contains: searchValue,
+                            },
+                        },
+                        {
+                            address: {
+                                contains: searchValue,
+                            },
+                        },
+                    ],
+                }
+            }),
         };
 
         return result;
     }
+
+    // public async getPaginationCount(searchValue: string) {
+    //     return prisma.customer.count({
+    //         where: {
+    //             OR: [
+    //                 {
+    //                     firstName: {
+    //                         contains: searchValue,
+    //                     },
+    //                 },
+    //                 {
+    //                     lastName: {
+    //                         contains: searchValue,
+    //                     },
+    //                 },
+    //                 {
+    //                     address: {
+    //                         contains: searchValue,
+    //                     },
+    //                 },
+    //             ],
+    //         }
+    //     })
+    // }
 
     public async getSingleCustomer(id: string) {
         return await prisma.customer.findUniqueOrThrow({
@@ -104,7 +148,7 @@ export default class CustomerRepository implements IPagination<Customer> {
     }
 
     public async deleteSingleCustomer(id: string) {
-        
+
         //Guard. Throws if given an id that does not exist
         await prisma.customer.findFirstOrThrow({
             where: {
