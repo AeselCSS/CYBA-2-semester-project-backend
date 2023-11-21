@@ -1,5 +1,6 @@
 import prisma from "../Database/PrismaClient.js";
 import {Customer} from "@prisma/client";
+import {ResultPagination} from "../shared.types.js";
 
 
 export default class CustomerRepository implements IPagination<Customer>{
