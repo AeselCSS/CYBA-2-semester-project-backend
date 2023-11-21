@@ -1,4 +1,4 @@
-import Pagination from "../Pagination.js";
+import Pagination from "../Utility/Pagination.js";
 import CustomerRepository from "./CustomerRepository.js";
 
 

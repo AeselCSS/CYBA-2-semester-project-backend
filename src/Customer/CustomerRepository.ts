@@ -1,4 +1,4 @@
-import prisma from "../PrismaClient.js";
+import prisma from "../Database/PrismaClient.js";
 import {Customer} from "@prisma/client";
 
 

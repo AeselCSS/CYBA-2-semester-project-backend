@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import createServer from "./app.js";
-import prisma from "./PrismaClient.js";
+import prisma from "./Database/PrismaClient.js";
 
 // create express app
 export const app = createServer();
