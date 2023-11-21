@@ -34,4 +34,35 @@ export default class CarService extends Pagination {
             sortDir
         );
     }
+
+    public async getCarById(id: number) {
+        const carRepository = new CarRepository();
+        return carRepository.getCarById(id);
+    }
+
+    public async createCar(car: NewCar) {
+        const carRepository = new CarRepository();
+        const newCar = {
+            ...car,
+            firstRegistration: new Date(car.firstRegistration),
+            lastInspectionDate: new Date(car.lastInspectionDate),
+        }
+        return carRepository.createCar(newCar);
+    }
+
+    public async updateCar(id: number, car: UpdatedCar) {
+        const carRepository = new CarRepository();
+        const updatedCar = {
+            ...car,
+            firstRegistration: new Date(car.firstRegistration),
+            lastInspectionDate: new Date(car.lastInspectionDate),
+        }
+        return carRepository.updateCar(id, updatedCar);
+    }
+
+    public async deleteCar(id: number) {
+        const carRepository = new CarRepository();
+        // TODO implementer logik for at overføre historiske ordre til bil med ID "DELETED"
+        return carRepository.deleteCar(id);
+    }
 }

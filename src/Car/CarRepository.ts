@@ -73,4 +73,29 @@ export default class CarRepository implements IPagination<Car> {
 
         return result;
     }
+
+    public async getCarById(id: number): Promise<Car | null> {
+        return prisma.car.findUnique({
+            where: {id}
+        });
+    }
+
+    public async createCar(newCar: NewCar): Promise<Car> {
+        return prisma.car.create({
+            data: newCar
+        });
+    }
+
+    public async updateCar(id: number, updatedCar: UpdatedCar): Promise<Car> {
+        return prisma.car.update({
+            where: {id},
+            data: updatedCar
+        });
+    }
+
+    public async deleteCar(id: number): Promise<Car> {
+        return prisma.car.delete({
+            where: {id}
+        });
+    }
 }

@@ -4,6 +4,13 @@ const carController = new CarController();
 
 const carRouter = express.Router();
 
-carRouter.route('/car').get(carController.getAllCarsExecuter);
+carRouter.route('/car')
+    .get(carController.getAllCarsExecuter)
+    .post(carController.createCarExecuter)
+
+carRouter.route('/car/:id')
+    .get(carController.getCarByIdExecuter)
+    .put(carController.updateCarExecuter)
+    .delete(carController.deleteCarExecuter)
 
 export default carRouter;
