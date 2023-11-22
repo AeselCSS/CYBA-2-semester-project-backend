@@ -95,8 +95,8 @@ export default class CarRepository implements IPagination<Car> {
         return result;
     }
 
-    public async getSingleCar(id: number): Promise<any | null> {
-        return prisma.car.findUnique({
+    public async getSingleCar(id: number) {
+        return prisma.car.findUniqueOrThrow({
             where: {id},
             select: {
                 id: true,
@@ -136,6 +136,14 @@ export default class CarRepository implements IPagination<Car> {
     }
 
     public async deleteCar(id: number) {
+
+        //Guard
+        await prisma.car.findUniqueOrThrow({
+            where: {
+                id: id
+            }
+        })
+
         return prisma.$transaction([
             // move all orders to car with id 1 (DELETED)
             prisma.order.updateMany({
