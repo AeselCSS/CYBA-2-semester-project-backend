@@ -1,5 +1,5 @@
 import prisma from '../Database/PrismaClient.js';
-import { Car } from '@prisma/client';
+import {Car} from '@prisma/client';
 
 export default class CarRepository implements IPagination<Car> {
     constructor() {}
@@ -24,6 +24,7 @@ export default class CarRepository implements IPagination<Car> {
             limit,
             offset,
             totalCount: await prisma.car.count(),
+
         };
 
         return result;
@@ -68,15 +69,56 @@ export default class CarRepository implements IPagination<Car> {
         result.metaData = {
             limit,
             offset,
-            totalCount: result.data.length,
+            totalCount: await prisma.car.count({
+                where: {
+                    OR: [
+                        {
+                            registrationNumber: {
+                                contains: searchValue,
+                            },
+                        },
+                        {
+                            vinNumber: {
+                                contains: searchValue,
+                            },
+                        },
+                        {
+                            model: {
+                                contains: searchValue,
+                            },
+                        },
+                    ],
+                }
+            }),
         };
 
         return result;
     }
 
-    public async getCarById(id: number): Promise<Car | null> {
+    public async getCarById(id: number): Promise<any | null> {
         return prisma.car.findUnique({
-            where: {id}
+            where: {id},
+            select: {
+                id: true,
+                registrationNumber: true,
+                vinNumber: true,
+                brand: true,
+                model: true,
+                modelVariant: true,
+                mileage: true,
+                firstRegistration: true,
+                lastInspectionDate: true,
+                customer: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        phone: true,
+                    }
+                }
+            }
+
         });
     }
 
@@ -93,9 +135,17 @@ export default class CarRepository implements IPagination<Car> {
         });
     }
 
-    public async deleteCar(id: number): Promise<Car> {
-        return prisma.car.delete({
-            where: {id}
-        });
+    public async deleteCar(id: number) {
+        return prisma.$transaction([
+            // move all orders to car with id 1 (DELETED)
+            prisma.order.updateMany({
+                where: {carId: id},
+                data: {carId: 1}
+            }),
+            // delete car with id
+            prisma.car.delete({
+                where: {id}
+            })
+        ]);
     }
 }
