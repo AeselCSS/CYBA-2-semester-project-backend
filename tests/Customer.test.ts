@@ -157,9 +157,15 @@ describe("Costumer", () => {
         it('should return 2 customers when searching for "Jensen"', async () => {
 
             const {body, statusCode} = await supertest(app).get("/customers?sortDir=asc&sortBy=firstName&pageNum=1&pageSize=10&searchValue=Jensen")
-            console.log(body)
-            console.log(statusCode)
 
+            expect(body).toEqual({
+                data: expect.any(Array),
+                metaData: {
+                    limit: expect.any(Number),
+                    offset: expect.any(Number),
+                    totalCount: expect.any(Number),
+                }
+            })
             expect(body.data.length).toBe(2);
             expect(statusCode).toBe(200);
             expect(body.data[0].firstName).toEqual("Lars")
