@@ -122,10 +122,6 @@ describe("Costumer", () => {
         },
     ];
 
-
-
-
-
     beforeAll( async () => {
 
         const createCustomers = prisma.customer.createMany({
