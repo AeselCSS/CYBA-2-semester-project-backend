@@ -3,7 +3,7 @@ interface IPagination<T>{
     getAllItemsPagination: (limit: number, offset: number, sortBy: string, sortDir: string) => Promise<ResultPagination<T>>,
     getAllItemsSearchPagination: (limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string) => Promise<ResultPagination<T>>,
     getAllItemsFilterPagination?: (limit: number, offset: number, sortBy: string, sortDir: string, filterBy: string) => Promise<ResultPagination<T>>,
-    getAllItemsAllPagination?: (limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: string) => Promise<ResultPagination<T>>
+    getAllItemsAllPagination?: (limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: string) => Promise<ResultPagination<T>>,
 }
 //Controller
 type ReqQuery = {
@@ -18,6 +18,19 @@ type ReqQuery = {
 type ReqParams = {
     id: string
 }
+
+type CustomerReqBody = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    address: string;
+    city: string;
+    zip: number;
+    phone: number;
+    email: string;
+};
+
+
 //Controller slut
 
 //Service
