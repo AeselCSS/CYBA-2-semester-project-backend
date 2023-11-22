@@ -163,7 +163,7 @@ describe("Costumer", () => {
                 metaData: {
                     limit: expect.any(Number),
                     offset: expect.any(Number),
-                    totalCount: expect.any(Number),
+                    totalCount: 2,
                 }
             })
             expect(body.data.length).toBe(2);
@@ -172,6 +172,91 @@ describe("Costumer", () => {
             expect(body.data[0].lastName).toEqual("Jensen")
             expect(body.data[1].firstName).toEqual("Sofie")
             expect(body.data[1].lastName).toEqual("Jensen")
+        });
+
+
+        it('should return customers sorted with firstName desc (string)', async () => {
+
+            const customersSorted = customers.sort((a,b) => b.firstName.localeCompare(a.firstName))
+
+            const {body, statusCode} = await supertest(app).get("/customers?sortDir=desc&sortBy=firstName&pageNum=1&pageSize=10")
+
+            expect(body).toEqual({
+                data: expect.any(Array),
+                metaData: {
+                    limit: expect.any(Number),
+                    offset: expect.any(Number),
+                    totalCount: 4,
+                }
+            })
+            expect(body.data.length).toBe(4);
+            expect(statusCode).toBe(200);
+
+            customersSorted.forEach((localCostumer, index) => {
+                expect(body.data[index].id).toEqual(localCostumer.id)
+            })
+        });
+
+        it('should return customers sorted with id desc (number)', async () => {
+
+            const customersSorted = customers.sort((a,b) => b.id.localeCompare(a.id))
+
+            const {body, statusCode} = await supertest(app).get("/customers?sortDir=desc&sortBy=id&pageNum=1&pageSize=10")
+
+            expect(body).toEqual({
+                data: expect.any(Array),
+                metaData: {
+                    limit: expect.any(Number),
+                    offset: expect.any(Number),
+                    totalCount: 4,
+                }
+            })
+            expect(body.data.length).toBe(4);
+            expect(statusCode).toBe(200);
+
+            customersSorted.forEach((localCostumer, index) => {
+                expect(body.data[index].id).toEqual(localCostumer.id)
+            })
+        });
+
+        it('should return 0 costumers when there is no search match', async () => {
+            const {body, statusCode} = await supertest(app).get("/customers?sortDir=asc&sortBy=firstName&pageNum=1&pageSize=10&searchValue=ALISALAMI")
+
+            expect(body).toEqual({
+                data: expect.any(Array),
+                metaData: {
+                    limit: expect.any(Number),
+                    offset: expect.any(Number),
+                    totalCount: 0,
+                }
+            })
+            expect(body.data.length).toBe(0);
+            expect(statusCode).toBe(200);
+        });
+
+        it('should return an error if sortDir query is missing', async () => {
+            const {statusCode} = await supertest(app).get("/customers?sortBy=firstName&pageNum=1&pageSize=10")
+
+            expect(statusCode).toBe(404);
+        });
+
+        it('should return an error if sortBy query is missing', async () => {
+            const {statusCode} = await supertest(app).get("/customers?sortDir=desc&pageNum=1&pageSize=10")
+
+            expect(statusCode).toBe(404);
+        });
+
+
+        it('should return an error if pageSize query is missing', async () => {
+            const {statusCode} = await supertest(app).get("/customers?sortDir=desc&sortBy=firstName&pageNum=1")
+
+            expect(statusCode).toBe(404);
+        });
+
+        it('should return an error if pageNum query is missing', async () => {
+            const {statusCode} = await supertest(app).get("/customers?sortDir=desc&sortBy=firstName&pageSize=10")
+
+            expect(statusCode).toBe(404);
         });
     })
 })
