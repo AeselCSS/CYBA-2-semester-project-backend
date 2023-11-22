@@ -3,6 +3,8 @@ import { Request, Response } from 'express';
 import cors from 'cors';
 import { customerRouter } from './Customer/CustomerRouter.js';
 import carRouter from './Car/CarRouter.js';
+import { employeeRouter } from "./Employee/EmployeeRouter.js";
+
 
 export default function createServer() {
     const app = express();
@@ -11,7 +13,7 @@ export default function createServer() {
     app.use(cors());
 
     //Routes her
-    app.use('/', customerRouter, carRouter);
+    app.use('/', customerRouter, carRouter, employeeRouter);
     // Routes slut
 
     app.use('/', async (_req: Request, res: Response) => {
