@@ -1,7 +1,9 @@
 import Pagination from "../Utility/Pagination.js";
 import CustomerRepository from "./CustomerRepository.js";
 
+
 export default class CustomerService extends Pagination {
+
     constructor() {
         super();
     }
