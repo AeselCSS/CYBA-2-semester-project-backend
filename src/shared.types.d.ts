@@ -1,7 +1,24 @@
 interface IPagination<T> {
-    getAllItemsPagination: (limit: number, offset: number, sortBy: string, sortDir: string) => Promise<ResultPagination<T>>;
-    getAllItemsSearchPagination: (limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string) => Promise<ResultPagination<T>>;
-    getAllItemsFilterPagination?: (limit: number, offset: number, sortBy: string, sortDir: string, filterBy: string | Department | Status) => Promise<ResultPagination<T>>;
+    getAllItemsPagination: (
+        limit: number,
+        offset: number,
+        sortBy: string,
+        sortDir: string
+    ) => Promise<ResultPagination<T>>;
+    getAllItemsSearchPagination: (
+        limit: number,
+        offset: number,
+        sortBy: string,
+        sortDir: string,
+        searchValue: string
+    ) => Promise<ResultPagination<T>>;
+    getAllItemsFilterPagination?: (
+        limit: number,
+        offset: number,
+        sortBy: string,
+        sortDir: string,
+        filterBy: string | Department | Status
+    ) => Promise<ResultPagination<T>>;
     getAllItemsAllPagination?: (
         limit: number,
         offset: number,
@@ -63,8 +80,8 @@ type EmployeeQueryType = QueryType & {
 };
 
 type OrderQueryType = QueryType & {
-    filterBy: Status
-}
+    filterBy: Status;
+};
 
 //Service slut
 
@@ -98,3 +115,95 @@ type NewCar = {
 };
 
 type OrderResult = Order & Car;
+
+type SingleOrder = {
+    id: number;
+    status: Status;
+    orderStartDate: Date;
+    createdAt: Date;
+    updatedAt: Date;
+    car: {
+        id: number;
+        registrationNumber: string;
+        vinNumber: string;
+        brand: string;
+        model: string;
+        modelVariant: string;
+        mileage: number;
+    };
+    customer: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: number;
+    };
+    taskInstances: {
+        id: number;
+        status: Status;
+        updatedAt: Date;
+        employee: {
+            firstName: string;
+            lastName: string;
+            department: Department;
+        } | null;
+        task: {
+            name: string;
+            description: string;
+        };
+        subtaskInstances: {
+            id: number;
+            status: Status;
+            updatedAt: Date;
+            subtask: {
+                name: string;
+                time: number;
+                description: string;
+            };
+        }[];
+    }[];
+};
+
+type SingleOrderDTO = {
+    id: number;
+    status: Status;
+    orderStartDate: Date;
+    createdAt: Date;
+    updatedAt: Date;
+    car: {
+        id: number;
+        registrationNumber: string;
+        vinNumber: string;
+        brand: string;
+        model: string;
+        modelVariant: string;
+        mileage: number;
+    };
+    customer: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: number;
+    };
+    tasks: {
+        id: number;
+        status: Status;
+        updatedAt: Date;
+        name: string;
+        description: string;
+        employee: {
+            firstName: string | undefined;
+            lastName: string | undefined;
+            department: Department;
+        } | null;
+        subtasks: {
+            id: number;
+            status: Status;
+            name: string;
+            time: number;
+            description: string;
+            updatedAt: Date;
+        }[];
+    }[];
+};

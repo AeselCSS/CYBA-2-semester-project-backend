@@ -1,5 +1,5 @@
 import Pagination from '../Utility/Pagination.js';
-import { ordersDTO } from './OrderDTO.js';
+import { orderDTO, ordersDTO } from './OrderDTO.js';
 import OrderRepository from './OrderRepository.js';
 
 export default class OrderService extends Pagination {
@@ -94,7 +94,6 @@ export default class OrderService extends Pagination {
     public async getSingleOrder(id: number) {
         const orderRepository = new OrderRepository();
         const result = await orderRepository.getSingleOrder(id);
-        return result;
-        // return orderDTO(result);
+        return orderDTO(result);
     }
 }

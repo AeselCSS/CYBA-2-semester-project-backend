@@ -1,5 +1,5 @@
-import { Order, Status } from '.prisma/client';
 import prisma from '../Database/PrismaClient.js';
+import { Order, Status } from '@prisma/client';
 
 export default class OrderRepository implements IPagination<Order> {
     constructor() {}
