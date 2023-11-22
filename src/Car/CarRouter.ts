@@ -5,14 +5,14 @@ const carController = new CarController();
 const carRouter = express.Router();
 
 carRouter
-    .route('/car')
+    .route('/cars')
     .get(carController.getAllCarsExecuter)
     .post(carController.createCarExecuter);
 
 carRouter
-    .route('/car/:id')
-    .get(carController.getCarByIdExecuter)
-    .put(carController.updateMileageOnCarExecuter)
+    .route('/cars/:id')
+    .get(carController.getSingleCarExecuter)
+    .patch(carController.updateMileageOnCarExecuter)
     .delete(carController.deleteCarExecuter);
 
 export default carRouter;
