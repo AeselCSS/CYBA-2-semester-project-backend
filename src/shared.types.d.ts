@@ -77,7 +77,7 @@ type ResultPagination<T> = {
 //Repository slut
 
 // Car
-interface NewCar {
+type NewCar = {
     registrationNumber: string,
     vinNumber: string,
     model: string,
@@ -89,8 +89,4 @@ interface NewCar {
     lastInspectionDate: string | Date,
     lastInspectionKind: string,
     lastInspectionResult: string
-}
-
-interface UpdatedCar extends NewCar {
-    id: number
 }
