@@ -1,10 +1,15 @@
-import { Order, Status } from ".prisma/client";
-import prisma from "../Database/PrismaClient.js";
+import { Order, Status } from '.prisma/client';
+import prisma from '../Database/PrismaClient.js';
 
 export default class OrderRepository implements IPagination<Order> {
     constructor() {}
 
-    public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string) {
+    public async getAllItemsPagination(
+        limit: number,
+        offset: number,
+        sortBy: string,
+        sortDir: string
+    ) {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -22,10 +27,10 @@ export default class OrderRepository implements IPagination<Order> {
                 updatedAt: true,
                 car: {
                     select: {
-                        registrationNumber: true
-                    }
-                }
-            }
+                        registrationNumber: true,
+                    },
+                },
+            },
         });
 
         result.metaData = {
@@ -37,7 +42,13 @@ export default class OrderRepository implements IPagination<Order> {
         return result;
     }
 
-    public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string): Promise<ResultPagination<Order>> {
+    public async getAllItemsSearchPagination(
+        limit: number,
+        offset: number,
+        sortBy: string,
+        sortDir: string,
+        searchValue: string
+    ): Promise<ResultPagination<Order>> {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -85,7 +96,13 @@ export default class OrderRepository implements IPagination<Order> {
         return result;
     }
 
-    public async getAllItemsSearchNumberPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: number) {
+    public async getAllItemsSearchNumberPagination(
+        limit: number,
+        offset: number,
+        sortBy: string,
+        sortDir: string,
+        searchValue: number
+    ) {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -129,7 +146,13 @@ export default class OrderRepository implements IPagination<Order> {
         return result;
     }
 
-    public async getAllItemsFilterPagination(limit: number, offset: number, sortBy: string, sortDir: string, filterBy: Status) {
+    public async getAllItemsFilterPagination(
+        limit: number,
+        offset: number,
+        sortBy: string,
+        sortDir: string,
+        filterBy: Status
+    ) {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -169,7 +192,14 @@ export default class OrderRepository implements IPagination<Order> {
         return result;
     }
 
-    public async getAllItemsAllPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: Status) {
+    public async getAllItemsAllPagination(
+        limit: number,
+        offset: number,
+        sortBy: string,
+        sortDir: string,
+        searchValue: string,
+        filterBy: Status
+    ) {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -227,7 +257,14 @@ export default class OrderRepository implements IPagination<Order> {
         return result;
     }
 
-    public async getAllItemsNumberAllPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: number, filterBy: Status) {
+    public async getAllItemsNumberAllPagination(
+        limit: number,
+        offset: number,
+        sortBy: string,
+        sortDir: string,
+        searchValue: number,
+        filterBy: Status
+    ) {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -279,5 +316,74 @@ export default class OrderRepository implements IPagination<Order> {
         };
 
         return result;
+    }
+
+    public async getSingleOrder(id: number) {
+        return prisma.order.findUniqueOrThrow({
+            where: {
+                id: id,
+            },
+            select: {
+                id: true,
+                status: true,
+                orderStartDate: true,
+                createdAt: true,
+                updatedAt: true,
+                car: {
+                    select: {
+                        id: true,
+                        registrationNumber: true,
+                        vinNumber: true,
+                        brand: true,
+                        model: true,
+                        modelVariant: true,
+                        mileage: true,
+                    },
+                },
+                customer: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        phone: true,
+                    },
+                },
+                taskInstances: {
+                    select: {
+                        id: true,
+                        status: true,
+                        updatedAt: true,
+                        employee: {
+                            select: {
+                                firstName: true,
+                                lastName: true,
+                                department: true,
+                            },
+                        },
+                        task: {
+                            select: {
+                                name: true,
+                                description: true,
+                            },
+                        },
+                        subtaskInstances: {
+                            select: {
+                                id: true,
+                                status: true,
+                                updatedAt: true,
+                                subtask: {
+                                    select: {
+                                        name: true,
+                                        time: true,
+                                        description: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        });
     }
 }
