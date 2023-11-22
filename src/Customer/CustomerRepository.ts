@@ -5,12 +5,7 @@ import { Role } from "@prisma/client";
 export default class CustomerRepository implements IPagination<Customer> {
     constructor() {}
 
-    public async getAllItemsPagination(
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string
-    ): Promise<ResultPagination<Customer>> {
+    public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string): Promise<ResultPagination<Customer>> {
         const result: ResultPagination<Customer> = {};
 
         result.data = await prisma.customer.findMany({
@@ -30,13 +25,7 @@ export default class CustomerRepository implements IPagination<Customer> {
         return result;
     }
 
-    public async getAllItemsSearchPagination(
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string,
-        searchValue: string
-    ): Promise<ResultPagination<Customer>> {
+    public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string): Promise<ResultPagination<Customer>> {
         const result: ResultPagination<Customer> = {};
 
         result.data = await prisma.customer.findMany({
@@ -103,10 +92,7 @@ export default class CustomerRepository implements IPagination<Customer> {
         });
     }
 
-    public async updateSingleCustomer(
-        id: string,
-        { firstName, lastName, address, city, email, phone, zip }: CustomerReqBody
-    ) {
+    public async updateCustomer(id: string, { firstName, lastName, address, city, email, phone, zip }: CustomerReqBody) {
         return await prisma.customer.update({
             where: {
                 id: id,
@@ -124,7 +110,7 @@ export default class CustomerRepository implements IPagination<Customer> {
         });
     }
 
-    public async deleteSingleCustomer(id: string) {
+    public async deleteCustomer(id: string) {
         //Guard. Throws if given an id that does not exist
         await prisma.customer.findFirstOrThrow({
             where: {
@@ -159,9 +145,7 @@ export default class CustomerRepository implements IPagination<Customer> {
         });
     }
 
-    public async createCustomer(
-        { firstName, lastName, address, city, email, phone, zip, id }: CustomerReqBody
-    ) {
+    public async createCustomer({ firstName, lastName, address, city, email, phone, zip, id }: CustomerReqBody) {
         return await prisma.customer.create({
             data: {
                 id,

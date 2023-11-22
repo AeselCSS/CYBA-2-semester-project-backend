@@ -24,15 +24,16 @@ export default class CustomerService extends Pagination {
         return customerRepository.getSingleCustomer(id);
     }
 
-    public async updateSingleCustomer(id: string, customerReqBody: CustomerReqBody) {
+    public async updateCustomer(id: string, customerReqBody: CustomerReqBody) {
         const customerRepository = new CustomerRepository();
 
-        return customerRepository.updateSingleCustomer(id, customerReqBody);
+        return customerRepository.updateCustomer(id, customerReqBody);
     }
 
-    public async deleteSingleCustomer(id: string) {
+    public async deleteCustomer(id: string) {
         const customerRepository = new CustomerRepository();
-        return customerRepository.deleteSingleCustomer(id);
+
+        return customerRepository.deleteCustomer(id);
     }
 
     public async createCustomer(customerReqBody: CustomerReqBody) {

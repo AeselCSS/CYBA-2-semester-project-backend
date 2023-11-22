@@ -6,6 +6,6 @@ const customerController = new CustomerController();
 
 customerRouter.get("/customers", customerController.getAllCustomersExecutor);
 customerRouter.get("/customers/:id", customerController.getSingleCustomerExecutor);
-customerRouter.put("/customers/:id", customerController.updateSingleCustomerExecutor);
-customerRouter.delete("/customers/:id", customerController.deleteSingleCustomerExecutor);
+customerRouter.put("/customers/:id", customerController.updateCustomerExecutor);
+customerRouter.delete("/customers/:id", customerController.deleteCustomerExecutor);
 customerRouter.post("/customers", customerController.createCustomerExecutor);
