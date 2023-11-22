@@ -95,7 +95,7 @@ export default class CarRepository implements IPagination<Car> {
         return result;
     }
 
-    public async getCarById(id: number): Promise<any | null> {
+    public async getSingleCar(id: number): Promise<any | null> {
         return prisma.car.findUnique({
             where: {id},
             select: {
@@ -128,10 +128,10 @@ export default class CarRepository implements IPagination<Car> {
         });
     }
 
-    public async updateCar(id: number, updatedCar: UpdatedCar): Promise<Car> {
+    public async updateCar(id: number, mileage: number): Promise<Car> {
         return prisma.car.update({
             where: {id},
-            data: updatedCar
+            data: {mileage}
         });
     }
 

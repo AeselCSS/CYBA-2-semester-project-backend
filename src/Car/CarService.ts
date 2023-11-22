@@ -35,9 +35,9 @@ export default class CarService extends Pagination {
         );
     }
 
-    public async getCarById(id: number) {
+    public async getSingleCar(id: number) {
         const carRepository = new CarRepository();
-        return carRepository.getCarById(id);
+        return carRepository.getSingleCar(id);
     }
 
     public async createCar(car: NewCar) {
@@ -50,14 +50,10 @@ export default class CarService extends Pagination {
         return carRepository.createCar(newCar);
     }
 
-    public async updateCar(id: number, car: UpdatedCar) {
+    public async updateCar(id: number, mileage: number) {
         const carRepository = new CarRepository();
-        const updatedCar = {
-            ...car,
-            firstRegistration: new Date(car.firstRegistration),
-            lastInspectionDate: new Date(car.lastInspectionDate),
-        }
-        return carRepository.updateCar(id, updatedCar);
+
+        return carRepository.updateCar(id, mileage);
     }
 
     public async deleteCar(id: number) {
