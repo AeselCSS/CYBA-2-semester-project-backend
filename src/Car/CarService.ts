@@ -62,7 +62,6 @@ export default class CarService extends Pagination {
 
     public async deleteCar(id: number) {
         const carRepository = new CarRepository();
-        // TODO implementer logik for at overføre historiske ordre til bil med ID "DELETED"
         return carRepository.deleteCar(id);
     }
 }
