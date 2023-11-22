@@ -94,6 +94,7 @@ export default class CustomerController {
 
         try {
             if (!id || !firstName || !lastName || !address || !city || !email || !phone || !zip) throw new Error("Missing customer property");
+            if (typeof zip == "string" || typeof phone == "string") throw new Error("Zip or phone is of type string");
 
             const customerService = new CustomerService();
             const result = await customerService.createCustomer(request.body);

@@ -3,7 +3,7 @@ import prisma from "../src/Database/PrismaClient";
 // @ts-ignore
 import {app} from "../src/server";
 import supertest from "supertest"
-import {Role} from "@prisma/client";
+import {Car, Order, Role, Status} from "@prisma/client";
 
 describe("Costumer", () => {
 
@@ -124,6 +124,8 @@ describe("Costumer", () => {
 
 
 
+
+
     beforeAll( async () => {
 
         const createCustomers = prisma.customer.createMany({
@@ -136,15 +138,17 @@ describe("Costumer", () => {
 
         await prisma.$transaction([
             createCustomers,
-            createCars
+            createCars,
         ])
     })
 
     afterAll( async () => {
         const deleteCustomers = prisma.customer.deleteMany();
         const deleteCars = prisma.car.deleteMany();
+        const deleteOrders = prisma.order.deleteMany();
 
         await prisma.$transaction([
+            deleteOrders,
             deleteCars,
             deleteCustomers
         ])
@@ -219,7 +223,7 @@ describe("Costumer", () => {
             })
         });
 
-        it('should return 0 costumers when there is no search match', async () => {
+        it('should return 0 customers when there is no search match', async () => {
             const {body, statusCode} = await supertest(app).get("/customers?sortDir=asc&sortBy=firstName&pageNum=1&pageSize=10&searchValue=ALISALAMI")
 
             expect(body).toEqual({
@@ -258,5 +262,148 @@ describe("Costumer", () => {
 
             expect(statusCode).toBe(404);
         });
+    })
+
+    describe("Get single customer", () => {
+
+        it('should return the correct customer when specifying correct id', async () => {
+            const {body, statusCode} = await supertest(app).get("/customers/8c081169f97e42479b136a6a")
+
+            expect(statusCode).toBe(200);
+            expect(body.id).toEqual("8c081169f97e42479b136a6a");
+            expect(body.firstName).toEqual("Rasmus");
+            expect(body.lastName).toEqual("Nielsen");
+        });
+
+        it('should return an error when a customer could not be found by the specified id', async () => {
+            const {statusCode} = await supertest(app).get("/customers/123ABC")
+
+            expect(statusCode).toBe(404);
+        });
+
+    })
+
+    describe("Create a new customer", () => {
+        const payload = {
+            id: 'ASDFGHJQWERTY',
+            firstName: 'Bob',
+            lastName: 'Ole',
+            address: 'Gammelgade 12',
+            city: 'Copenhagen',
+            zip: 2200,
+            phone: 12345432,
+            email: 'bob.ole@mailbox.dk',
+        }
+
+        const payloadTwo = {
+            id: '12345321ASD',
+            firstName: 'Ib',
+            lastName: 'Sørensen',
+            address: 'Unggade 12',
+            city: 'Copenhagen',
+            zip: 2200,
+            phone: 34565432,
+            email: 'ib.sørensen@mailbox.dk',
+        }
+
+        it('should successfully create a new customer', async () => {
+
+            const {body, statusCode} = await supertest(app).post("/customers")
+                .send(payload)
+                .set('Content-Type', 'application/json')
+
+
+            expect(statusCode).toBe(201);
+            expect(body.id).toEqual(payload.id);
+            expect(body.email).toEqual('bob.ole@mailbox.dk')
+        });
+
+        it('should fail to create a new customer if phone is of type string', async () => {
+
+            const failedPayload = {
+                ...payload,
+                zip: "2200"
+            }
+
+            const {statusCode} = await supertest(app).post("/customers")
+                .send(failedPayload)
+                .set('Content-Type', 'application/json');
+
+            expect(statusCode).toBe(404);
+        });
+
+        it('should fail to create a customer if customer already exists', async () => {
+            await prisma.customer.create({
+                data: {
+                    ...payloadTwo,
+                    role: Role.CUSTOMER
+                }
+            })
+
+            const {statusCode} = await supertest(app).post("/customers")
+                .send(payloadTwo)
+                .set('Content-Type', 'application/json');
+
+            expect(statusCode).toBe(404);
+        });
+    })
+
+    describe("Update customer", () => {
+
+    })
+
+    describe("Delete customer", () => {
+
+        it('should delete the customer successfully and replace all their relations with "order" and "car" with id=DELETED', async () => {
+
+            const car: Car = await prisma.car.findFirstOrThrow({
+                where: {
+                    vinNumber: "XYZ789ABC123"
+                }
+            })
+
+            //Create new order
+            await prisma.order.create({
+                data: {
+                    status: Status.AWAITING_CUSTOMER,
+                    orderStartDate: new Date(),
+                    carId: car.id,
+                    customerId: "8c081169f97e42479b136a6a"
+                }
+            })
+
+            const {statusCode} = await supertest(app).delete("/customers/8c081169f97e42479b136a6a");
+
+            const carAfterDeletion: Car = await prisma.car.findFirstOrThrow({
+                where: {
+                    vinNumber: "XYZ789ABC123"
+                }
+            })
+
+            const orderAfterDeletion: Order = await prisma.order.findFirstOrThrow({
+                where: {
+                    carId: car.id,
+                }
+            })
+
+            const deletedCustomer = await prisma.customer.findUnique({
+                where: {
+                    id: "8c081169f97e42479b136a6a"
+                }
+            })
+
+            expect(carAfterDeletion.customerId).toEqual("DELETED")
+            expect(orderAfterDeletion.customerId).toEqual("DELETED")
+            expect(deletedCustomer).toBeFalsy()
+            expect(statusCode).toBe(204);
+        });
+
+
+        it('should fail to delete a customer which does not exist', async () => {
+            const {statusCode} = await supertest(app).delete("/customers/999999999999asb");
+
+            expect(statusCode).toBe(404);
+        });
+
     })
 })
