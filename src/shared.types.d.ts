@@ -76,3 +76,21 @@ type ResultPagination<T> = {
 
 //Repository slut
 
+// Car
+interface NewCar {
+    registrationNumber: string,
+    vinNumber: string,
+    model: string,
+    brand: string,
+    modelVariant: string,
+    customerId: string,
+    firstRegistration: string | Date,
+    mileage: number,
+    lastInspectionDate: string | Date,
+    lastInspectionKind: string,
+    lastInspectionResult: string
+}
+
+interface UpdatedCar extends NewCar {
+    id: number
+}
