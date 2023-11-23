@@ -92,4 +92,23 @@ export default class TaskRepository {
     public async getTasks() {
         return prisma.task.findMany();
     }
+
+    public async getOrderIdByTaskInstanceId(taskInstanceId: number) {
+        const taskInstance = await prisma.taskInstance.findFirstOrThrow({
+            where: {
+                id: taskInstanceId
+            }
+        })
+
+        return taskInstance.orderId;
+    }
+
+    public async getTaskInstancesInSingleOrder(orderId: number) {
+
+        return prisma.taskInstance.findMany({
+            where: {
+                orderId: orderId
+            }
+        })
+    }
 }
