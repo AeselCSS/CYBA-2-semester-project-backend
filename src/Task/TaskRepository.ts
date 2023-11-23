@@ -27,22 +27,8 @@ export default class TaskRepository {
         const [taskInstance] = await this.getSingleTaskInstance(taskId, orderId)
 
         return prisma.$transaction(async (prisma) => {
-            //Update the taskInstance status to a newStatus
-            await prisma.taskInstance.updateMany({
-                where: {
-                    AND: [
-                        {
-                            taskId: taskId,
-                        },
-                        {
-                            orderId: orderId,
-                        },
-                    ],
-                },
-                data: {
-                    status: Status.IN_PROGRESS,
-                },
-            });
+            //Update the taskInstance status to IN_PROGRESS
+            await this.updateTaskInstanceStatus(taskId, orderId, Status.IN_PROGRESS)
 
 
             //Get all subtasks associated with the taskInstance. Sort after subtaskNumber
