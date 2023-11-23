@@ -1,3 +1,4 @@
+
 interface IPagination<T> {
     getAllItemsPagination: (
         limit: number,
@@ -216,3 +217,34 @@ type SingleOrderDTO = {
         }[];
     }[];
 };
+
+
+type SingleTaskInstance = {
+    id: number,
+    status: Status
+    taskId: number,
+    employeeId: string | null,
+    updatedAt: Date,
+    subtaskInstances: {
+        id: number,
+        status: Status,
+        updatedAt: Date,
+        subtask: {
+            name: string,
+            time: number,
+            description: string
+        }
+    }[],
+    taskInstanceComments: {
+        id: number,
+        comment: string,
+        createdAt: Date,
+        employee: {
+            id: string,
+            role: Role,
+            department: Department,
+            firstName: string,
+            lastName: string
+        }
+    }[]
+}

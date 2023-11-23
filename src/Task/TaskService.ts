@@ -1,6 +1,7 @@
 import TaskRepository from "./TaskRepository.js";
 import { Status } from "@prisma/client";
 import EmployeeRepository from "../Employee/EmployeeRepository.js";
+import {taskInstanceDTO} from "./TaskDTO.js";
 
 export default class TaskService {
     constructor() {}
@@ -41,7 +42,7 @@ export default class TaskService {
 
     public async getSingleTask(taskId: number) {
         const taskRepository = new TaskRepository();
-        const rawResult = await taskRepository.getSingleTask(taskId);
-        return rawResult
+        const rawTaskInstance = await taskRepository.getSingleTask(taskId);
+        return taskInstanceDTO(rawTaskInstance);
     }
 }

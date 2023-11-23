@@ -93,7 +93,7 @@ export default class TaskRepository {
     }
 
     public async getSingleTask(taskId: number) {
-        return prisma.taskInstance.findUnique({
+        /*return prisma.taskInstance.findUnique({
             where: {
                 id: taskId
             },
@@ -101,7 +101,51 @@ export default class TaskRepository {
                 taskInstanceComments: true,
                 subtaskInstances: {
                     include: {
-                        subtask: true
+                        subtask: true,
+
+                    }
+                }
+            }
+        })*/
+
+        return prisma.taskInstance.findUniqueOrThrow({
+            where: {
+                id: taskId
+            },
+            select: {
+                id: true,
+                status: true,
+                taskId: true,
+                employeeId: true,
+                updatedAt: true,
+                subtaskInstances: {
+                    select: {
+                        id: true,
+                        status: true,
+                        updatedAt: true,
+                        subtask: {
+                            select: {
+                                name: true,
+                                time: true,
+                                description: true
+                            }
+                        }
+                    }
+                },
+                taskInstanceComments: {
+                    select: {
+                        id: true,
+                        comment: true,
+                        createdAt: true,
+                        employee: {
+                            select: {
+                                id: true,
+                                role: true,
+                                department: true,
+                                firstName: true,
+                                lastName: true
+                            }
+                        }
                     }
                 }
             }
