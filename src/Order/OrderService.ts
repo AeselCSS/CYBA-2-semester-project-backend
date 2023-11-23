@@ -95,7 +95,11 @@ export default class OrderService extends Pagination {
     public async getSingleOrder(id: number) {
         const orderRepository = new OrderRepository();
         const result = await orderRepository.getSingleOrder(id);
-        return orderDTO(result);
+        const orderDTOResult = await orderDTO(result);
+
+        //Add the total time of all subtasks in the order
+        orderDTOResult.totalTime = orderDTOResult.tasks.reduce((acc, item) => item.totalTime + acc, 0);
+        return orderDTOResult;
     }
 
     public async updateOrderStatus(id: number, status: Status) {

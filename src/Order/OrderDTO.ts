@@ -21,6 +21,7 @@ async function orderDTO(order: SingleOrder) {
     const DTO: SingleOrderDTO = {
         id: order.id,
         status: order.status,
+        totalTime: undefined,
         orderStartDate: order.orderStartDate,
         createdAt: order.createdAt,
         updatedAt: order.updatedAt,
@@ -47,6 +48,7 @@ async function orderDTO(order: SingleOrder) {
                 description: task.task.description,
                 status: task.status,
                 updatedAt: task.updatedAt,
+                totalTime: task.subtaskInstances.reduce((acc, item) => item.subtask.time + acc, 0),
                 employee: {
                     firstName: task.employee?.firstName,
                     lastName: task.employee?.lastName,

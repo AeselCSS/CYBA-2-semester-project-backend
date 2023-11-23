@@ -177,6 +177,7 @@ type SingleOrder = {
 type SingleOrderDTO = {
     id: number;
     status: Status;
+    totalTime?: number;
     orderStartDate: Date;
     createdAt: Date;
     updatedAt: Date;
@@ -202,6 +203,7 @@ type SingleOrderDTO = {
         updatedAt: Date;
         name: string;
         description: string;
+        totalTime: number;
         employee: {
             firstName: string | undefined;
             lastName: string | undefined;
