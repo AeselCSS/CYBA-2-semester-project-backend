@@ -8,6 +8,7 @@ async function taskInstanceDTO(taskInstance: SingleTaskInstance) {
         taskId: taskInstance.taskId,
         employeeId: taskInstance.employeeId,
         updatedAt: taskInstance.updatedAt,
+        totalTime: taskInstance.subtaskInstances.reduce((acc, item) => acc + item.subtask.time, 0),
         subtasks: taskInstance.subtaskInstances.map((subtaskInstance) => {
             return {
                 id: subtaskInstance.id,
