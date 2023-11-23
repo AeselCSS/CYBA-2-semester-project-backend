@@ -22,7 +22,7 @@ export default class SubtaskRepository {
         });
     }
 
-    public async FinishSubtask(subtaskId: number, taskInstanceId: number) {
+    public async completeSubtask(subtaskId: number, taskInstanceId: number) {
 
         const taskInstance = await prisma.taskInstance.findUniqueOrThrow({
             where: {
@@ -60,6 +60,7 @@ export default class SubtaskRepository {
 
                 if (subtaskInstance.status === Status.PENDING) {
                     await this.updateSubtaskStatus(subtaskInstance.id, taskInstance.id, Status.IN_PROGRESS);
+                    //Exit the loop
                     break;
                 }
             }
