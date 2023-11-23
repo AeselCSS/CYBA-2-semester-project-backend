@@ -31,40 +31,49 @@ export default class SubtaskRepository {
         })
 
         return prisma.$transaction(async (prisma) => {
+            console.log("ENTERING TRANSACTION");
+            
             //Update the given subtaskInstance status to COMPLETED
-            await prisma.subtaskInstance.updateMany({
+            await this.updateSubtaskStatus(subtaskId, taskInstanceId, Status.COMPLETED)
+
+            //initialise the next subtaskInstance with the status "IN_PROGRESS"
+            const subtasks = await this.getSubtasksForASingleTask(taskInstance.taskId);
+            console.log(subtasks);
+            
+
+            for (const subtask of subtasks) {
+                const [subtaskInstance] = await prisma.subtaskInstance.findMany({
+                    where: {
+                        AND: [
+                            {
+                                subtaskId: subtask.subtaskId,
+                            },
+                            {
+                                taskInstanceId: taskInstance.id
+                            }
+                        ],
+                    },
+                });
+                console.log(subtaskInstance);
+                
+
+                if (subtaskInstance.status === Status.PENDING) {
+                    await this.updateSubtaskStatus(subtaskInstance.id, taskInstance.id, Status.IN_PROGRESS);
+                    //Exit the transaction and end it here if there is a subtask that has been updated to IN_PROGRESS
+                    return;
+                }
+            }
+
+            //If the loop above didnt iterate to true, then all subtaskInstances must be status=COMPLETED. 
+            //We update the taskInstance.status to COMPLETED
+            await prisma.taskInstance.updateMany({
                 where: {
-                    AND: [
-                        {
-                            subtaskId: subtaskId
-                        },
-                        {
-                            taskInstanceId: taskInstanceId
-                        }
-                    ]
+                    id: taskInstance.id
                 },
                 data: {
                     status: Status.COMPLETED
                 }
             })
-
-            //initialise the next subtaskInstance with the status "IN_PROGRESS"
-            const subtasks = await this.getSubtasksForASingleTask(taskInstance.taskId);
-
-            for (const subtask of subtasks) {
-                const [subtaskInstance] = await prisma.subtaskInstance.findMany({
-                    where: {
-                        subtaskId: subtask.subtaskId
-                    }
-                })
-
-                if (subtaskInstance.status === Status.PENDING) {
-                    await this.updateSubtaskStatus(subtaskInstance.id, taskInstance.id, Status.IN_PROGRESS);
-                    //Exit the loop
-                    break;
-                }
-            }
-            
         })
     }
 

@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-// import SubtaskService from "./SubtaskService.js";
+import SubtaskService from "./SubtaskService.js";
 
 
 export default class SubtaskController {
@@ -9,12 +9,23 @@ export default class SubtaskController {
         const subtaskId = parseInt(request.params.id);
         const taskInstanceId = request.body.taskInstanceId;
 
-        if (!subtaskId || !taskInstanceId) {
-            response.status(400).json({ message: "taskInstanceId is missing or subtaskId is not of type number" })
-            return;
-        }
+        
+        try {
+            if (!subtaskId || !taskInstanceId) {
+                response.status(400).json({ message: "taskInstanceId is missing or subtaskId is not of type number" })
+                return;
+            }
+    
+            const subtaskService = new SubtaskService();
+            await subtaskService.updateSubtaskStatus(subtaskId, taskInstanceId);
 
-        // const subtaskService = new SubtaskService();
-        // const result = await sub
+            response.status(200).json({});
+        } catch (error: any) {
+            if (error instanceof Error) {
+                response.status(404).json({ message: error.message });
+            } else {
+                response.status(500).json({ message: error.message });
+            }
+        }
     }
 }
