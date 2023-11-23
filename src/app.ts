@@ -5,6 +5,9 @@ import { customerRouter } from './Customer/CustomerRouter.js';
 import carRouter from './Car/CarRouter.js';
 import { employeeRouter } from "./Employee/EmployeeRouter.js";
 import { orderRouter } from './Order/OrderRouter.js';
+import { taskRouter } from './Task/TaskRouter.js';
+import { subtaskRouter } from './Subtask/SubtaskRouter.js';
+
 
 
 export default function createServer() {
@@ -14,7 +17,7 @@ export default function createServer() {
     app.use(cors());
 
     //Routes her
-    app.use('/', customerRouter, carRouter, employeeRouter, orderRouter);
+    app.use('/', customerRouter, carRouter, employeeRouter, taskRouter, subtaskRouter, orderRouter);
     // Routes slut
 
     app.use('/', async (_req: Request, res: Response) => {
