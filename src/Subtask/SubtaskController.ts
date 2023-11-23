@@ -17,9 +17,15 @@ export default class SubtaskController {
             }
     
             const subtaskService = new SubtaskService();
-            await subtaskService.updateSubtaskStatus(subtaskId, taskInstanceId);
+            //! IMPORTER ORDERSERVICE!!!
+            const orderService = new OrderService()
 
-            response.status(200).json({});
+            const orderId = await subtaskService.updateSubtaskStatus(subtaskId, taskInstanceId);
+
+            //! SØRG FOR DET HER METODEKALD VIRKER
+            const order = await orderService.getSingleOrder(orderId)
+
+            response.status(200).json(order);
         } catch (error: any) {
             if (error instanceof Error) {
                 response.status(404).json({ message: error.message });

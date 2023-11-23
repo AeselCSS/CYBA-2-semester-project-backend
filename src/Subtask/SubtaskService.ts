@@ -25,13 +25,14 @@ export default class SubtaskService {
         //Guard. Loop through taskInstances. If there still exists a taskInstance with status != COMPLETED, then exit the method and return to controller. 
         for (const taskInstance of taskInstancesInOrder) {
             if (taskInstance.status !== Status.COMPLETED) {
-                return;
+                //return orderId for the controller
+                return orderId;
             }
         }
 
         //If you reach here, then all taskInstances are COMPLETED. We update the status on the order itself to COMPLETED
         //! SKAL KALDE PÅ EN METODE PATCH STATUS ORDER INDE I ORDER REPOSITORY!!
-        return prisma.order.update({
+        await prisma.order.update({
             where: {
                 id: orderId
             },
@@ -40,5 +41,8 @@ export default class SubtaskService {
             }
         })
         //!
+
+        //return orderId for the controller
+        return orderId;
     }
 }
