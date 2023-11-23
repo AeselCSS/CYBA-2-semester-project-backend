@@ -1,14 +1,21 @@
-import { Status, Task } from "@prisma/client";
-import Pagination from "../Utility/Pagination.js";
-import { orderDTO, ordersDTO } from "./OrderDTO.js";
-import OrderRepository from "./OrderRepository.js";
+import { Status, Task } from '@prisma/client';
+import Pagination from '../Utility/Pagination.js';
+import { orderDTO, ordersDTO } from './OrderDTO.js';
+import OrderRepository from './OrderRepository.js';
 
 export default class OrderService extends Pagination {
     constructor() {
         super();
     }
 
-    public async getAllOrders({ pageNum, pageSize, sortBy, sortDir, filterBy, searchValue }: OrderQueryType) {
+    public async getAllOrders({
+        pageNum,
+        pageSize,
+        sortBy,
+        sortDir,
+        filterBy,
+        searchValue,
+    }: OrderQueryType) {
         const orderRepository = new OrderRepository();
         this.calculateOffset(pageSize, pageNum);
         const numericRegex: RegExp = /^[0-9]+$/;
@@ -18,9 +25,24 @@ export default class OrderService extends Pagination {
         if (searchValue && filterBy) {
             if (numericRegex.test(searchValue)) {
                 const searchValueInt = parseInt(searchValue);
-                orderResult = await orderRepository.getAllItemsNumberAllPagination(pageSize, this.offset, sortBy, sortDir, searchValueInt, filterBy);
+                orderResult =
+                    await orderRepository.getAllItemsNumberAllPagination(
+                        pageSize,
+                        this.offset,
+                        sortBy,
+                        sortDir,
+                        searchValueInt,
+                        filterBy
+                    );
             } else {
-                orderResult = await orderRepository.getAllItemsAllPagination(pageSize, this.offset, sortBy, sortDir, searchValue, filterBy);
+                orderResult = await orderRepository.getAllItemsAllPagination(
+                    pageSize,
+                    this.offset,
+                    sortBy,
+                    sortDir,
+                    searchValue,
+                    filterBy
+                );
             }
 
             return ordersDTO(orderResult);
@@ -29,20 +51,44 @@ export default class OrderService extends Pagination {
         if (searchValue) {
             if (numericRegex.test(searchValue)) {
                 const searchValueInt = parseInt(searchValue);
-                orderResult = await orderRepository.getAllItemsSearchNumberPagination(pageSize, this.offset, sortBy, sortDir, searchValueInt);
+                orderResult =
+                    await orderRepository.getAllItemsSearchNumberPagination(
+                        pageSize,
+                        this.offset,
+                        sortBy,
+                        sortDir,
+                        searchValueInt
+                    );
             } else {
-                orderResult = await orderRepository.getAllItemsSearchPagination(pageSize, this.offset, sortBy, sortDir, searchValue);
+                orderResult = await orderRepository.getAllItemsSearchPagination(
+                    pageSize,
+                    this.offset,
+                    sortBy,
+                    sortDir,
+                    searchValue
+                );
             }
 
             return ordersDTO(orderResult);
         }
 
         if (filterBy) {
-            orderResult = await orderRepository.getAllItemsFilterPagination(pageSize, this.offset, sortBy, sortDir, filterBy);
+            orderResult = await orderRepository.getAllItemsFilterPagination(
+                pageSize,
+                this.offset,
+                sortBy,
+                sortDir,
+                filterBy
+            );
             return ordersDTO(orderResult);
         }
 
-        orderResult = await orderRepository.getAllItemsPagination(pageSize, this.offset, sortBy, sortDir);
+        orderResult = await orderRepository.getAllItemsPagination(
+            pageSize,
+            this.offset,
+            sortBy,
+            sortDir
+        );
         return ordersDTO(orderResult);
     }
 
@@ -57,8 +103,8 @@ export default class OrderService extends Pagination {
         // check status guard
         const orderStatus = await orderRepository.getOrderStatus(id);
 
-        if (orderStatus.status === "COMPLETED") {
-            throw new Error("Order is completed");
+        if (orderStatus.status === 'COMPLETED') {
+            throw new Error('Order is completed');
         }
 
         return orderRepository.updateOrderStatus(id, status);
@@ -69,25 +115,54 @@ export default class OrderService extends Pagination {
         // check status guard
         const orderStatus = await orderRepository.getOrderStatus(id);
 
-        if (orderStatus.status === "COMPLETED" || orderStatus.status === "IN_PROGRESS") {
+        if (
+            orderStatus.status === 'COMPLETED' ||
+            orderStatus.status === 'IN_PROGRESS'
+        ) {
             throw new Error(`Order is ${orderStatus.status.toLowerCase()}`);
         }
 
-        const {taskInstances} = await orderRepository.getOrderTasks(id);
-        
+        const { taskInstances } = await orderRepository.getOrderTasks(id);
+
         // Convert incoming tasks to a Set of IDs for easy comparison
-        const taskIds = new Set(tasks.map(task => task.id));
+        const taskIds = new Set(tasks.map((task) => task.id));
 
         // Tasks to delete: present in taskInstances but not in incoming tasks
-        const tasksToDelete = taskInstances.filter(instance => !taskIds.has(instance.id));
+        const tasksToDelete = taskInstances.filter(
+            (instance) => !taskIds.has(instance.id)
+        );
 
         // Tasks to add: present in incoming tasks but not in taskInstances
-        const existingTaskIds = new Set(taskInstances.map(instance => instance.id));
-        const tasksToAdd = tasks.filter(task => !existingTaskIds.has(task.id));
+        const existingTaskIds = new Set(
+            taskInstances.map((instance) => instance.id)
+        );
+        const tasksToAdd = tasks.filter(
+            (task) => !existingTaskIds.has(task.id)
+        );
 
         // SubTasks to add
         const subTaskstoAdd = await orderRepository.getTaskSubtasks(tasksToAdd);
 
-        return orderRepository.updateOrderTasks(id, tasksToDelete, tasksToAdd, subTaskstoAdd);
+        return orderRepository.updateOrderTasks(
+            id,
+            tasksToDelete,
+            tasksToAdd,
+            subTaskstoAdd
+        );
+    }
+
+    public async createOrder(order: NewOrder) {
+        const orderRepository = new OrderRepository();
+
+        const { tasks } = order;
+
+        // find all subtasks for each task
+        const subTasks = await orderRepository.getTaskSubtasks(tasks);
+
+        // 1. create order - OK
+        // 2. create order taskInstances - orderId
+        // 3. create order subtaskInstances -taskInstanceId and subtaskId
+
+        return orderRepository.createOrder(order, subTasks);
     }
 }

@@ -6,5 +6,12 @@ const orderController = new OrderController();
 
 orderRouter.get('/orders', orderController.getAllOrdersExecutor);
 orderRouter.get('/orders/:id', orderController.getSingleOrderExecutor);
-orderRouter.patch("/orders/:id/status", orderController.updateOrderStatusExecutor);
-orderRouter.patch("/orders/:id/tasks", orderController.updateOrderTasksExecutor);
+orderRouter.patch(
+    '/orders/:id/status',
+    orderController.updateOrderStatusExecutor
+);
+orderRouter.patch(
+    '/orders/:id/tasks',
+    orderController.updateOrderTasksExecutor
+);
+orderRouter.post('/orders', orderController.createOrderExecutor);

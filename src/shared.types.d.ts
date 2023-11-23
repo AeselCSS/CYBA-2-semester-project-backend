@@ -114,6 +114,15 @@ type NewCar = {
     lastInspectionResult: string;
 };
 
+// Order
+type NewOrder = {
+    status?: Status;
+    orderStartDate: string | Date;
+    carId: number;
+    customerId: string;
+    tasks: Task[];
+};
+
 type OrderResult = Order & Car;
 
 type SingleOrder = {
