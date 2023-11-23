@@ -49,7 +49,7 @@ export default class OrderController {
 
     public async updateOrderStatusExecutor(request: Request<ReqParams, {}, { status: Status }, {}>, response: Response) {
         const id = parseInt(request.params.id);
-        const status = request.body.status;
+        const {status} = request.body;
 
         try {
             if (!id) {
@@ -83,9 +83,9 @@ export default class OrderController {
             }
 
             const orderService = new OrderService();
-            await orderService.updateOrderTasks(id, tasks);
+            const result = await orderService.updateOrderTasks(id, tasks);
 
-            response.status(200).json({});
+            response.status(200).json(result);
         } catch (error: any) {
             errorHandler(error, response);
         }

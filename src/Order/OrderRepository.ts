@@ -1,5 +1,5 @@
 import prisma from "../Database/PrismaClient.js";
-import { Order, Status, Task } from "@prisma/client";
+import { Order, Status, Task, TaskInstance, SubtaskInstance } from "@prisma/client";
 
 export default class OrderRepository implements IPagination<Order> {
     constructor() {}
@@ -349,74 +349,171 @@ export default class OrderRepository implements IPagination<Order> {
             },
         });
     }
-
+    
+    public async getOrderStatus(id: number) {
+        return prisma.order.findUniqueOrThrow({
+            where: {
+                id: id,
+            },
+            select: {
+                status: true,
+            },
+        });
+    }
 
     public async updateOrderStatus(id: number, status: Status) {
-        return prisma.order.update({
+        
+        return await prisma.order.update({
             where: {
-                id: id
+                id: id,
             },
             data: {
-                status: status
-            }
+                status: status,
+            },
+        });
+    }
+
+    public async getOrderTasks(id: number) {
+        return prisma.order.findUniqueOrThrow({
+            where: {
+                id: id,
+            },
+            include: { taskInstances: {
+                select: {
+                    id: true,
+                },
+            } },
         })
     }
 
-    public async updateOrderTasks(orderId: number, tasks: Task[]) {
-        await prisma.$transaction(async (prisma) => {
-
-            const tasksInDBArr = await prisma.taskInstance.findMany({
-                where: {
-                    orderId: orderId,
+    public async getTaskSubtasks(tasks: Task[]) {
+        return prisma.taskSubtask.findMany({
+            where: {
+                taskId: {
+                    in: tasks.map(task => task.id),
                 },
-            });
+            },
+        });
+    }
 
-            //Vi sletter tidligere taskInstances
-            prisma.taskInstance.deleteMany({
-                where: {
-                    orderId: orderId,
-                },
-            });
+    // public async updateOrderTasks(orderId: number, tasksToDelete: {id:number}[], tasksToAdd: Task[], subtasksToAdd: {
+    //     taskId: number;
+    //     subtaskId: number;
+    //     subtaskNumber: number;
+    // }[]) {
 
-            //Vi sletter tidligere subtaskInstances
-            for (const task of tasksInDBArr) {
-                prisma.subtaskInstance.deleteMany({
+    //    const result =  await prisma.$transaction(async (prisma) => {
+
+    //         await prisma.subtaskInstance.deleteMany({
+    //             where: {
+    //                 taskInstanceId: {
+    //                     in: tasksToDelete.map(task => task.id),
+    //                 },
+    //             },
+    //         });
+            
+    //         await prisma.taskInstance.deleteMany({
+    //             where: {
+    //                 id: {
+    //                     in: tasksToDelete.map(task => task.id),
+    //                 },
+    //             },
+    //         });
+
+    //         await prisma.taskInstance.createMany({
+    //             data: tasksToAdd.map(task => {
+    //                 return {
+    //                     status: "PENDING",
+    //                     taskId: task.id,
+    //                     orderId: orderId,
+    //                 }
+    //             }),
+    //         });
+
+    //         // await prisma.subtaskInstance.createMany({
+    //         //     data: subtasksToAdd.map(subtask => {
+    //         //         return {
+    //         //             status: "PENDING",
+    //         //             subtaskId: subtask.subtaskId,
+    //         //             taskInstanceId: {
+    //         //                 in: tasksToAdd.map(task => task.id),
+    //         //             },
+    //         //         }
+    //         //     }),
+    //         // });
+    //         });
+    //     return result;
+    // }
+
+    public async updateOrderTasks(orderId: number, tasksToDelete: {id:number}[], tasksToAdd: Task[], subtasksToAdd: {
+        taskId: number;
+        subtaskId: number;
+        subtaskNumber: number;
+    }[]) {
+        const result = await prisma.$transaction(async (prisma) => {
+            // Delete task and subtask instances if there are tasks to delete
+            if (tasksToDelete.length > 0) {
+                await prisma.subtaskInstance.deleteMany({
                     where: {
-                        taskInstanceId: task.id,
-                    },
-                });
-            }
-
-            //Vi looper gennem vores tasks fra vores parameter
-            for (const newTasks of tasks) {
-                //Vi opretter en ny taskInstance for hvert nyt task i parameteren
-                const createdInstanceTask = await prisma.taskInstance.create({
-                    data: {
-                        status: "AWAITING_CUSTOMER",
-                        taskId: newTasks.id,
-                        employeeId: null,
-                        orderId: orderId,
-                    },
-                });
-
-                //Vi finder subtasksne til vores enkelte, nye task
-                const subtasksArr = await prisma.taskSubtask.findMany({
-                    where: {
-                        taskId: newTasks.id,
-                    },
-                });
-
-                //Vi opretter nye subtaskInstance for hvert subtask, der er i vores nye task
-                for (const subtask of subtasksArr) {
-                    prisma.subtaskInstance.create({
-                        data: {
-                            status: "PENDING",
-                            taskInstanceId: createdInstanceTask.id,
-                            subtaskId: subtask.subtaskId,
+                        taskInstanceId: {
+                            in: tasksToDelete.map(task => task.id),
                         },
-                    });
-                }
+                    },
+                });
+    
+                await prisma.taskInstance.deleteMany({
+                    where: {
+                        id: {
+                            in: tasksToDelete.map(task => task.id),
+                        },
+                    },
+                });
             }
-        })
+    
+            // Variables to store new task instances and subtask instance data
+            let newTaskInstances: TaskInstance[] = [];
+            let subtaskInstanceData: /*{status: Status, subtaskId: number, taskInstanceId: number}*/ any[]= [];
+    
+            // Create new task instances if there are tasks to add
+            if (tasksToAdd.length > 0) {
+                await prisma.taskInstance.createMany({
+                    data: tasksToAdd.map(task => ({
+                        status: "PENDING",
+                        taskId: task.id,
+                        orderId: orderId,
+                    })),
+                });
+    
+                // Fetch the newly created task instances to get their IDs
+                newTaskInstances = await prisma.taskInstance.findMany({
+                    where: {
+                        orderId: orderId,
+                        taskId: {
+                            in: tasksToAdd.map(task => task.id),
+                        },
+                    },
+                });
+    
+                // Map each subtask to its corresponding task instance
+                subtaskInstanceData = subtasksToAdd.map(subtask => {
+                    const taskInstance = newTaskInstances.find(instance => instance.taskId === subtask.taskId);
+                    return taskInstance ? {
+                        status: "PENDING",
+                        subtaskId: subtask.subtaskId,
+                        taskInstanceId: taskInstance.id,
+                    } : null;
+                }).filter(item => item !== null);
+            }
+    
+            // Create new subtask instances if there are subtasks to add
+            if (subtaskInstanceData.length > 0) {
+                await prisma.subtaskInstance.createMany({
+                    data: subtaskInstanceData,
+                });
+            }
+        });
+        return result;
     }
+
+
 }

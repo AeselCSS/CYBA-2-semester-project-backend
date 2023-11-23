@@ -54,13 +54,40 @@ export default class OrderService extends Pagination {
 
     public async updateOrderStatus(id: number, status: Status) {
         const orderRepository = new OrderRepository();
+        // check status guard
+        const orderStatus = await orderRepository.getOrderStatus(id);
+
+        if (orderStatus.status === "COMPLETED") {
+            throw new Error("Order is completed");
+        }
 
         return orderRepository.updateOrderStatus(id, status);
     }
 
     public async updateOrderTasks(id: number, tasks: Task[]) {
         const orderRepository = new OrderRepository();
+        // check status guard
+        const orderStatus = await orderRepository.getOrderStatus(id);
 
-        return orderRepository.updateOrderTasks(id, tasks);
+        if (orderStatus.status === "COMPLETED" || orderStatus.status === "IN_PROGRESS") {
+            throw new Error(`Order is ${orderStatus.status.toLowerCase()}`);
+        }
+
+        const {taskInstances} = await orderRepository.getOrderTasks(id);
+        
+        // Convert incoming tasks to a Set of IDs for easy comparison
+        const taskIds = new Set(tasks.map(task => task.id));
+
+        // Tasks to delete: present in taskInstances but not in incoming tasks
+        const tasksToDelete = taskInstances.filter(instance => !taskIds.has(instance.id));
+
+        // Tasks to add: present in incoming tasks but not in taskInstances
+        const existingTaskIds = new Set(taskInstances.map(instance => instance.id));
+        const tasksToAdd = tasks.filter(task => !existingTaskIds.has(task.id));
+
+        // SubTasks to add
+        const subTaskstoAdd = await orderRepository.getTaskSubtasks(tasksToAdd);
+
+        return orderRepository.updateOrderTasks(id, tasksToDelete, tasksToAdd, subTaskstoAdd);
     }
 }
