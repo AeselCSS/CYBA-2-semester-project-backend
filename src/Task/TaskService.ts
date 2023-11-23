@@ -4,17 +4,17 @@ import { Status } from "@prisma/client";
 export default class TaskService {
     constructor() {}
 
-    public async initiateTask(taskId: number, orderId: number) {
+    public async initiateTask(taskInstanceId: number, employeeId: string) {
         const taskRepository = new TaskRepository();
         
-        const [taskInstance] = await taskRepository.getSingleTaskInstance(taskId, orderId);
+        const taskInstance = await taskRepository.getSingleTaskInstance(taskInstanceId);
 
         if (taskInstance.status === Status.AWAITING_CUSTOMER || taskInstance.status === Status.PENDING) {
             //Transaction
-            await taskRepository.initiateTaskInstance(taskId, orderId);
+            await taskRepository.initiateTaskInstance(taskInstance, employeeId);
 
             //return the updated taskInstance with the updated status;
-            const [result] = await taskRepository.getSingleTaskInstance(taskId, orderId);
+            const result = await taskRepository.getSingleTaskInstance(taskInstanceId);
             return result;
         }
 

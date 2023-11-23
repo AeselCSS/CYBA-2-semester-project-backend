@@ -4,18 +4,18 @@ import TaskService from "./TaskService.js";
 export default class TaskController {
     constructor() {}
 
-    public async initiateTaskExecutor(request: Request<ReqParams, {}, { orderId: number }, {}>, response: Response) {
-        const taskId = parseInt(request.params.id);
-        const orderId = request.body.orderId;
+    public async initiateTaskExecutor(request: Request<ReqParams, {}, { employeeId: string }, {}>, response: Response) {
+        const taskInstanceId = parseInt(request.params.id);
+        const {employeeId} = request.body;
 
         try {
-            if (!taskId || !orderId) {
-                response.status(400).json({ error: "Id is not a number" });
+            if (!taskInstanceId || !employeeId) {
+                response.status(400).json({ error: "One or more ids are missing" });
                 return;
             }
 
             const taskService = new TaskService();
-            const result = await taskService.initiateTask(taskId, orderId);
+            const result = await taskService.initiateTask(taskInstanceId, employeeId);
             console.log(result);
 
             if (!result) {
