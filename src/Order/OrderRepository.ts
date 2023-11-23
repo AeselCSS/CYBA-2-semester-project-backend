@@ -434,6 +434,55 @@ export default class OrderRepository implements IPagination<Order> {
         });
     }
 
+    // public async updateOrderTasks(orderId: number, tasksToDelete: {id:number}[], tasksToAdd: Task[], subtasksToAdd: {
+    //     taskId: number;
+    //     subtaskId: number;
+    //     subtaskNumber: number;
+    // }[]) {
+
+    //    const result =  await prisma.$transaction(async (prisma) => {
+
+    //         await prisma.subtaskInstance.deleteMany({
+    //             where: {
+    //                 taskInstanceId: {
+    //                     in: tasksToDelete.map(task => task.id),
+    //                 },
+    //             },
+    //         });
+
+    //         await prisma.taskInstance.deleteMany({
+    //             where: {
+    //                 id: {
+    //                     in: tasksToDelete.map(task => task.id),
+    //                 },
+    //             },
+    //         });
+
+    //         await prisma.taskInstance.createMany({
+    //             data: tasksToAdd.map(task => {
+    //                 return {
+    //                     status: "PENDING",
+    //                     taskId: task.id,
+    //                     orderId: orderId,
+    //                 }
+    //             }),
+    //         });
+
+    //         // await prisma.subtaskInstance.createMany({
+    //         //     data: subtasksToAdd.map(subtask => {
+    //         //         return {
+    //         //             status: "PENDING",
+    //         //             subtaskId: subtask.subtaskId,
+    //         //             taskInstanceId: {
+    //         //                 in: tasksToAdd.map(task => task.id),
+    //         //             },
+    //         //         }
+    //         //     }),
+    //         // });
+    //         });
+    //     return result;
+    // }
+
     public async updateOrderTasks(
         orderId: number,
         tasksToDelete: { id: number }[],
