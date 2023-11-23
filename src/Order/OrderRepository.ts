@@ -1,15 +1,10 @@
-import prisma from '../Database/PrismaClient.js';
-import {Order, Status, Task, TaskInstance} from '@prisma/client';
+import prisma from "../Database/PrismaClient.js";
+import { Order, Status, Task, TaskInstance } from "@prisma/client";
 
 export default class OrderRepository implements IPagination<Order> {
     constructor() {}
 
-    public async getAllItemsPagination(
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string
-    ) {
+    public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string) {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -42,13 +37,7 @@ export default class OrderRepository implements IPagination<Order> {
         return result;
     }
 
-    public async getAllItemsSearchPagination(
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string,
-        searchValue: string
-    ): Promise<ResultPagination<Order>> {
+    public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string): Promise<ResultPagination<Order>> {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -96,13 +85,7 @@ export default class OrderRepository implements IPagination<Order> {
         return result;
     }
 
-    public async getAllItemsSearchNumberPagination(
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string,
-        searchValue: number
-    ) {
+    public async getAllItemsSearchNumberPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: number) {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -146,13 +129,7 @@ export default class OrderRepository implements IPagination<Order> {
         return result;
     }
 
-    public async getAllItemsFilterPagination(
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string,
-        filterBy: Status
-    ) {
+    public async getAllItemsFilterPagination(limit: number, offset: number, sortBy: string, sortDir: string, filterBy: Status) {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -192,14 +169,7 @@ export default class OrderRepository implements IPagination<Order> {
         return result;
     }
 
-    public async getAllItemsAllPagination(
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string,
-        searchValue: string,
-        filterBy: Status
-    ) {
+    public async getAllItemsAllPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: Status) {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -257,14 +227,7 @@ export default class OrderRepository implements IPagination<Order> {
         return result;
     }
 
-    public async getAllItemsNumberAllPagination(
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string,
-        searchValue: number,
-        filterBy: Status
-    ) {
+    public async getAllItemsNumberAllPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: number, filterBy: Status) {
         const result: ResultPagination<OrderResult> = {};
 
         result.data = await prisma.order.findMany({
@@ -466,14 +429,13 @@ export default class OrderRepository implements IPagination<Order> {
 
             // Variables to store new task instances and subtask instance data
             let newTaskInstances: TaskInstance[] = [];
-            let subtaskInstanceData: /*{status: Status, subtaskId: number, taskInstanceId: number}*/ any[] =
-                [];
+            let subtaskInstanceData: /*{status: Status, subtaskId: number, taskInstanceId: number}*/ any[] = [];
 
             // Create new task instances if there are tasks to add
             if (tasksToAdd.length > 0) {
                 await prisma.taskInstance.createMany({
                     data: tasksToAdd.map((task) => ({
-                        status: 'PENDING',
+                        status: Status.PENDING,
                         taskId: task.id,
                         orderId: orderId,
                     })),
@@ -492,15 +454,13 @@ export default class OrderRepository implements IPagination<Order> {
                 // Map each subtask to its corresponding task instance
                 subtaskInstanceData = subtasksToAdd
                     .map((subtask) => {
-                        const taskInstance = newTaskInstances.find(
-                            (instance) => instance.taskId === subtask.taskId
-                        );
+                        const taskInstance = newTaskInstances.find((instance) => instance.taskId === subtask.taskId);
                         return taskInstance
                             ? {
-                                status: 'PENDING',
-                                subtaskId: subtask.subtaskId,
-                                taskInstanceId: taskInstance.id,
-                            }
+                                  status: Status.PENDING,
+                                  subtaskId: subtask.subtaskId,
+                                  taskInstanceId: taskInstance.id,
+                              }
                             : null;
                     })
                     .filter((item) => item !== null);
@@ -536,8 +496,7 @@ export default class OrderRepository implements IPagination<Order> {
 
             // Variables to store new task instances and subtask instance data
             let newTaskInstances: TaskInstance[] = [];
-            let subtaskInstanceData: /*{status: Status, subtaskId: number, taskInstanceId: number}*/ any[] =
-                [];
+            let subtaskInstanceData: /*{status: Status, subtaskId: number, taskInstanceId: number}*/ any[] = [];
 
             // Create task instances
             await prisma.taskInstance.createMany({
@@ -561,15 +520,13 @@ export default class OrderRepository implements IPagination<Order> {
             // Create subtask instances
             subtaskInstanceData = subtasks
                 .map((subtask) => {
-                    const taskInstance = newTaskInstances.find(
-                        (instance: any) => instance.taskId === subtask.taskId
-                    );
+                    const taskInstance = newTaskInstances.find((instance: any) => instance.taskId === subtask.taskId);
                     return taskInstance
                         ? {
-                            status: Status.PENDING,
-                            subtaskId: subtask.subtaskId,
-                            taskInstanceId: taskInstance.id,
-                        }
+                              status: Status.PENDING,
+                              subtaskId: subtask.subtaskId,
+                              taskInstanceId: taskInstance.id,
+                          }
                         : null;
                 })
                 .filter((item) => item !== null);

@@ -115,10 +115,7 @@ export default class OrderService extends Pagination {
         // check status guard
         const orderStatus = await orderRepository.getOrderStatus(id);
 
-        if (
-            orderStatus.status === 'COMPLETED' ||
-            orderStatus.status === 'IN_PROGRESS'
-        ) {
+        if (orderStatus.status === "COMPLETED" || orderStatus.status === "IN_PROGRESS" || orderStatus.status === "CANCELED") {
             throw new Error(`Order is ${orderStatus.status.toLowerCase()}`);
         }
 
