@@ -68,4 +68,25 @@ export default class TaskController {
             }
         }
     }
+
+    public async getSingleTaskExecutor(request: Request<ReqParams, {}, {}, {}>, response: Response) {
+        const taskInstanceId = parseInt(request.params.id);
+
+        try {
+            if (!taskInstanceId) {
+                response.status(400).json({ error: "Task instance id is missing" });
+                return;
+            }
+
+            const taskService = new TaskService();
+            const result = await taskService.getSingleTask(taskInstanceId);
+            response.status(200).json(result);
+        } catch (error: any) {
+            if (error instanceof Error) {
+                response.status(404).json({ message: error.message });
+            } else {
+                response.status(500).json({ message: error.message });
+            }
+        }
+    }
 }

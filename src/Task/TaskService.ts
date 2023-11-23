@@ -38,4 +38,10 @@ export default class TaskService {
         
         return await taskRepository.createComment(taskInstanceId, comment, employeeId);
     }
+
+    public async getSingleTask(taskId: number) {
+        const taskRepository = new TaskRepository();
+        const rawResult = await taskRepository.getSingleTask(taskId);
+        return rawResult
+    }
 }
