@@ -18,14 +18,15 @@ export default class SubtaskController {
     
             const subtaskService = new SubtaskService();
             //! IMPORTER ORDERSERVICE!!!
-            const orderService = new OrderService()
+            // const orderService = new OrderService()
 
             const orderId = await subtaskService.updateSubtaskStatus(subtaskId, taskInstanceId);
 
             //! SØRG FOR DET HER METODEKALD VIRKER
-            const order = await orderService.getSingleOrder(orderId)
+            // const order = await orderService.getSingleOrder(orderId)
 
-            response.status(200).json(order);
+            //!Returner order, når du får det hele til at virke
+            response.status(200).json(orderId);
         } catch (error: any) {
             if (error instanceof Error) {
                 response.status(404).json({ message: error.message });
