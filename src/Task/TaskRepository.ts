@@ -22,6 +22,42 @@ export default class TaskRepository {
         });
     }
 
+    public async completeTaskInstance(taskId: number, orderId: number) {
+        return prisma.taskInstance.updateMany({
+            where: {
+                AND: [
+                    {
+                        taskId: taskId,
+                    },
+                    {
+                        orderId: orderId,
+                    },
+                ],
+            },
+            data: {
+                status: Status.COMPLETED,
+            },
+        });
+    }
+
+    public async cancelTaskInstance(taskId: number, orderId: number) {
+        return prisma.taskInstance.updateMany({
+            where: {
+                AND: [
+                    {
+                        taskId: taskId,
+                    },
+                    {
+                        orderId: orderId,
+                    },
+                ],
+            },
+            data: {
+                status: Status.CANCELED,
+            },
+        });
+    }
+
     public async getSingleTaskInstance(taskId: number, orderId: number) {
         return prisma.taskInstance.findMany({
             where: {
@@ -35,5 +71,9 @@ export default class TaskRepository {
                 ],
             },
         });
+    }
+
+    public async getTasks() {
+        return prisma.task.findMany();
     }
 }

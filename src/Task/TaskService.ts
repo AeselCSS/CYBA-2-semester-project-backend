@@ -16,4 +16,9 @@ export default class TaskService {
 
         return null;
     }
+
+    public async getTasks() {
+        const taskRepository = new TaskRepository();
+        return await taskRepository.getTasks()
+    }
 }
