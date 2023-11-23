@@ -9,16 +9,16 @@ export default class TaskService {
         const [taskInstance] = await taskRepository.getSingleTaskInstance(taskId, orderId);
 
         if (taskInstance.status === Status.AWAITING_CUSTOMER || taskInstance.status === Status.PENDING) {
-            await taskRepository.initiateTaskInstance(taskId, orderId);
-            const [result] = await taskRepository.getSingleTaskInstance(taskId, orderId)
+            await taskRepository.updateTaskInstanceStatus(taskId, orderId, Status.IN_PROGRESS);
+            const [result] = await taskRepository.getSingleTaskInstance(taskId, orderId);
             return result;
-        } 
+        }
 
         return null;
     }
 
     public async getTasks() {
         const taskRepository = new TaskRepository();
-        return await taskRepository.getTasks()
+        return await taskRepository.getTasks();
     }
 }
