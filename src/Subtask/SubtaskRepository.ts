@@ -9,29 +9,74 @@ export default class SubtaskRepository {
             where: {
                 AND: [
                     {
-                        taskInstanceId: taskInstanceId
+                        taskInstanceId: taskInstanceId,
                     },
                     {
-                        subtaskId: subtaskId
-                    }
-                ]
+                        subtaskId: subtaskId,
+                    },
+                ],
             },
             data: {
-                status: newStatus
-            }
+                status: newStatus,
+            },
         });
     }
 
-    
+    public async FinishSubtask(subtaskId: number, taskInstanceId: number) {
+
+        const taskInstance = await prisma.taskInstance.findUniqueOrThrow({
+            where: {
+                id: taskInstanceId
+            }
+        })
+
+        return prisma.$transaction(async (prisma) => {
+            //Update the given subtaskInstance status to COMPLETED
+            await prisma.subtaskInstance.updateMany({
+                where: {
+                    AND: [
+                        {
+                            subtaskId: subtaskId
+                        },
+                        {
+                            taskInstanceId: taskInstanceId
+                        }
+                    ]
+                },
+                data: {
+                    status: Status.COMPLETED
+                }
+            })
+
+            //initialise the next subtaskInstance with the status "IN_PROGRESS"
+            const subtasks = await this.getSubtasksForASingleTask(taskInstance.taskId);
+
+            for (const subtask of subtasks) {
+                const [subtaskInstance] = await prisma.subtaskInstance.findMany({
+                    where: {
+                        subtaskId: subtask.subtaskId
+                    }
+                })
+
+                if (subtaskInstance.status === Status.PENDING) {
+                    await this.updateSubtaskStatus(subtaskInstance.id, taskInstance.id, Status.IN_PROGRESS);
+                    break;
+                }
+            }
+            
+        })
+    }
+
+
 
     public async getSubtasksForASingleTask(taskId: number) {
         return prisma.taskSubtask.findMany({
             where: {
-                taskId: taskId
-            }, 
+                taskId: taskId,
+            },
             orderBy: {
-                subtaskNumber: "asc"
-            }
-        })
+                subtaskNumber: "asc",
+            },
+        });
     }
 }
