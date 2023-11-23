@@ -46,4 +46,26 @@ export default class TaskController {
             }
         }
     }
+
+    public async createCommentExecutor(request: Request<ReqParams, {}, { comment: string, employeeId: string }, {}>, response: Response) {
+        const taskInstanceId = parseInt(request.params.id);
+        const { comment, employeeId } = request.body;
+
+        try {
+            if (!taskInstanceId || !comment || !employeeId) {
+                response.status(400).json({ error: "One or more props are missing" });
+                return;
+            }
+
+            const taskService = new TaskService();
+            const createdComment = await taskService.createComment(taskInstanceId, comment, employeeId);
+            response.status(200).json(createdComment);
+        } catch (error: any) {
+            if (error instanceof Error) {
+                response.status(404).json({ message: error.message });
+            } else {
+                response.status(500).json({ message: error.message });
+            }
+        }
+    }
 }

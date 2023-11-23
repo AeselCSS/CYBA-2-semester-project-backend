@@ -1,5 +1,6 @@
 import TaskRepository from "./TaskRepository.js";
 import { Status } from "@prisma/client";
+import EmployeeRepository from "../Employee/EmployeeRepository.js";
 
 export default class TaskService {
     constructor() {}
@@ -24,5 +25,17 @@ export default class TaskService {
     public async getTasks() {
         const taskRepository = new TaskRepository();
         return await taskRepository.getTasks();
+    }
+
+    public async createComment(taskInstanceId: number, comment: string, employeeId: string) {
+        const taskRepository = new TaskRepository();
+        const employeeRepository = new EmployeeRepository()
+
+        //Two guards
+        await taskRepository.getSingleTaskInstance(taskInstanceId)
+        await employeeRepository.getSingleEmployee(employeeId);
+
+        
+        return await taskRepository.createComment(taskInstanceId, comment, employeeId);
     }
 }
