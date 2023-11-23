@@ -1,5 +1,5 @@
 import prisma from '../Database/PrismaClient.js';
-import { Order, Status, Task, TaskInstance } from '@prisma/client';
+import {Order, Status, Task, TaskInstance} from '@prisma/client';
 
 export default class OrderRepository implements IPagination<Order> {
     constructor() {}
@@ -399,7 +399,7 @@ export default class OrderRepository implements IPagination<Order> {
     }
 
     public async updateOrderStatus(id: number, status: Status) {
-        return await prisma.order.update({
+        return prisma.order.update({
             where: {
                 id: id,
             },
@@ -444,7 +444,7 @@ export default class OrderRepository implements IPagination<Order> {
             subtaskNumber: number;
         }[]
     ) {
-        const result = await prisma.$transaction(async (prisma) => {
+        return prisma.$transaction(async (prisma) => {
             // Delete task and subtask instances if there are tasks to delete
             if (tasksToDelete.length > 0) {
                 await prisma.subtaskInstance.deleteMany({
@@ -497,10 +497,10 @@ export default class OrderRepository implements IPagination<Order> {
                         );
                         return taskInstance
                             ? {
-                                  status: 'PENDING',
-                                  subtaskId: subtask.subtaskId,
-                                  taskInstanceId: taskInstance.id,
-                              }
+                                status: 'PENDING',
+                                subtaskId: subtask.subtaskId,
+                                taskInstanceId: taskInstance.id,
+                            }
                             : null;
                     })
                     .filter((item) => item !== null);
@@ -513,7 +513,6 @@ export default class OrderRepository implements IPagination<Order> {
                 });
             }
         });
-        return result;
     }
 
     public async createOrder(
@@ -524,7 +523,7 @@ export default class OrderRepository implements IPagination<Order> {
             subtaskNumber: number;
         }[]
     ) {
-        const result = await prisma.$transaction(async (prisma) => {
+        return prisma.$transaction(async (prisma) => {
             // Create order
             const newOrder = await prisma.order.create({
                 data: {
@@ -567,10 +566,10 @@ export default class OrderRepository implements IPagination<Order> {
                     );
                     return taskInstance
                         ? {
-                              status: Status.PENDING,
-                              subtaskId: subtask.subtaskId,
-                              taskInstanceId: taskInstance.id,
-                          }
+                            status: Status.PENDING,
+                            subtaskId: subtask.subtaskId,
+                            taskInstanceId: taskInstance.id,
+                        }
                         : null;
                 })
                 .filter((item) => item !== null);
@@ -579,6 +578,5 @@ export default class OrderRepository implements IPagination<Order> {
                 data: subtaskInstanceData,
             });
         });
-        return result;
     }
 }
