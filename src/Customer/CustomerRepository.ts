@@ -91,6 +91,10 @@ export default class CustomerRepository implements IPagination<Customer> {
             where: {
                 id: id,
             },
+            include: {
+                orders: true,
+                cars: true
+            }
         });
     }
 
