@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import SubtaskService from "./SubtaskService.js";
-
+import OrderService from "../Order/OrderService.js";
 
 export default class SubtaskController {
     constructor() {}
@@ -8,7 +8,7 @@ export default class SubtaskController {
     public async updateSubtaskStatusExecutor(request: Request<ReqParams, {}, { taskInstanceId: number }, {}>, response: Response) {
         const subtaskId = parseInt(request.params.id);
         const taskInstanceId = request.body.taskInstanceId;
-
+        
         
         try {
             if (!subtaskId || !taskInstanceId) {
@@ -17,16 +17,12 @@ export default class SubtaskController {
             }
     
             const subtaskService = new SubtaskService();
-            //! IMPORTER ORDERSERVICE!!!
-            // const orderService = new OrderService()
+            const orderService = new OrderService();
 
             const orderId = await subtaskService.updateSubtaskStatus(subtaskId, taskInstanceId);
+            const order = await orderService.getSingleOrder(orderId)
 
-            //! SØRG FOR DET HER METODEKALD VIRKER
-            // const order = await orderService.getSingleOrder(orderId)
-
-            //!Returner order, når du får det hele til at virke
-            response.status(200).json(orderId);
+            response.status(200).json(order);
         } catch (error: any) {
             if (error instanceof Error) {
                 response.status(404).json({ message: error.message });
