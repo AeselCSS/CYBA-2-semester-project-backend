@@ -63,6 +63,11 @@ export default class EmployeeController {
             const employeeService = new EmployeeService();
             const result = await employeeService.createEmployee(firstName, lastName, department, role, id)
 
+            if (!result) {
+                response.status(400).json({ message: "Employee already exists in the system" });
+                return;
+            }
+
             response.status(201).json(result);
         } catch (error: any) {
             if (error instanceof Error) {

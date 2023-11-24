@@ -204,6 +204,14 @@ export default class EmployeeRepository implements IPagination<Employee> {
         });
     }
 
+    public async isExistingEmployee(id: string) {
+        return prisma.employee.findUnique({
+            where: {
+                id: id
+            },
+        });
+    }
+
     public async createEmployee(id: string, firstName: string, lastName: string, department: Department, role: Role) {
         return prisma.employee.create({
             data: {
@@ -211,9 +219,9 @@ export default class EmployeeRepository implements IPagination<Employee> {
                 firstName,
                 lastName,
                 department,
-                role
-            }
-        })
+                role,
+            },
+        });
     }
 }
 

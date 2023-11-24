@@ -35,6 +35,12 @@ export default class EmployeeService extends Pagination {
 
     public async createEmployee(firstName: string, lastName: string, department: Department, role: Role, id: string) {
         const employeeRepository = new EmployeeRepository();
+        
+        const isEmployeeInDB = await employeeRepository.isExistingEmployee(id);
+
+        if (isEmployeeInDB) {
+            return null;
+        }
 
         return await employeeRepository.createEmployee(id, firstName, lastName, department, role);
     }
