@@ -6,7 +6,7 @@
     "type": "module",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsc",
+        "build": "prisma generate && tsc",
         "build:digitalocean": "npm install --production=false && npm run build && npm ci",
         "dev": "concurrently \"tsc -w\" \"dotenv -e .env.development nodemon dist/server.js\"",
         "migrate": "dotenv -e .env.development prisma migrate dev --name init",
