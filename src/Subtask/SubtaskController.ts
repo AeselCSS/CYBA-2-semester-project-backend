@@ -6,6 +6,7 @@ export default class SubtaskController {
     constructor() {}
 
     public async updateSubtaskStatusExecutor(request: Request<ReqParams, {}, { taskInstanceId: number }, {}>, response: Response) {
+        //TODO burde udelukkende modtage subtaskInstance_id (som req.params) i stedet for subtask_id og task_instance_id tilsammen
         const subtaskId = parseInt(request.params.id);
         const taskInstanceId = request.body.taskInstanceId;
         
