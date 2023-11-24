@@ -40,6 +40,13 @@ export default class CustomerService extends Pagination {
 
     public async createCustomer(customerReqBody: CustomerReqBody) {
         const customerRepository = new CustomerRepository();
+
+        const isCustomerInDB = await customerRepository.isExistingCustomer(customerReqBody.id, customerReqBody.email);
+
+        if (isCustomerInDB) {
+            return null;
+        }
+
         return customerRepository.createCustomer(customerReqBody);
     }
 }

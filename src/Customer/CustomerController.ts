@@ -98,6 +98,11 @@ export default class CustomerController {
             const customerService = new CustomerService();
             const result = await customerService.createCustomer(request.body);
 
+            if (!result) {
+                response.status(400).json({ message: "Customer already exists in the system" });
+                return;
+            }
+
             response.status(201).json(result);
         } catch (error: any) {
             if (error instanceof Error) {
