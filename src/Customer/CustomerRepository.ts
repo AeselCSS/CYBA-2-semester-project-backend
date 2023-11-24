@@ -140,23 +140,22 @@ export default class CustomerRepository implements IPagination<Customer> {
         });
 
         await prisma.$transaction(async (prisma) => {
-            await prisma.car.updateMany({
-                where: {
-                    customerId: id,
-                },
-                data: {
-                    customerId: "DELETED",
-                },
-            });
-
+            
             await prisma.order.updateMany({
                 where: {
                     customerId: id,
                 },
                 data: {
                     customerId: "DELETED",
+                    carId: 1
                 },
             });
+            
+            await prisma.car.deleteMany({
+                where: {
+                    customerId: id,
+                }
+            })
 
             await prisma.customer.delete({
                 where: {
