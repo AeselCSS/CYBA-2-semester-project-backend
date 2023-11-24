@@ -312,7 +312,7 @@ describe("Costumer", () => {
             expect(body).toHaveProperty("createdAt")
         });
 
-        it("should fail to create a new customer if phone is of type string", async () => {
+        it("should fail to create a new customer if zip is of type string", async () => {
             const failedPayload = {
                 ...payload,
                 zip: "2200",
