@@ -1,20 +1,25 @@
 import TaskRepository from "./TaskRepository.js";
 import { Status } from "@prisma/client";
+import EmployeeRepository from "../Employee/EmployeeRepository.js";
+import {taskInstanceDTO} from "./TaskDTO.js";
+import OrderRepository from "../Order/OrderRepository.js";
 
 export default class TaskService {
     constructor() {}
 
-    public async initiateTask(taskId: number, orderId: number) {
+    public async initiateTask(taskInstanceId: number, employeeId: string) {
         const taskRepository = new TaskRepository();
+        const orderRepository = new OrderRepository()
         
-        const [taskInstance] = await taskRepository.getSingleTaskInstance(taskId, orderId);
+        const taskInstance = await taskRepository.getSingleTaskInstance(taskInstanceId);
+        const orderStatus = await orderRepository.getOrderStatus(taskInstance.orderId)
 
-        if (taskInstance.status === Status.AWAITING_CUSTOMER || taskInstance.status === Status.PENDING) {
+        if (taskInstance.status === Status.PENDING && orderStatus.status === Status.IN_PROGRESS) {
             //Transaction
-            await taskRepository.initiateTaskInstance(taskId, orderId);
+            await taskRepository.initiateTaskInstance(taskInstance, employeeId);
 
             //return the updated taskInstance with the updated status;
-            const [result] = await taskRepository.getSingleTaskInstance(taskId, orderId);
+            const result = await taskRepository.getSingleTaskInstance(taskInstanceId);
             return result;
         }
 
@@ -24,5 +29,23 @@ export default class TaskService {
     public async getTasks() {
         const taskRepository = new TaskRepository();
         return await taskRepository.getTasks();
+    }
+
+    public async createComment(taskInstanceId: number, comment: string, employeeId: string) {
+        const taskRepository = new TaskRepository();
+        const employeeRepository = new EmployeeRepository()
+
+        //Two guards
+        await taskRepository.getSingleTaskInstance(taskInstanceId)
+        await employeeRepository.getSingleEmployee(employeeId);
+
+        
+        return await taskRepository.createComment(taskInstanceId, comment, employeeId);
+    }
+
+    public async getSingleTask(taskId: number) {
+        const taskRepository = new TaskRepository();
+        const rawTaskInstance = await taskRepository.getSingleTask(taskId);
+        return taskInstanceDTO(rawTaskInstance);
     }
 }

@@ -1,40 +1,31 @@
 import prisma from "../Database/PrismaClient.js";
-import { Status } from "@prisma/client";
+import { Status, TaskInstance } from "@prisma/client";
 
 export default class TaskRepository {
     constructor() {}
 
-    public async updateTaskInstanceStatus(taskId: number, orderId: number, newStatus: Status) {
-        return prisma.taskInstance.updateMany({
+    public async updateTaskInstanceStatus(taskInstanceId: number, employeeId: string, newStatus: Status) {
+        return prisma.taskInstance.update({
             where: {
-                AND: [
-                    {
-                        taskId: taskId,
-                    },
-                    {
-                        orderId: orderId,
-                    },
-                ],
+                id: taskInstanceId
             },
             data: {
                 status: newStatus,
+                employeeId: employeeId
             },
         });
     }
 
-    public async initiateTaskInstance(taskId: number, orderId: number) {
-        //Get the id of the taskInstance itself. Used for later.
-        const [taskInstance] = await this.getSingleTaskInstance(taskId, orderId)
+    public async initiateTaskInstance(taskInstance: TaskInstance, employeeId: string) {
 
         return prisma.$transaction(async (prisma) => {
             //Update the taskInstance status to IN_PROGRESS
-            await this.updateTaskInstanceStatus(taskId, orderId, Status.IN_PROGRESS)
-
+            await this.updateTaskInstanceStatus(taskInstance.id, employeeId, Status.IN_PROGRESS);
 
             //Get all subtasks associated with the taskInstance. Sort after subtaskNumber
             const subtasks = await prisma.taskSubtask.findMany({
                 where: {
-                    taskId: taskId,
+                    taskId: taskInstance.taskId,
                 },
                 orderBy: {
                     subtaskNumber: "asc",
@@ -60,19 +51,12 @@ export default class TaskRepository {
         })
     }
 
-    public async getSingleTaskInstance(taskId: number, orderId: number) {
-        return prisma.taskInstance.findMany({
+    public async getSingleTaskInstance(taskInstanceId: number) {
+        return prisma.taskInstance.findUniqueOrThrow({
             where: {
-                AND: [
-                    {
-                        taskId: taskId,
-                    },
-                    {
-                        orderId: orderId,
-                    },
-                ],
-            },
-        });
+                id: taskInstanceId
+            }
+        })
     }
 
     public async getTasks() {
@@ -94,6 +78,76 @@ export default class TaskRepository {
         return prisma.taskInstance.findMany({
             where: {
                 orderId: orderId
+            }
+        })
+    }
+
+    public async createComment(taskInstanceId: number, comment: string, employeeId: string) {
+        return prisma.taskInstanceComment.create({
+            data: {
+                comment: comment,
+                taskInstanceId: taskInstanceId,
+                employeeId: employeeId
+            }
+        })
+    }
+
+    public async getSingleTask(taskId: number) {
+        /*return prisma.taskInstance.findUnique({
+            where: {
+                id: taskId
+            },
+            include: {
+                taskInstanceComments: true,
+                subtaskInstances: {
+                    include: {
+                        subtask: true,
+
+                    }
+                }
+            }
+        })*/
+
+        return prisma.taskInstance.findUniqueOrThrow({
+            where: {
+                id: taskId
+            },
+            select: {
+                id: true,
+                status: true,
+                taskId: true,
+                employeeId: true,
+                updatedAt: true,
+                subtaskInstances: {
+                    select: {
+                        id: true,
+                        status: true,
+                        updatedAt: true,
+                        subtask: {
+                            select: {
+                                name: true,
+                                time: true,
+                                description: true
+                            }
+                        }
+                    }
+                },
+                taskInstanceComments: {
+                    select: {
+                        id: true,
+                        comment: true,
+                        createdAt: true,
+                        employee: {
+                            select: {
+                                id: true,
+                                role: true,
+                                department: true,
+                                firstName: true,
+                                lastName: true
+                            }
+                        }
+                    }
+                }
             }
         })
     }

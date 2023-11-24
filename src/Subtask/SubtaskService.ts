@@ -1,7 +1,7 @@
 import { Status } from "@prisma/client";
 import TaskRepository from "../Task/TaskRepository.js";
 import SubtaskRepository from "./SubtaskRepository.js";
-import prisma from "../Database/PrismaClient.js";
+import OrderRepository from "../Order/OrderRepository.js";
 
 
 
@@ -11,7 +11,7 @@ export default class SubtaskService {
     public async updateSubtaskStatus(subtaskId: number, taskInstanceId: number) {
         const subtaskRepository = new SubtaskRepository();
         const taskRepository = new TaskRepository()
-        //! Instancer et orderRepository til det sidste prisma kald i den her metode.
+        const orderRepository = new OrderRepository();
 
         //Update the subtaskInstance and taskInstance if necesseray in this transaction
         await subtaskRepository.completeSubtask(subtaskId, taskInstanceId);
@@ -31,17 +31,8 @@ export default class SubtaskService {
         }
 
         //If you reach here, then all taskInstances are COMPLETED. We update the status on the order itself to COMPLETED
-        //! SKAL KALDE PÅ EN METODE PATCH STATUS ORDER INDE I ORDER REPOSITORY!!
-        await prisma.order.update({
-            where: {
-                id: orderId
-            },
-            data: {
-                status: Status.COMPLETED
-            }
-        })
-        //!
-
+        await orderRepository.updateOrderStatus(orderId, Status.COMPLETED);
+        
         //return orderId for the controller
         return orderId;
     }
