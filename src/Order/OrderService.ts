@@ -140,12 +140,15 @@ export default class OrderService extends Pagination {
         // SubTasks to add
         const subTaskstoAdd = await orderRepository.getTaskSubtasks(tasksToAdd);
 
-        return orderRepository.updateOrderTasks(
+        await orderRepository.updateOrderTasks(
             id,
             tasksToDelete,
             tasksToAdd,
             subTaskstoAdd
         );
+
+        const updatedOrder = await orderRepository.getSingleOrder(id);
+        return orderDTO(updatedOrder);
     }
 
     public async createOrder(order: NewOrder) {
