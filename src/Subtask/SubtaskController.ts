@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import SubtaskService from "./SubtaskService.js";
 import OrderService from "../Order/OrderService.js";
+import errorHandler from "../Utility/errorHandler.js";
 
 export default class SubtaskController {
     constructor() {}
@@ -12,11 +13,6 @@ export default class SubtaskController {
         
         
         try {
-            if (!subtaskId || !taskInstanceId) {
-                response.status(400).json({ message: "taskInstanceId is missing or subtaskId is not of type number" })
-                return;
-            }
-    
             const subtaskService = new SubtaskService();
             const orderService = new OrderService();
 
@@ -25,11 +21,7 @@ export default class SubtaskController {
 
             response.status(200).json(order);
         } catch (error: any) {
-            if (error instanceof Error) {
-                response.status(404).json({ message: error.message });
-            } else {
-                response.status(500).json({ message: error.message });
-            }
+            errorHandler(error, response)
         }
     }
 }

@@ -8,16 +8,13 @@ export default class CustomerService extends Pagination {
         super();
     }
 
-    public async getAllCustomers({ sortBy, sortDir, pageSize, pageNum, searchValue }: QueryType) {
+    public async getAllCustomers(queryParams: QueryType) {
+        const { sortBy, sortDir, pageSize, pageNum, searchValue } = queryParams;
         const customerRepository = new CustomerRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        //If searchValue is defined
-        if (searchValue) {
-            return customerRepository.getAllItemsSearchPagination(pageSize, this.offset, sortBy, sortDir, searchValue);
-        }
+        return customerRepository.getAllCustomers(pageSize, this.offset, sortBy, sortDir, searchValue);
 
-        return customerRepository.getAllItemsPagination(pageSize, this.offset, sortBy, sortDir);
     }
 
     public async getSingleCustomer(id: string) {
