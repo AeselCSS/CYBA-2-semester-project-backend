@@ -61,9 +61,9 @@ export default class OrderController {
             }
 
             const orderService = new OrderService();
-            await orderService.updateOrderStatus(id, status);
+            const result = await orderService.updateOrderStatus(id, status);
 
-            response.status(200).json({});
+            response.status(200).json(result);
         } catch (error: any) {
             errorHandler(error, response);
         }
