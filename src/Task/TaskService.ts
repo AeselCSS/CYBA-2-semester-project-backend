@@ -2,16 +2,19 @@ import TaskRepository from "./TaskRepository.js";
 import { Status } from "@prisma/client";
 import EmployeeRepository from "../Employee/EmployeeRepository.js";
 import {taskInstanceDTO} from "./TaskDTO.js";
+import OrderRepository from "../Order/OrderRepository.js";
 
 export default class TaskService {
     constructor() {}
 
     public async initiateTask(taskInstanceId: number, employeeId: string) {
         const taskRepository = new TaskRepository();
+        const orderRepository = new OrderRepository()
         
         const taskInstance = await taskRepository.getSingleTaskInstance(taskInstanceId);
+        const orderStatus = await orderRepository.getOrderStatus(taskInstance.orderId)
 
-        if (taskInstance.status === Status.AWAITING_CUSTOMER || taskInstance.status === Status.PENDING) {
+        if (taskInstance.status === Status.PENDING && orderStatus.status === Status.IN_PROGRESS) {
             //Transaction
             await taskRepository.initiateTaskInstance(taskInstance, employeeId);
 

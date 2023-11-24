@@ -19,7 +19,7 @@ export default class TaskController {
             console.log(result);
 
             if (!result) {
-                response.status(400).json({ message: 'Task instance is neither "AWAITING_CUSTOMER" or "PENDING"' });
+                response.status(400).json({ message: 'Task instance status is not "PENDING" AND/OR order status is not IN_PROGRESS' });
                 return;
             }
 
