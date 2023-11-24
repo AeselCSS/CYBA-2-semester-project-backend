@@ -534,6 +534,8 @@ export default class OrderRepository implements IPagination<Order> {
             await prisma.subtaskInstance.createMany({
                 data: subtaskInstanceData,
             });
+
+            return newOrder.id
         });
     }
 }

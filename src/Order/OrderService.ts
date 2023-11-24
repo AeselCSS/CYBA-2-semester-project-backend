@@ -156,10 +156,8 @@ export default class OrderService extends Pagination {
         // find all subtasks for each task
         const subTasks = await orderRepository.getTaskSubtasks(tasks);
 
-        // 1. create order - OK
-        // 2. create order taskInstances - orderId
-        // 3. create order subtaskInstances -taskInstanceId and subtaskId
-
-        return orderRepository.createOrder(order, subTasks);
+        const orderId = await orderRepository.createOrder(order, subTasks);
+        const createdOrder = await orderRepository.getSingleOrder(orderId);
+        return orderDTO(createdOrder);
     }
 }
