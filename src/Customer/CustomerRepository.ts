@@ -2,7 +2,6 @@ import prisma from "../Database/PrismaClient.js";
 import { Customer } from "@prisma/client";
 import { Role } from "@prisma/client";
 
-
 export default class CustomerRepository implements IPagination<Customer> {
 
     constructor() {}
@@ -87,7 +86,7 @@ export default class CustomerRepository implements IPagination<Customer> {
     }
 
     public async getSingleCustomer(id: string) {
-        return await prisma.customer.findUniqueOrThrow({
+        return prisma.customer.findUniqueOrThrow({
             where: {
                 id: id,
             },

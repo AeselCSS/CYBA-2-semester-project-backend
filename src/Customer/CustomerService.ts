@@ -1,5 +1,6 @@
 import Pagination from "../Utility/Pagination.js";
 import CustomerRepository from "./CustomerRepository.js";
+import {singleCustomerDTO} from "./CustomerDTO.js";
 
 
 export default class CustomerService extends Pagination {
@@ -22,8 +23,9 @@ export default class CustomerService extends Pagination {
 
     public async getSingleCustomer(id: string) {
         const customerRepository = new CustomerRepository();
+        const customerDate = await customerRepository.getSingleCustomer(id);
 
-        return customerRepository.getSingleCustomer(id);
+        return singleCustomerDTO(customerDate);
     }
 
     public async updateCustomer(id: string, customerReqBody: CustomerReqBody) {

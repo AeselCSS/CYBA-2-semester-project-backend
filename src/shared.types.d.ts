@@ -250,3 +250,79 @@ type SingleTaskInstance = {
         }
     }[]
 }
+
+type SingleCustomer = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    address: string;
+    city: string;
+    zip: number;
+    phone: number;
+    email: string;
+    role: Role;
+    orders: {
+        id: number;
+        status: Status;
+        orderStartDate: Date;
+        carId: number;
+        customerId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        }[];
+    cars: {
+        id: number;
+        customerId: string;
+        registrationNumber: string;
+        vinNumber: string;
+        brand: string;
+        model: string;
+        modelVariant: string;
+        firstRegistration: Date;
+        mileage: number;
+        lastInspectionDate: Date;
+        lastInspectionKind: string;
+        lastInspectionResult: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }[];
+};
+
+type SingleCustomerDTO = {
+    customer: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        address: string;
+        city: string;
+        zip: number;
+        phone: number;
+        email: string;
+        role: Role;
+    },
+    orders: {
+        id: number;
+        status: Status;
+        orderStartDate: Date;
+        carId: number;
+        customerId: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }[],
+    cars: {
+        id: number;
+        customerId: string;
+        registrationNumber: string;
+        vinNumber: string;
+        brand: string;
+        model: string;
+        modelVariant: string;
+        firstRegistration: Date;
+        mileage: number;
+        lastInspectionDate: Date;
+        lastInspectionKind: string;
+        lastInspectionResult: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }[]
+    };
