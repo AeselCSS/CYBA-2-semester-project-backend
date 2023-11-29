@@ -2,7 +2,7 @@ import {query, body, validationResult, param} from "express-validator";
 import {NextFunction, Request, Response} from "express";
 
 export const validateOrderQuery = [
-    query('sortBy').isString().withMessage('Sort By must be a string'),
+    query('sortBy').isString().isIn(['id', 'status', 'orderStartDate', 'carId', 'customerId', 'createdAt', 'updatedAt']).withMessage("sortBy must be either 'id', 'status', 'orderStartDate', 'carId', 'customerId', 'createdAt', 'updatedAt' "),
     query('sortDir').isString().isIn(['asc', 'desc']).withMessage("sortDir must be either 'asc' or 'desc' "),
     query('pageSize').isInt({ min: 1 }).withMessage('Page Size must be a positive integer'),
     query('pageNum').isInt({ min: 1 }).withMessage('Page Number must be a positive integer'),
@@ -17,7 +17,8 @@ export const validateOrderQuery = [
         }
         throw new Error('Search Value must be either a string or an integer');
     }),
-    query('filterBy').optional().isString().isIn(['','None','AWAITING_CUSTOMER', 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']).withMessage('Filter By must be a string.'),
+    //TODO 'CANCELED' skal rettes til 'CANCELLED', da sidstnævnte er stavet rigtigt. Rettelsen kræver gennemgang af hele backend koden samt opdatering af vores migration og dummydata.sql fil
+    query('filterBy').optional().isString().isIn(['','None','AWAITING_CUSTOMER', 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELED']).withMessage('Filter By must be a string.'),
     (request: Request, response: Response, next: NextFunction): Response | void => {
         const errors = validationResult(request);
         if (!errors.isEmpty()) {
