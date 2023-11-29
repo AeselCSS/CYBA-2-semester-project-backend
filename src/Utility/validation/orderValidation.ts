@@ -17,8 +17,8 @@ export const validateOrderQuery = [
         }
         throw new Error('Search Value must be either a string or an integer');
     }),
-    //TODO 'CANCELED' skal rettes til 'CANCELLED', da sidstnævnte er stavet rigtigt. Rettelsen kræver gennemgang af hele backend koden samt opdatering af vores migration og dummydata.sql fil
-    query('filterBy').optional().isString().isIn(['','None','AWAITING_CUSTOMER', 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELED']).withMessage('Filter By must be a string.'),
+
+    query('filterBy').optional().isString().isIn(['','AWAITING_CUSTOMER', 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']).withMessage("Filter By must be either 'AWAITING_CUSTOMER', 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED' or '' "),
     (request: Request, response: Response, next: NextFunction): Response | void => {
         const errors = validationResult(request);
         if (!errors.isEmpty()) {
