@@ -12,12 +12,12 @@ export const validateOrderQuery = [
             return true; // It's a valid integer
         }
         // Check if the value is a string
-        if (typeof value === 'string' && value.trim() !== '') {
+        if (typeof value === 'string') {
             return true; // It's a valid string
         }
         throw new Error('Search Value must be either a string or an integer');
     }),
-    query('filterBy').optional().isString().isIn(['AWAITING_CUSTOMER', 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']).withMessage('Filter By must be a string.'),
+    query('filterBy').optional().isString().isIn(['','None','AWAITING_CUSTOMER', 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']).withMessage('Filter By must be a string.'),
     (request: Request, response: Response, next: NextFunction): Response | void => {
         const errors = validationResult(request);
         if (!errors.isEmpty()) {

@@ -23,10 +23,6 @@ export default class CustomerRepository {
             take: limit,
             orderBy: { [sortBy]: sortDir.toLowerCase() },
             where: whereClause,
-            include: {
-                orders: true,
-                cars: true
-            }
         });
 
         const totalCount = await prisma.customer.count({ where: whereClause });

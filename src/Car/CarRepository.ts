@@ -21,16 +21,16 @@ export default class CarRepository {
             take: limit,
             orderBy: {[sortBy]: sortDir.toLowerCase()},
             where: whereClause,
-            include: {
-                customer: {
-                    select: {
-                        firstName: true,
-                        lastName: true,
-                        email: true,
-                        phone: true,
-                    },
-                },
-            },
+            // include: {
+            //     customer: {
+            //         select: {
+            //             firstName: true,
+            //             lastName: true,
+            //             email: true,
+            //             phone: true,
+            //         },
+            //     },
+            // },
         });
 
         const totalCount = await prisma.car.count({where: whereClause});
