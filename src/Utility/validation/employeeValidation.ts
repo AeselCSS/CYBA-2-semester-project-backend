@@ -2,12 +2,12 @@ import {query, body, validationResult} from "express-validator";
 import {NextFunction, Request, Response} from "express";
 
 export const validateEmployeeQuery = [
-    query('sortBy').isString().isIn(['id', 'firstName', 'lastName', 'role', 'department']).withMessage('sortBy must be a string'),
+    query('sortBy').isString().isIn(['id', 'firstName', 'lastName', 'role', 'department', 'createdAt', 'updatedAt']).withMessage("sortBy must be either 'id', 'firstName', 'lastName', 'role', 'department', 'createdAt', 'updatedAt' "),
     query('sortDir').isString().isIn(['asc', 'desc']).withMessage("sortDir must be either 'asc' or 'desc' "),
     query('pageSize').isInt({ min: 1 }).withMessage('pageSize must be a positive integer'),
     query('pageNum').isInt({ min: 1 }).withMessage('pageNum must be a positive integer'),
     query('searchValue').optional().isString().withMessage('Search value must be a string.'),
-    query('filterBy').optional().isString().isIn(['', 'MECHANICAL_WORKSHOP', 'BODY_WORKSHOP', 'PAINT_SHOP', 'ADMINISTRATION']).withMessage('filterBy must be a string.'),
+    query('filterBy').optional().isString().isIn(['', 'MECHANICAL_WORKSHOP', 'BODY_WORKSHOP', 'PAINT_SHOP', 'ADMINISTRATION']).withMessage("filterBy must be either 'MECHANICAL_WORKSHOP', 'BODY_WORKSHOP', 'PAINT_SHOP', 'ADMINISTRATION' or '' "),
     (request: Request, response: Response, next: NextFunction): Response | void => {
         const errors = validationResult(request);
         if (!errors.isEmpty()) {
