@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 
 export const validateCarQuery = [
     query('sortBy').isString().withMessage('sortBy must be a string'),
-    query('sortDir').isString().isIn(['asc', 'desc']).withMessage('sortDir must be a string'),
+    query('sortDir').isString().isIn(['asc', 'desc']).withMessage("sortDir must be either 'asc' or 'desc' "),
     query('pageSize').isInt({ min: 1 }).withMessage('pageSize must be a positive integer'),
     query('pageNum').isInt({ min: 1 }).withMessage('pageNum must be a positive integer'),
     query('searchValue').optional().isString().withMessage('Search value must be a string.'),

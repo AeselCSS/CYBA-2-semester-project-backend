@@ -3,7 +3,7 @@ import {NextFunction, Request, Response} from "express";
 
 export const validateOrderQuery = [
     query('sortBy').isString().withMessage('Sort By must be a string'),
-    query('sortDir').isString().isIn(['asc', 'desc']).withMessage('Sort Direction must be a string'),
+    query('sortDir').isString().isIn(['asc', 'desc']).withMessage("sortDir must be either 'asc' or 'desc' "),
     query('pageSize').isInt({ min: 1 }).withMessage('Page Size must be a positive integer'),
     query('pageNum').isInt({ min: 1 }).withMessage('Page Number must be a positive integer'),
     query('searchValue').optional().custom((value) => {
