@@ -110,7 +110,11 @@ export default class CarRepository {
             }
         });
 
-        const totalCount = await prisma.car.count();
+        const totalCount = await prisma.car.count({
+            where: {
+                customerId: customerId
+            }
+        });
 
         return {data: cars, metaData: {limit, offset, totalCount}};
     }
