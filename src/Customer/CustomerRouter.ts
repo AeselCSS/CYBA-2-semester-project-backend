@@ -11,7 +11,7 @@ export const customerRouter = express.Router();
 const customerController = new CustomerController();
 
 customerRouter.get("/customers", validateCustomerQuery, customerController.getAllCustomersExecutor);
-customerRouter.get("/customers/:id/cars", customerController.getAllOrdersByCustomerIdExecutor)
+customerRouter.get("/customers/:id/orders", customerController.getAllOrdersByCustomerIdExecutor)
 customerRouter.get("/customers/:id", validateIdParamsString, customerController.getSingleCustomerExecutor);
 customerRouter.put("/customers/:id", validateUpdateCustomer, customerController.updateCustomerExecutor);
 customerRouter.delete("/customers/:id", validateIdParamsString, customerController.deleteCustomerExecutor);
