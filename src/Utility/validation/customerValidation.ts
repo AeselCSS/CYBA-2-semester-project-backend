@@ -22,8 +22,8 @@ export const validateCreateCustomer = [
     body('lastName').isString().withMessage('lastName must be a string'),
     body('address').isString().withMessage('address must be a string'),
     body('city').isString().withMessage('city must be a string'),
-    body('zip').isInt({min: 1, max: 4}).withMessage('zip must be a positive integer'),
-    body('phone').isInt({min: 8, max: 8}).withMessage('phone must be a positive integer'),
+    body('zip').isInt({min: 1}).withMessage('zip must be a positive integer'),
+    body('phone').isInt({min: 1}).withMessage('phone must be a positive integer'),
     body('email').isEmail().withMessage('email must be a valid email'),
     (request: Request, response: Response, next: NextFunction): Response | void => {
         const errors = validationResult(request);
