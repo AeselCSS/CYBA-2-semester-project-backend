@@ -22,7 +22,7 @@ export default class OrderRepository {
         }
 
         const whereClause = {
-            ...(carIds.length > 0 && { carId: { in: carIds } }),
+            ...(searchValue && { carId: { in: carIds } }),
             ...(filterBy && { status: filterBy }),
         };
 
