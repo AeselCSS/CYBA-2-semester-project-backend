@@ -37,6 +37,22 @@ export default class CustomerController {
         }
     }
 
+    public async getAllCarsByCustomerIdExecutor(request: Request<ReqParams, {}, {pageNum: number, pageSize: number}, {}>, response: Response) {
+        const {pageNum, pageSize} = request.body;
+        const id = request.params.id;
+
+        try {
+            if (!id) throw new Error("Id is not a number");
+
+            const customerService = new CustomerService();
+            const result = await customerService.getAllCarsByCustomerId(id, pageNum, pageSize);
+
+            response.status(200).json(result);
+        } catch (error: any) {
+            errorHandler(error, response);
+        }
+    }
+
     public async updateCustomerExecutor(request: Request<ReqParams, {}, CustomerReqBody, {}>, response: Response) {
         const id = request.params.id;
 
