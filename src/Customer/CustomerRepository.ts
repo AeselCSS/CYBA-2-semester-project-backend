@@ -2,7 +2,6 @@ import prisma from "../Database/PrismaClient.js";
 import { Customer } from "@prisma/client";
 import { Role } from "@prisma/client";
 
-
 export default class CustomerRepository {
 
     constructor() {}
