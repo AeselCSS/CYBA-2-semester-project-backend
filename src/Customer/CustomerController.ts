@@ -37,7 +37,7 @@ export default class CustomerController {
         }
     }
 
-    public async getAllCarsByCustomerIdExecutor(request: Request<ReqParams, {}, {}, {pageNum: string, pageSize: string}>, response: Response) {
+    public async getAllOrdersByCustomerIdExecutor(request: Request<ReqParams, {}, {}, {pageNum: string, pageSize: string}>, response: Response) {
         const pageSize = parseInt(request.query.pageSize)
         const pageNum = parseInt(request.query.pageNum)
         const id = request.params.id;
@@ -49,7 +49,7 @@ export default class CustomerController {
             if (!id) throw new Error("Id is not a number");
 
             const customerService = new CustomerService();
-            const result = await customerService.getAllCarsByCustomerId(id, pageNum, pageSize);
+            const result = await customerService.getAllOrdersByCustomerId(id, pageNum, pageSize);
 
             response.status(200).json(result);
         } catch (error: any) {

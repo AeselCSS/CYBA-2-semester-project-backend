@@ -1,5 +1,5 @@
 import prisma from "../Database/PrismaClient.js";
-import { Order, Status, Task, TaskInstance } from "@prisma/client";
+import { Order, Status, Task, TaskInstance} from "@prisma/client";
 
 export default class OrderRepository {
     constructor() {}
@@ -302,5 +302,26 @@ export default class OrderRepository {
 
             return newOrder.id
         });
+    }
+
+
+
+    public async getAllOrdersByCustomerId(customerId: string, limit: number, offset: number, sortBy: string, sortDir: string) {
+        const orders: Order[]  = await prisma.order.findMany({
+            skip: offset,
+            take: limit,
+            orderBy: {[sortBy]: sortDir.toLowerCase()},
+            where: {
+                customerId: customerId
+            }
+        });
+
+        const totalCount = await prisma.order.count({
+            where: {
+                customerId: customerId
+            }
+        });
+
+        return {data: orders, metaData: {limit, offset, totalCount}};
     }
 }

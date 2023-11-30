@@ -100,22 +100,5 @@ export default class CarRepository {
         ]);
     }
 
-    public async getAllCarsByCustomerId(customerId: string, limit: number, offset: number, sortBy: string, sortDir: string) {
-        const cars: Car[] = await prisma.car.findMany({
-            skip: offset,
-            take: limit,
-            orderBy: {[sortBy]: sortDir.toLowerCase()},
-            where: {
-                customerId: customerId
-            }
-        });
 
-        const totalCount = await prisma.car.count({
-            where: {
-                customerId: customerId
-            }
-        });
-
-        return {data: cars, metaData: {limit, offset, totalCount}};
-    }
 }
