@@ -78,7 +78,6 @@ export default class SubtaskRepository {
     }
 
 
-
     public async getSubtasksForASingleTask(taskId: number) {
         return prisma.taskSubtask.findMany({
             where: {

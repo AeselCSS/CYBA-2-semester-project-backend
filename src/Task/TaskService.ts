@@ -28,7 +28,7 @@ export default class TaskService {
 
     public async getTasks() {
         const taskRepository = new TaskRepository();
-        return await taskRepository.getTasks();
+        return taskRepository.getTasks();
     }
 
     public async createComment(taskInstanceId: number, comment: string, employeeId: string) {

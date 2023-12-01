@@ -1,284 +1,49 @@
 import prisma from "../Database/PrismaClient.js";
-import { Order, Status, Task, TaskInstance } from "@prisma/client";
+import { Order, Status, Task, TaskInstance} from "@prisma/client";
 
-export default class OrderRepository implements IPagination<Order> {
+export default class OrderRepository {
     constructor() {}
 
-    public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string) {
-        const result: ResultPagination<OrderResult> = {};
-
-        result.data = await prisma.order.findMany({
-            skip: offset,
-            take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-            select: {
-                id: true,
-                customerId: true,
-                status: true,
-                orderStartDate: true,
-                createdAt: true,
-                updatedAt: true,
-                car: {
-                    select: {
-                        registrationNumber: true,
-                    },
-                },
-            },
-        });
-
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.order.count(),
-        };
-
-        return result;
-    }
-
-    public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string): Promise<ResultPagination<Order>> {
-        const result: ResultPagination<OrderResult> = {};
-
-        result.data = await prisma.order.findMany({
-            skip: offset,
-            take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-            where: {
-                car: {
-                    registrationNumber: {
-                        contains: searchValue,
-                    },
-                },
-            },
-            select: {
-                id: true,
-                customerId: true,
-                status: true,
-                orderStartDate: true,
-                createdAt: true,
-                updatedAt: true,
-                car: {
-                    select: {
-                        registrationNumber: true,
-                    },
-                },
-            },
-        });
-
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.order.count({
+    public async getAllOrders(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string | undefined, filterBy: any) {
+        let carIds: number[] = [];
+        // Because we are searching for car related data, we need to fetch the car IDs first
+        // Prismas OR operator does not work with nested selects, so we need to do it this way
+        if(searchValue){
+            const cars = await prisma.car.findMany({
                 where: {
-                    car: {
-                        registrationNumber: {
-                            contains: searchValue,
-                        },
-                    },
-                },
-            }),
-        };
-
-        return result;
-    }
-
-    public async getAllItemsSearchNumberPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: number) {
-        const result: ResultPagination<OrderResult> = {};
-
-        result.data = await prisma.order.findMany({
-            skip: offset,
-            take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-            where: {
-                id: {
-                    equals: searchValue,
-                },
-            },
-            select: {
-                id: true,
-                customerId: true,
-                status: true,
-                orderStartDate: true,
-                createdAt: true,
-                updatedAt: true,
-                car: {
-                    select: {
-                        registrationNumber: true,
-                    },
-                },
-            },
-        });
-
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.order.count({
-                where: {
-                    id: {
-                        equals: searchValue,
-                    },
-                },
-            }),
-        };
-
-        return result;
-    }
-
-    public async getAllItemsFilterPagination(limit: number, offset: number, sortBy: string, sortDir: string, filterBy: Status) {
-        const result: ResultPagination<OrderResult> = {};
-
-        result.data = await prisma.order.findMany({
-            skip: offset,
-            take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-            where: {
-                status: filterBy,
-            },
-            select: {
-                id: true,
-                customerId: true,
-                status: true,
-                orderStartDate: true,
-                createdAt: true,
-                updatedAt: true,
-                car: {
-                    select: {
-                        registrationNumber: true,
-                    },
-                },
-            },
-        });
-
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.order.count({
-                where: {
-                    status: filterBy,
-                },
-            }),
-        };
-
-        return result;
-    }
-
-    public async getAllItemsAllPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: Status) {
-        const result: ResultPagination<OrderResult> = {};
-
-        result.data = await prisma.order.findMany({
-            skip: offset,
-            take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-            where: {
-                car: {
-                    registrationNumber: {
-                        contains: searchValue,
-                    },
-                },
-                AND: [
-                    {
-                        status: filterBy,
-                    },
-                ],
-            },
-            select: {
-                id: true,
-                customerId: true,
-                status: true,
-                orderStartDate: true,
-                createdAt: true,
-                updatedAt: true,
-                car: {
-                    select: {
-                        registrationNumber: true,
-                    },
-                },
-            },
-        });
-
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.order.count({
-                where: {
-                    car: {
-                        registrationNumber: {
-                            contains: searchValue,
-                        },
-                    },
-                    AND: [
-                        {
-                            status: filterBy,
-                        },
+                    OR: [
+                        { registrationNumber: { contains: searchValue } },
+                        { vinNumber: { contains: searchValue } },
                     ],
                 },
-            }),
+                select: { id: true }
+            });
+            carIds = cars.map(car => car.id); // get array of car IDs
+        }
+
+        const whereClause = {
+            ...(searchValue && { carId: { in: carIds } }),
+            ...(filterBy && { status: filterBy }),
         };
 
-        return result;
-    }
-
-    public async getAllItemsNumberAllPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: number, filterBy: Status) {
-        const result: ResultPagination<OrderResult> = {};
-
-        result.data = await prisma.order.findMany({
+        const orders: Order[] = await prisma.order.findMany({
             skip: offset,
             take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-            where: {
-                id: {
-                    equals: searchValue,
-                },
-                AND: [
-                    {
-                        status: filterBy,
-                    },
-                ],
-            },
-            select: {
-                id: true,
-                customerId: true,
-                status: true,
-                orderStartDate: true,
-                createdAt: true,
-                updatedAt: true,
+            orderBy: { [sortBy]: sortDir.toLowerCase() },
+            where: whereClause,
+            include: {
                 car: {
                     select: {
                         registrationNumber: true,
+                        vinNumber: true,
                     },
                 },
             },
         });
 
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.order.count({
-                where: {
-                    id: {
-                        equals: searchValue,
-                    },
-                    AND: [
-                        {
-                            status: filterBy,
-                        },
-                    ],
-                },
-            }),
-        };
+        const totalCount = await prisma.order.count({ where: whereClause });
 
-        return result;
+        return { data: orders, metaData: { limit, offset, totalCount } };
     }
 
     public async getSingleOrder(id: number) {
@@ -537,5 +302,26 @@ export default class OrderRepository implements IPagination<Order> {
 
             return newOrder.id
         });
+    }
+
+
+
+    public async getAllOrdersByCustomerId(customerId: string, limit: number, offset: number, sortBy: string, sortDir: string) {
+        const orders: Order[]  = await prisma.order.findMany({
+            skip: offset,
+            take: limit,
+            orderBy: {[sortBy]: sortDir.toLowerCase()},
+            where: {
+                customerId: customerId
+            }
+        });
+
+        const totalCount = await prisma.order.count({
+            where: {
+                customerId: customerId
+            }
+        });
+
+        return {data: orders, metaData: {limit, offset, totalCount}};
     }
 }

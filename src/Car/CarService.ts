@@ -6,33 +6,12 @@ export default class CarService extends Pagination {
         super();
     }
 
-    public async getAllCars({
-        sortBy,
-        sortDir,
-        pageSize,
-        pageNum,
-        searchValue,
-    }: QueryType) {
+    public async getAllCars(queryParams: QueryType) {
+        const { sortBy, sortDir, pageSize, pageNum, searchValue } = queryParams;
         const carRepository = new CarRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        //If searchValue is defined
-        if (searchValue) {
-            return carRepository.getAllItemsSearchPagination(
-                pageSize,
-                this.offset,
-                sortBy,
-                sortDir,
-                searchValue
-            );
-        }
-
-        return carRepository.getAllItemsPagination(
-            pageSize,
-            this.offset,
-            sortBy,
-            sortDir
-        );
+        return carRepository.getAllCars(pageSize, this.offset, sortBy, sortDir, searchValue);
     }
 
     public async getSingleCar(id: number) {

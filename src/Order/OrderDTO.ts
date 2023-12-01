@@ -8,6 +8,7 @@ async function ordersDTO(orders: ResultPagination<any>) {
             createdAt: rawOrder.createdAt,
             updatedAt: rawOrder.updatedAt,
             registrationNumber: rawOrder.car.registrationNumber,
+            vinNumber: rawOrder.car.vinNumber,
         };
     });
 

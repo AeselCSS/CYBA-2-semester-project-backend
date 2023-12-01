@@ -1,6 +1,7 @@
 import Pagination from "../Utility/Pagination.js";
 import CustomerRepository from "./CustomerRepository.js";
 import {singleCustomerDTO} from "./CustomerDTO.js";
+import OrderRepository from "../Order/OrderRepository.js";
 
 
 export default class CustomerService extends Pagination {
@@ -9,16 +10,13 @@ export default class CustomerService extends Pagination {
         super();
     }
 
-    public async getAllCustomers({ sortBy, sortDir, pageSize, pageNum, searchValue }: QueryType) {
+    public async getAllCustomers(queryParams: QueryType) {
+        const { sortBy, sortDir, pageSize, pageNum, searchValue } = queryParams;
         const customerRepository = new CustomerRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        //If searchValue is defined
-        if (searchValue) {
-            return customerRepository.getAllItemsSearchPagination(pageSize, this.offset, sortBy, sortDir, searchValue);
-        }
+        return customerRepository.getAllCustomers(pageSize, this.offset, sortBy, sortDir, searchValue);
 
-        return customerRepository.getAllItemsPagination(pageSize, this.offset, sortBy, sortDir);
     }
 
     public async getSingleCustomer(id: string) {
@@ -26,6 +24,13 @@ export default class CustomerService extends Pagination {
         const customerDate = await customerRepository.getSingleCustomer(id);
 
         return singleCustomerDTO(customerDate);
+    }
+
+    public async getAllOrdersByCustomerId(id: string, pageNum: number, pageSize: number) {
+        const orderRepository = new OrderRepository();
+        this.calculateOffset(pageSize, pageNum);
+
+        return orderRepository.getAllOrdersByCustomerId(id, pageSize, this.offset, "createdAt", "asc");
     }
 
     public async updateCustomer(id: string, customerReqBody: CustomerReqBody) {

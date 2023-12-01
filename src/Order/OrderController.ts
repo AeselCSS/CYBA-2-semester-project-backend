@@ -7,20 +7,14 @@ export default class OrderController {
     constructor() {}
 
     public async getAllOrdersExecutor(request: Request<{}, {}, {}, ReqQuery>, response: Response) {
-        const { sortDir, sortBy, pageNum, pageSize, searchValue, filterBy } = request.query;
+        const queries: OrderQueryType = {
+            ...request.query,
+            pageSize: parseInt(request.query.pageSize),
+            pageNum: parseInt(request.query.pageNum),
+            filterBy: request.query.filterBy as Status,
+        }
 
         try {
-            if (!sortDir || !sortBy || !pageNum || !pageSize) response.status(400).json({ error: "Queries missing" });
-
-            const queries = {
-                sortBy,
-                sortDir,
-                pageSize: parseInt(pageSize),
-                pageNum: parseInt(pageNum),
-                searchValue: searchValue,
-                filterBy: filterBy,
-            };
-
             const orderService = new OrderService();
             const result = await orderService.getAllOrders(queries);
 
