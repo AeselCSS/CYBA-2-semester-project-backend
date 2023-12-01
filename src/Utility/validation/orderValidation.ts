@@ -60,7 +60,7 @@ export const validateCreateOrder = [
     body('carId').isInt().withMessage('Car ID must be an integer.'),
     body('customerId').isString().withMessage('Customer ID must be an string.'),
     body('tasks').isArray().withMessage('Tasks must be an array.'),
-    body('tasks.id').isInt().withMessage('Task ID must be an integer.'),
+    body('tasks.*.id').isInt({ min: 1 }).withMessage('Task ID must be an integer.'),
 
     (request: Request, response: Response, next: NextFunction): Response | void => {
         const errors = validationResult(request);
