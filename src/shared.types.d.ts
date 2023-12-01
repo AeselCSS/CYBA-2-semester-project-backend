@@ -1,4 +1,3 @@
-
 interface IPagination<T> {
     getAllItemsPagination: (
         limit: number,
@@ -269,7 +268,7 @@ type SingleCustomer = {
         customerId: string;
         createdAt: Date;
         updatedAt: Date;
-        }[];
+    }[];
     cars: {
         id: number;
         customerId: string;
@@ -325,4 +324,15 @@ type SingleCustomerDTO = {
         createdAt: Date;
         updatedAt: Date;
     }[]
-    };
+};
+
+type Tasks = {
+    id: number,
+    name: string,
+    description: string,
+    taskSubtasks: {
+        subtask: {
+            time: number
+        }
+    }[]
+}
