@@ -6,17 +6,14 @@ import errorHandler from "../Utility/errorHandler.js";
 export default class SubtaskController {
     constructor() {}
 
-    public async updateSubtaskStatusExecutor(request: Request<ReqParams, {}, { taskInstanceId: number }, {}>, response: Response) {
-        //TODO burde udelukkende modtage subtaskInstance_id (som req.params) i stedet for subtask_id og task_instance_id tilsammen
-        const subtaskId = parseInt(request.params.id);
-        const taskInstanceId = request.body.taskInstanceId;
-        
-        
+    public async updateSubtaskStatusExecutor(request: Request<ReqParams, {}, {}, {}>, response: Response) {
+        const id = parseInt(request.params.id);
+
         try {
             const subtaskService = new SubtaskService();
             const orderService = new OrderService();
 
-            const orderId = await subtaskService.updateSubtaskStatus(subtaskId, taskInstanceId);
+            const orderId = await subtaskService.updateSubtaskStatus(id);
             const order = await orderService.getSingleOrder(orderId)
 
             response.status(200).json(order);

@@ -49,9 +49,6 @@ export default class OrderController {
             if (!id) {
                 response.status(400).json({ error: "id is not a number" });
                 return;
-            } else if (!status) {
-                response.status(400).json({ error: "status is missing" });
-                return;
             }
 
             const orderService = new OrderService();
@@ -93,11 +90,6 @@ export default class OrderController {
         const { orderStartDate, carId, customerId, tasks } = request.body;
 
         try {
-            if (!orderStartDate || !carId || !customerId || !tasks) {
-                response.status(400).json({ error: "order parameters are missing" });
-                return;
-            }
-
             const newOrder: NewOrder = {
                 status: Status.AWAITING_CUSTOMER,
                 orderStartDate: new Date(orderStartDate),

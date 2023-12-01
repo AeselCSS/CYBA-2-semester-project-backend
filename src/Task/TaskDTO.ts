@@ -27,6 +27,17 @@ async function taskInstanceDTO(taskInstance: SingleTaskInstance) {
     }
 }
 
+async function tasksDTO(rawTasks: Tasks[]) {
+    return rawTasks.map((rawTask) => {
+        return {
+            id: rawTask.id,
+            name: rawTask.name,
+            description: rawTask.description,
+            time: rawTask.taskSubtasks.reduce((acc, item) => item.subtask.time + acc, 0)
+        }
+    })
+}
 
-export {taskInstanceDTO}
+
+export {taskInstanceDTO, tasksDTO}
 

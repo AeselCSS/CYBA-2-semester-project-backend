@@ -60,7 +60,22 @@ export default class TaskRepository {
     }
 
     public async getTasks() {
-        return prisma.task.findMany();
+        return prisma.task.findMany({
+            select: {
+                id: true,
+                name: true,
+                description: true,
+                taskSubtasks: {
+                    select: {
+                        subtask: {
+                            select: {
+                                time: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public async getOrderIdByTaskInstanceId(taskInstanceId: number) {
@@ -81,6 +96,7 @@ export default class TaskRepository {
             }
         })
     }
+
 
     public async createComment(taskInstanceId: number, comment: string, employeeId: string) {
         return prisma.taskInstanceComment.create({

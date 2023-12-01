@@ -26,8 +26,6 @@ export default class CustomerController {
         const id = request.params.id;
 
         try {
-            if (!id) throw new Error("Id is not a number");
-
             const customerService = new CustomerService();
             const result = await customerService.getSingleCustomer(id);
 
@@ -46,10 +44,22 @@ export default class CustomerController {
         console.log(pageNum)
 
         try {
-            if (!id) throw new Error("Id is not a number");
-
             const customerService = new CustomerService();
             const result = await customerService.getAllOrdersByCustomerId(id, pageNum, pageSize);
+
+            response.status(200).json(result);
+        } catch (error: any) {
+            errorHandler(error, response);
+        }
+    }
+
+    public async getAllCarsByCustomerIdExecutor(request: Request<ReqParams, {}, {}, {}>, response: Response) {
+        const id = request.params.id;
+
+
+        try {
+            const customerService = new CustomerService();
+            const result = await customerService.getAllCarsByCustomerId(id);
 
             response.status(200).json(result);
         } catch (error: any) {
@@ -61,12 +71,9 @@ export default class CustomerController {
         const id = request.params.id;
 
         try {
-            if (!id) throw new Error("Id is missing");
-            if (!request.body.firstName || !request.body.lastName || !request.body.address || !request.body.city || !request.body.email || !request.body.zip || !request.body.phone)
-                throw new Error("Customer property is missing");
-
             const customerService = new CustomerService();
             const result = await customerService.updateCustomer(id, request.body);
+
             response.status(200).json(result);
         } catch (error: any) {
             errorHandler(error, response);
@@ -77,8 +84,6 @@ export default class CustomerController {
         const id = request.params.id;
 
         try {
-            if (!id) throw new Error("Id is missing");
-
             const customerService = new CustomerService();
             const result = await customerService.deleteCustomer(id);
 
@@ -89,11 +94,8 @@ export default class CustomerController {
     }
 
     public async createCustomerExecutor(request: Request<{}, {}, CustomerReqBody, {}>, response: Response) {
-        const { id, firstName, lastName, address, city, email, phone, zip } = request.body;
 
         try {
-            if (!id || !firstName || !lastName || !address || !city || !email || !phone || !zip) throw new Error("Missing customer property");
-
             const customerService = new CustomerService();
             const result = await customerService.createCustomer(request.body);
 

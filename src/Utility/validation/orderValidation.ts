@@ -43,9 +43,9 @@ export const validateUpdateOrderStatus = [
 export const validateUpdateOrderTasks = [
     param('id').isInt().withMessage('Order ID must be an integer.'),
     body('tasks').isArray().withMessage('Tasks must be an array.'),
-    body('tasks.description').isString().withMessage('Task description must be a string.'),
-    body('tasks.name').isString().withMessage('Task name must be a string.'),
-    body('tasks.id').isInt().withMessage('Task ID must be an integer.'),
+    body('tasks.*.description').isString().withMessage('Task description must be a string.'),
+    body('tasks.*.name').isString().withMessage('Task name must be a string.'),
+    body('tasks.*.id').isInt().withMessage('Task ID must be an integer.'),
     (request: Request, response: Response, next: NextFunction): Response | void => {
         const errors = validationResult(request);
         if (!errors.isEmpty()) {
@@ -60,9 +60,7 @@ export const validateCreateOrder = [
     body('carId').isInt().withMessage('Car ID must be an integer.'),
     body('customerId').isString().withMessage('Customer ID must be an string.'),
     body('tasks').isArray().withMessage('Tasks must be an array.'),
-    body('tasks.description').isString().withMessage('Task description must be a string.'),
-    body('tasks.name').isString().withMessage('Task name must be a string.'),
-    body('tasks.id').isInt().withMessage('Task ID must be an integer.'),
+    body('tasks.*.id').isInt({ min: 1 }).withMessage('Task ID must be an integer.'),
 
     (request: Request, response: Response, next: NextFunction): Response | void => {
         const errors = validationResult(request);

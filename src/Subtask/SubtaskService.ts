@@ -1,39 +1,23 @@
-import { Status } from "@prisma/client";
 import TaskRepository from "../Task/TaskRepository.js";
 import SubtaskRepository from "./SubtaskRepository.js";
-import OrderRepository from "../Order/OrderRepository.js";
-
-
 
 export default class SubtaskService {
     constructor() {}
 
-    public async updateSubtaskStatus(subtaskId: number, taskInstanceId: number) {
+    public async updateSubtaskStatus(id: number) {
         const subtaskRepository = new SubtaskRepository();
         const taskRepository = new TaskRepository()
-        const orderRepository = new OrderRepository();
 
-        //Update the subtaskInstance and taskInstance if necesseray in this transaction
-        await subtaskRepository.completeSubtask(subtaskId, taskInstanceId);
+        //Get the subtaskInstance object
+        const subtaskInstance = await subtaskRepository.getSingleSubtask(id);
 
-        //Get the orderId
-        const orderId = await taskRepository.getOrderIdByTaskInstanceId(taskInstanceId);
+        //Get the taskInstance that belongs to the subtaskInstance
+        const taskInstance = await taskRepository.getSingleTaskInstance(subtaskInstance.taskInstanceId);
 
-        //Use the orderId to get all taskInstances in the order
-        const taskInstancesInOrder = await taskRepository.getTaskInstancesInSingleOrder(orderId);
-        
-        //Guard. Loop through taskInstances. If there still exists a taskInstance with status != COMPLETED, then exit the method and return to controller. 
-        for (const taskInstance of taskInstancesInOrder) {
-            if (taskInstance.status !== Status.COMPLETED) {
-                //return orderId for the controller
-                return orderId;
-            }
-        }
+        //Update the subtaskInstance- and taskInstance- and order status if necessary in this transaction
+        await subtaskRepository.completeSubtask(id, taskInstance.id);
 
-        //If you reach here, then all taskInstances are COMPLETED. We update the status on the order itself to COMPLETED
-        await orderRepository.updateOrderStatus(orderId, Status.COMPLETED);
-        
-        //return orderId for the controller
-        return orderId;
+        //return orderId to controller
+        return taskInstance.orderId
     }
 }

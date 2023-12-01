@@ -1,7 +1,7 @@
 import TaskRepository from "./TaskRepository.js";
 import { Status } from "@prisma/client";
 import EmployeeRepository from "../Employee/EmployeeRepository.js";
-import {taskInstanceDTO} from "./TaskDTO.js";
+import {taskInstanceDTO, tasksDTO} from "./TaskDTO.js";
 import OrderRepository from "../Order/OrderRepository.js";
 
 export default class TaskService {
@@ -28,7 +28,8 @@ export default class TaskService {
 
     public async getTasks() {
         const taskRepository = new TaskRepository();
-        return taskRepository.getTasks();
+        const rawTasks: Tasks[] = await taskRepository.getTasks();
+        return tasksDTO(rawTasks);
     }
 
     public async createComment(taskInstanceId: number, comment: string, employeeId: string) {

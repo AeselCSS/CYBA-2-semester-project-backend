@@ -2,6 +2,7 @@ import Pagination from "../Utility/Pagination.js";
 import CustomerRepository from "./CustomerRepository.js";
 import {singleCustomerDTO} from "./CustomerDTO.js";
 import OrderRepository from "../Order/OrderRepository.js";
+import CarRepository from "../Car/CarRepository.js";
 
 
 export default class CustomerService extends Pagination {
@@ -30,7 +31,13 @@ export default class CustomerService extends Pagination {
         const orderRepository = new OrderRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        return orderRepository.getAllOrdersByCustomerId(id, pageSize, this.offset, "createdAt", "asc");
+        return orderRepository.getAllOrdersByCustomerId(id, pageSize, this.offset, "createdAt", "desc");
+    }
+
+    public async getAllCarsByCustomerId(id: string) {
+        const carRepository = new CarRepository();
+
+        return carRepository.getAllCarsByCustomerId(id)
     }
 
     public async updateCustomer(id: string, customerReqBody: CustomerReqBody) {
