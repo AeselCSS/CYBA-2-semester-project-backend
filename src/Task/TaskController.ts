@@ -28,6 +28,7 @@ export default class TaskController {
         try {
             const taskService = new TaskService();
             const result = await taskService.getTasks();
+
             response.status(200).json(result);
         } catch (error: any) {
             errorHandler(error, response);
@@ -39,13 +40,9 @@ export default class TaskController {
         const { comment, employeeId } = request.body;
 
         try {
-            if (!taskInstanceId || !comment || !employeeId) {
-                response.status(400).json({ error: "One or more props are missing" });
-                return;
-            }
-
             const taskService = new TaskService();
             const createdComment = await taskService.createComment(taskInstanceId, comment, employeeId);
+
             response.status(200).json(createdComment);
         } catch (error: any) {
             errorHandler(error, response);
@@ -56,13 +53,9 @@ export default class TaskController {
         const taskInstanceId = parseInt(request.params.id);
 
         try {
-            if (!taskInstanceId) {
-                response.status(400).json({ error: "Task instance id is missing" });
-                return;
-            }
-
             const taskService = new TaskService();
             const result = await taskService.getSingleTask(taskInstanceId);
+            
             response.status(200).json(result);
         } catch (error: any) {
             errorHandler(error, response);

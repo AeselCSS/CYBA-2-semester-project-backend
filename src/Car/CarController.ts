@@ -27,8 +27,6 @@ export default class CarController {
         const { id } = request.params;
 
         try {
-            if (!id) response.status(404).json({ message: "Id missing" });
-
             const carService = new CarService();
             const result = await carService.getSingleCar(parseInt(id));
 
