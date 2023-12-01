@@ -53,6 +53,20 @@ export default class CustomerController {
         }
     }
 
+    public async getAllCarsByCustomerIdExecutor(request: Request<ReqParams, {}, {}, {}>, response: Response) {
+        const id = request.params.id;
+
+
+        try {
+            const customerService = new CustomerService();
+            const result = await customerService.getAllCarsByCustomerId(id);
+
+            response.status(200).json(result);
+        } catch (error: any) {
+            errorHandler(error, response);
+        }
+    }
+
     public async updateCustomerExecutor(request: Request<ReqParams, {}, CustomerReqBody, {}>, response: Response) {
         const id = request.params.id;
 

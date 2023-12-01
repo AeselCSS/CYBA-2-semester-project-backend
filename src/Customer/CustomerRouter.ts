@@ -11,7 +11,10 @@ export const customerRouter = express.Router();
 const customerController = new CustomerController();
 
 customerRouter.get("/customers", validateCustomerQuery, customerController.getAllCustomersExecutor);
+//TODO Mangler validation
 customerRouter.get("/customers/:id/orders", customerController.getAllOrdersByCustomerIdExecutor)
+//TODO Mangler validation
+customerRouter.get("/customers/:id/cars", customerController.getAllCarsByCustomerIdExecutor)
 customerRouter.get("/customers/:id", validateIdParamsString, customerController.getSingleCustomerExecutor);
 customerRouter.put("/customers/:id", validateUpdateCustomer, customerController.updateCustomerExecutor);
 customerRouter.delete("/customers/:id", validateIdParamsString, customerController.deleteCustomerExecutor);

@@ -65,6 +65,14 @@ export default class CarRepository {
         });
     }
 
+    public async getAllCarsByCustomerId(id: string) {
+        return prisma.car.findMany({
+            where: {
+                customerId: id
+            }
+        })
+    }
+
     public async createCar(newCar: NewCar): Promise<Car> {
         return prisma.car.create({
             data: newCar
