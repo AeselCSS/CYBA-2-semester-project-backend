@@ -12,6 +12,7 @@ export const orderRouter = express.Router();
 const orderController = new OrderController();
 
 orderRouter.get('/orders', validateOrderQuery, orderController.getAllOrdersExecutor);
+orderRouter.get("/orders/dates", orderController.getAllOrdersStartDatesExecutor)
 orderRouter.get('/orders/:id', validateIdParamsInt, orderController.getSingleOrderExecutor);
 orderRouter.patch(
     '/orders/:id/status', validateUpdateOrderStatus, orderController.updateOrderStatusExecutor);

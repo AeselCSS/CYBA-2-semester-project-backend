@@ -126,6 +126,14 @@ export default class OrderRepository {
         });
     }
 
+    public async getAllOrdersStartDates() {
+        return prisma.order.findMany({
+            select: {
+                orderStartDate: true
+            }
+        })
+    }
+
     public async updateOrderStatus(id: number, status: Status) {
         return prisma.order.update({
             where: {

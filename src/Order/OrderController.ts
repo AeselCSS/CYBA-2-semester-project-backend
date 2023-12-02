@@ -41,6 +41,17 @@ export default class OrderController {
         }
     }
 
+    public async getAllOrdersStartDatesExecutor(request: Request<{}, {}, {}, {}>, response: Response) {
+        try {
+            const orderService = new OrderService();
+            const result = await orderService.getAllOrdersStartDates();
+
+            response.status(200).json(result);
+        } catch (error: any) {
+            errorHandler(error, response);
+        }
+    }
+
     public async updateOrderStatusExecutor(request: Request<ReqParams, {}, { status: Status }, {}>, response: Response) {
         const id = parseInt(request.params.id);
         const { status } = request.body;

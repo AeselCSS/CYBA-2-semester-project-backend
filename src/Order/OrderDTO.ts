@@ -18,6 +18,15 @@ async function ordersDTO(orders: ResultPagination<any>) {
     };
 }
 
+async function ordersStartDatesDTO(startDates: {orderStartDate: Date}[]) {
+    const datesArr = startDates.map((item) => {
+        return item.orderStartDate.toISOString().split("T")[0]
+    })
+
+    //return only unique values (dates) in an array
+    return [...new Set(datesArr)]
+}
+
 async function orderDTO(order: SingleOrder) {
     const DTO: SingleOrderDTO = {
         id: order.id,
@@ -76,4 +85,4 @@ async function orderDTO(order: SingleOrder) {
     return DTO;
 }
 
-export { ordersDTO, orderDTO };
+export { ordersDTO, orderDTO, ordersStartDatesDTO};
