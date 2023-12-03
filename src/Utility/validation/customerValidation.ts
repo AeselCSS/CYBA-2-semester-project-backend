@@ -16,6 +16,22 @@ export const validateCustomerQuery = [
     },
 ];
 
+export const validateCustomerOrdersQuery = [
+    query('pageSize').isInt({min: 1}).withMessage('pageSize must be a positive integer'),
+    query('pageNum').isInt({min: 1}).withMessage('pageNum must be a positive integer'),
+    (request: Request, response: Response, next: NextFunction): Response | void => {
+        const errors = validationResult(request);
+        if (!errors.isEmpty()) {
+            return response.status(400).json({errors: errors.array()});
+        }
+        next();
+    },
+]
+
+export const validateCustomerCarsQuery = [
+
+]
+
 export const validateCreateCustomer = [
     body('id').isString().withMessage('id must be a string'),
     body('firstName').isString().withMessage('firstName must be a string'),

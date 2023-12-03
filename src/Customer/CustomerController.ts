@@ -55,8 +55,7 @@ export default class CustomerController {
 
     public async getAllCarsByCustomerIdExecutor(request: Request<ReqParams, {}, {}, {}>, response: Response) {
         const id = request.params.id;
-
-
+        
         try {
             const customerService = new CustomerService();
             const result = await customerService.getAllCarsByCustomerId(id);
