@@ -11,6 +11,7 @@ export const singleCustomerDTO = (singleCustomer: SingleCustomer): SingleCustome
             phone: singleCustomer.phone,
             email: singleCustomer.email,
             role: singleCustomer.role,
+            createdAt: singleCustomer.createdAt
         },
         orders: singleCustomer.orders.map((order) => {
             return {

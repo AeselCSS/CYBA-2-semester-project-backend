@@ -259,6 +259,7 @@ type SingleCustomer = {
     zip: number;
     phone: number;
     email: string;
+    createdAt: Date;
     role: Role;
     orders: {
         id: number;
@@ -298,6 +299,7 @@ type SingleCustomerDTO = {
         phone: number;
         email: string;
         role: Role;
+        createdAt: Date;
     },
     orders: {
         id: number;
