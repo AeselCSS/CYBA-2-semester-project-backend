@@ -1,5 +1,8 @@
 import Pagination from '../Utility/Pagination.js';
 import CarRepository from './CarRepository.js';
+import {synsbasenToken, synsbasenURL} from "../server.js";
+import {synsbasenCarDetailsDTO} from "./CarDTO.js";
+
 
 export default class CarService extends Pagination {
     constructor() {
@@ -38,5 +41,22 @@ export default class CarService extends Pagination {
     public async deleteCar(id: number) {
         const carRepository = new CarRepository();
         return carRepository.deleteCar(id);
+    }
+
+    public async getCarDetailsSynsbasen(registrationNumber: string) {
+
+        const response = await fetch(`${synsbasenURL}/vehicles/registration/${registrationNumber}`, {
+            method: "GET",
+            headers: {
+                'Authorization': `Bearer ${synsbasenToken}`,
+            },
+        })
+
+        if (!response.ok) {
+            throw new Error("Failed to get car details from Synsbasen API with " + registrationNumber)
+        }
+
+        const carDetails = await response.json()
+        return synsbasenCarDetailsDTO(carDetails.data)
     }
 }
