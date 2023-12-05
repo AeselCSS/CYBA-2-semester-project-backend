@@ -29,18 +29,29 @@ export default class SubtaskRepository {
             
             //Update the given subtaskInstance status to COMPLETED
             await this.updateSubtaskStatus(id, Status.COMPLETED)
+            
 
             //initialise the next subtaskInstance with the status "IN_PROGRESS"
+
+            //Ordered after asc
             const subtasks = await this.getSubtasksForASingleTask(taskInstance.taskId);
 
             for (const subtask of subtasks) {
-                const subtaskInstance = await prisma.subtaskInstance.findUniqueOrThrow({
+                const subtaskInstance = await prisma.subtaskInstance.findFirstOrThrow({
                     where: {
-                        id: subtask.subtaskId
+                        AND: [
+                            {
+                                subtaskId: subtask.subtaskId
+                            },
+                            {
+                                taskInstanceId: taskInstanceId
+                            }
+                        ]
                     },
                 });
-                
 
+                console.log(subtaskInstance);
+                
                 if (subtaskInstance.status === Status.PENDING) {
                     await this.updateSubtaskStatus(subtaskInstance.id, Status.IN_PROGRESS);
                     //Exit the transaction and end it here if there is a subtask that has been updated to IN_PROGRESS

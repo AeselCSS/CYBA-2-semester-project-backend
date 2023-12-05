@@ -16,9 +16,22 @@ export default class TaskRepository {
         });
     }
 
-    public async initiateTaskInstance(taskInstance: TaskInstance, employeeId: string) {
+    public async initiateTaskInstance(taskInstance: TaskInstance, employeeId: string, order: {status: Status, id: number}) {
 
         return prisma.$transaction(async (prisma) => {
+        
+            if (order.status === Status.PENDING) {
+                
+                await prisma.order.update({
+                where: {
+                    id: order.id
+                },
+                data: {
+                    status: Status.IN_PROGRESS
+                }
+            })
+        }
+
             //Update the taskInstance status to IN_PROGRESS
             await this.updateTaskInstanceStatus(taskInstance.id, employeeId, Status.IN_PROGRESS);
 

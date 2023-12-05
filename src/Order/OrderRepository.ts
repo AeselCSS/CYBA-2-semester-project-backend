@@ -121,6 +121,7 @@ export default class OrderRepository {
                 id: id,
             },
             select: {
+                id: true,
                 status: true,
             },
         });
