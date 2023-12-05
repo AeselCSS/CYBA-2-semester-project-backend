@@ -1,5 +1,3 @@
-import { raw } from '@prisma/client/runtime/library.js';
-
 export function singleCarDTO(rawCar: singleCar): singleCarDTO {
     return {
         car: {
