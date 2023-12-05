@@ -339,3 +339,14 @@ type Tasks = {
     }[]
 }
 
+interface SynsBasenAPI {
+    registration: string,
+    vin: string,
+    brand: string,
+    model: string,
+    variant: string,
+    first_registration_date: string,
+    last_inspection_date: string,
+    last_inspection_result: string,
+    last_inspection_kind: string,
+}

@@ -17,4 +17,7 @@ carRouter
     .patch(validateUpdateMileageOnCar, carController.updateMileageOnCarExecuter)
     .delete(validateIdParamsInt, carController.deleteCarExecuter);
 
+carRouter
+    .route("/cars/registration/:registrationNumber")
+    .get(carController.getCarDetailsSynsbasenExecutor)
 export default carRouter;

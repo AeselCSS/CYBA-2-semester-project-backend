@@ -75,4 +75,17 @@ export default class CarController {
             errorHandler(error, response);
         }
     }
+
+    public async getCarDetailsSynsbasenExecutor(request: Request<{registrationNumber: string},{},{},{}>, response: Response) {
+        const {registrationNumber} = request.params;
+
+        try {
+            const carService = new CarService();
+            const result = await carService.getCarDetailsSynsbasen(registrationNumber);
+
+            response.status(200).json(result);
+        } catch (error: any) {
+            errorHandler(error, response);
+        }
+    }
 }
