@@ -109,9 +109,9 @@ type NewCar = {
     customerId: string;
     firstRegistration: string | Date;
     mileage: number;
-    lastInspectionDate: string | Date;
-    lastInspectionKind: string;
-    lastInspectionResult: string;
+    lastInspectionDate: string | Date | null;
+    lastInspectionKind: string | null;
+    lastInspectionResult: string | null;
 };
 
 // Order
@@ -280,9 +280,9 @@ type SingleCustomer = {
         modelVariant: string;
         firstRegistration: Date;
         mileage: number;
-        lastInspectionDate: Date;
-        lastInspectionKind: string;
-        lastInspectionResult: string;
+        lastInspectionDate: Date | null;
+        lastInspectionKind: string | null;
+        lastInspectionResult: string | null;
         createdAt: Date;
         updatedAt: Date;
     }[];
@@ -320,9 +320,9 @@ type SingleCustomerDTO = {
         modelVariant: string;
         firstRegistration: Date;
         mileage: number;
-        lastInspectionDate: Date;
-        lastInspectionKind: string;
-        lastInspectionResult: string;
+        lastInspectionDate: Date | null;
+        lastInspectionKind: string | null;
+        lastInspectionResult: string | null;
         createdAt: Date;
         updatedAt: Date;
     }[]
