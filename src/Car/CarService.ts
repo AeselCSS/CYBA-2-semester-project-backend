@@ -1,8 +1,7 @@
 import Pagination from '../Utility/Pagination.js';
 import CarRepository from './CarRepository.js';
-import {synsbasenToken, synsbasenURL} from "../server.js";
-import {synsbasenCarDetailsDTO} from "./CarDTO.js";
-
+import { synsbasenToken, synsbasenURL } from '../server.js';
+import { singleCarDTO, synsbasenCarDetailsDTO } from './CarDTO.js';
 
 export default class CarService extends Pagination {
     constructor() {
@@ -14,12 +13,19 @@ export default class CarService extends Pagination {
         const carRepository = new CarRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        return carRepository.getAllCars(pageSize, this.offset, sortBy, sortDir, searchValue);
+        return carRepository.getAllCars(
+            pageSize,
+            this.offset,
+            sortBy,
+            sortDir,
+            searchValue
+        );
     }
 
     public async getSingleCar(id: number) {
         const carRepository = new CarRepository();
-        return carRepository.getSingleCar(id);
+        const rawCar = await carRepository.getSingleCar(id);
+        return singleCarDTO(rawCar);
     }
 
     public async createCar(car: NewCar) {
@@ -29,6 +35,7 @@ export default class CarService extends Pagination {
             firstRegistration: new Date(car.firstRegistration),
             lastInspectionDate: car.lastInspectionDate ? new Date(car.lastInspectionDate) : null,
         }
+        
         return carRepository.createCar(newCar);
     }
 
@@ -44,19 +51,24 @@ export default class CarService extends Pagination {
     }
 
     public async getCarDetailsSynsbasen(registrationNumber: string) {
-
-        const response = await fetch(`${synsbasenURL}/vehicles/registration/${registrationNumber}`, {
-            method: "GET",
-            headers: {
-                'Authorization': `Bearer ${synsbasenToken}`,
-            },
-        })
+        const response = await fetch(
+            `${synsbasenURL}/vehicles/registration/${registrationNumber}`,
+            {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${synsbasenToken}`,
+                },
+            }
+        );
 
         if (!response.ok) {
-            throw new Error("Failed to get car details from Synsbasen API with " + registrationNumber)
+            throw new Error(
+                'Failed to get car details from Synsbasen API with ' +
+                    registrationNumber
+            );
         }
 
-        const carDetails = await response.json()
-        return synsbasenCarDetailsDTO(carDetails.data)
+        const carDetails = await response.json();
+        return synsbasenCarDetailsDTO(carDetails.data);
     }
 }

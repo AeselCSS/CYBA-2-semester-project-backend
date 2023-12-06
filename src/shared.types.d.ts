@@ -219,36 +219,35 @@ type SingleOrderDTO = {
     }[];
 };
 
-
 type SingleTaskInstance = {
-    id: number,
-    status: Status
-    taskId: number,
-    employeeId: string | null,
-    updatedAt: Date,
+    id: number;
+    status: Status;
+    taskId: number;
+    employeeId: string | null;
+    updatedAt: Date;
     subtaskInstances: {
-        id: number,
-        status: Status,
-        updatedAt: Date,
+        id: number;
+        status: Status;
+        updatedAt: Date;
         subtask: {
-            name: string,
-            time: number,
-            description: string
-        }
-    }[],
+            name: string;
+            time: number;
+            description: string;
+        };
+    }[];
     taskInstanceComments: {
-        id: number,
-        comment: string,
-        createdAt: Date,
+        id: number;
+        comment: string;
+        createdAt: Date;
         employee: {
-            id: string,
-            role: Role,
-            department: Department,
-            firstName: string,
-            lastName: string
-        }
-    }[]
-}
+            id: string;
+            role: Role;
+            department: Department;
+            firstName: string;
+            lastName: string;
+        };
+    }[];
+};
 
 type SingleCustomer = {
     id: string;
@@ -300,7 +299,7 @@ type SingleCustomerDTO = {
         email: string;
         role: Role;
         createdAt: Date;
-    },
+    };
     orders: {
         id: number;
         status: Status;
@@ -309,7 +308,7 @@ type SingleCustomerDTO = {
         customerId: string;
         createdAt: Date;
         updatedAt: Date;
-    }[],
+    }[];
     cars: {
         id: number;
         customerId: string;
@@ -325,28 +324,68 @@ type SingleCustomerDTO = {
         lastInspectionResult: string | null;
         createdAt: Date;
         updatedAt: Date;
-    }[]
+    }[];
 };
 
 type Tasks = {
-    id: number,
-    name: string,
-    description: string,
+    id: number;
+    name: string;
+    description: string;
     taskSubtasks: {
         subtask: {
-            time: number
-        }
-    }[]
-}
+            time: number;
+        };
+    }[];
+};
 
-interface SynsBasenAPI {
-    registration: string,
-    vin: string,
-    brand: string,
-    model: string,
-    variant: string,
-    first_registration_date: string,
-    last_inspection_date: string,
-    last_inspection_result: string,
-    last_inspection_kind: string,
-}
+type SynsBasenAPI = {
+    registration: string;
+    vin: string;
+    brand: string;
+    model: string;
+    variant: string;
+    first_registration_date: string;
+    last_inspection_date: string;
+    last_inspection_result: string;
+    last_inspection_kind: string;
+};
+
+type singleCar = {
+    id: number;
+    registrationNumber: string;
+    vinNumber: string;
+    brand: string;
+    model: string;
+    modelVariant: string;
+    mileage: number;
+    firstRegistration: Date;
+    lastInspectionDate: Date;
+    customer: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: number;
+    };
+};
+
+type singleCarDTO = {
+    car: {
+        id: number;
+        registrationNumber: string;
+        vinNumber: string;
+        brand: string;
+        model: string;
+        modelVariant: string;
+        mileage: number;
+        firstRegistration: Date;
+        lastInspectionDate: Date;
+    };
+    customer: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: number;
+    };
+};
