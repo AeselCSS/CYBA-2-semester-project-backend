@@ -34,9 +34,9 @@ model Car {
   modelVariant         String   @map(name: "model_variant")
   firstRegistration    DateTime @map(name: "first_registration")
   mileage              Int
-  lastInspectionDate   DateTime @map(name: "last_inspection_date")
-  lastInspectionResult String   @map(name: "last_inspection_result")
-  lastInspectionKind   String   @map(name: "last_inspection_kind")
+  lastInspectionDate   DateTime? @map(name: "last_inspection_date")
+  lastInspectionResult String?   @map(name: "last_inspection_result")
+  lastInspectionKind   String?   @map(name: "last_inspection_kind")
   createdAt            DateTime @default(now()) @map(name: "created_at")
   updatedAt            DateTime @updatedAt @map(name: "updated_at")
   customer             Customer @relation(fields: [customerId], references: [id])

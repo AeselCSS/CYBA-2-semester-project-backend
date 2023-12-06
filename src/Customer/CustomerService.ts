@@ -31,7 +31,7 @@ export default class CustomerService extends Pagination {
         const orderRepository = new OrderRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        return orderRepository.getAllOrdersByCustomerId(id, pageSize, this.offset, "createdAt", "desc");
+        return orderRepository.getAllOrdersByCustomerId(id, pageSize, this.offset, "createdAt", "asc");
     }
 
     public async getAllCarsByCustomerId(id: string) {

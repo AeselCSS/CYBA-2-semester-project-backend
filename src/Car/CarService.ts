@@ -33,8 +33,9 @@ export default class CarService extends Pagination {
         const newCar = {
             ...car,
             firstRegistration: new Date(car.firstRegistration),
-            lastInspectionDate: new Date(car.lastInspectionDate),
-        };
+            lastInspectionDate: car.lastInspectionDate ? new Date(car.lastInspectionDate) : null,
+        }
+        
         return carRepository.createCar(newCar);
     }
 
