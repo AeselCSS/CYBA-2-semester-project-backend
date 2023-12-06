@@ -359,7 +359,7 @@ type singleCar = {
     modelVariant: string;
     mileage: number;
     firstRegistration: Date;
-    lastInspectionDate: Date;
+    lastInspectionDate: Date | null;
     customer: {
         id: string;
         firstName: string;
@@ -379,7 +379,7 @@ type singleCarDTO = {
         modelVariant: string;
         mileage: number;
         firstRegistration: Date;
-        lastInspectionDate: Date;
+        lastInspectionDate: Date | null;
     };
     customer: {
         id: string;
