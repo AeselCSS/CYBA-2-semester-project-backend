@@ -91,26 +91,6 @@ export default class TaskRepository {
         });
     }
 
-    public async getOrderIdByTaskInstanceId(taskInstanceId: number) {
-        const taskInstance = await prisma.taskInstance.findFirstOrThrow({
-            where: {
-                id: taskInstanceId
-            }
-        })
-
-        return taskInstance.orderId;
-    }
-
-    public async getTaskInstancesInSingleOrder(orderId: number) {
-
-        return prisma.taskInstance.findMany({
-            where: {
-                orderId: orderId
-            }
-        })
-    }
-
-
     public async createComment(taskInstanceId: number, comment: string, employeeId: string) {
         return prisma.taskInstanceComment.create({
             data: {
