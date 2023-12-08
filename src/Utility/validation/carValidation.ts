@@ -36,20 +36,6 @@ export const validateCarQuery = [
     },
 ];
 
-/*
- query('searchValue').optional().custom((value) => {
- // Check if the value is an integer
- if (!isNaN(value) && parseInt(value) == value) {
- return true; // It's a valid integer
- }
- // Check if the value is a string
- if (typeof value === 'string') {
- return true; // It's a valid string
- }
- throw new Error('Search Value must be either a string or an integer');
- }),
- */
-
 export const validateCreateCar = [
     body("registrationNumber").isString().withMessage("registrationNumber must be a string"),
     body("vinNumber").isString().withMessage("vinNumber must be a string"),
