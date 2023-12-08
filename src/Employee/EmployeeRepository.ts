@@ -1,162 +1,30 @@
 import { Department, Employee, Role } from "@prisma/client";
 import prisma from "../Database/PrismaClient.js";
 
-export default class EmployeeRepository implements IPagination<Employee> {
+export default class EmployeeRepository {
     constructor() {}
 
-    public async getAllItemsPagination(limit: number, offset: number, sortBy: string, sortDir: string) {
-        const result: ResultPagination<Employee> = {};
-
-        result.data = await prisma.employee.findMany({
-            skip: offset,
-            take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-        });
-
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.employee.count(),
-        };
-
-        return result;
-    }
-
-    public async getAllItemsSearchPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string) {
-        const result: ResultPagination<Employee> = {};
-
-        result.data = await prisma.employee.findMany({
-            skip: offset,
-            take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-            where: {
+    public async getAllEmployees(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string | undefined, filterBy: any) {
+        const whereClause = {
+            ...(searchValue && {
                 OR: [
-                    {
-                        firstName: {
-                            contains: searchValue,
-                        },
-                    },
-                    {
-                        lastName: {
-                            contains: searchValue,
-                        },
-                    },
+                    { firstName: { contains: searchValue } },
+                    { lastName: { contains: searchValue } },
                 ],
-            },
-        });
-
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.employee.count({
-                where: {
-                    OR: [
-                        {
-                            firstName: {
-                                contains: searchValue,
-                            },
-                        },
-                        {
-                            lastName: {
-                                contains: searchValue,
-                            },
-                        },
-                    ],
-                },
             }),
+            ...(filterBy && { department: filterBy }),
         };
 
-        return result;
-    }
-
-    public async getAllItemsFilterPagination(limit: number, offset: number, sortBy: string, sortDir: string, filterBy: Department) {
-        const result: ResultPagination<Employee> = {};
-
-        result.data = await prisma.employee.findMany({
+        const employees: Employee[] = await prisma.employee.findMany({
             skip: offset,
             take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-            where: {
-                department: filterBy,
-            },
+            orderBy: { [sortBy]: sortDir.toLowerCase() },
+            where: whereClause,
         });
 
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.employee.count({
-                where: {
-                    department: filterBy,
-                },
-            }),
-        };
+        const totalCount = await prisma.employee.count({ where: whereClause });
 
-        return result;
-    }
-
-    public async getAllItemsAllPagination(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string, filterBy: Department) {
-        const result: ResultPagination<Employee> = {};
-
-        result.data = await prisma.employee.findMany({
-            skip: offset,
-            take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-            where: {
-                OR: [
-                    {
-                        firstName: {
-                            contains: searchValue,
-                        },
-                    },
-                    {
-                        lastName: {
-                            contains: searchValue,
-                        },
-                    },
-                ],
-                AND: [
-                    {
-                        department: filterBy,
-                    },
-                ],
-            },
-        });
-
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.employee.count({
-                where: {
-                    OR: [
-                        {
-                            firstName: {
-                                contains: searchValue,
-                            },
-                        },
-                        {
-                            lastName: {
-                                contains: searchValue,
-                            },
-                        },
-                    ],
-                    AND: [
-                        {
-                            department: filterBy,
-                        },
-                    ],
-                },
-            }),
-        };
-
-        return result;
+        return { data: employees, metaData: { limit, offset, totalCount } };
     }
 
     public async getSingleEmployee(id: string) {
@@ -166,40 +34,19 @@ export default class EmployeeRepository implements IPagination<Employee> {
             },
             select: {
                 id: true,
-                firstName: true,
-                lastName: true,
                 role: true,
                 department: true,
-                taskInstances: {
-                    select: {
-                        id: true,
-                        status: true,
-                        order: {
-                            select: {
-                                id: true,
-                                car: {
-                                    select: {
-                                        registrationNumber: true,
-                                        customer: {
-                                            select: {
-                                                firstName: true,
-                                                lastName: true,
-                                                phone: true,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                        task: {
-                            select: {
-                                id: true,
-                                name: true,
-                                description: true,
-                            },
-                        },
-                    },
-                },
+                firstName: true,
+                lastName: true,
+                createdAt: true
+            }
+        });
+    }
+
+    public async isExistingEmployee(id: string) {
+        return prisma.employee.findUnique({
+            where: {
+                id: id
             },
         });
     }
@@ -211,21 +58,8 @@ export default class EmployeeRepository implements IPagination<Employee> {
                 firstName,
                 lastName,
                 department,
-                role
-            }
-        })
+                role,
+            },
+        });
     }
 }
-
-// return prisma.employee.findUniqueOrThrow({
-//     where: {
-//         id: id,
-//     },
-//     include: {
-//         taskInstances: {
-//             include: {
-//                 subtaskInstances: true,
-//             },
-//         },
-//     },
-// });

@@ -1,98 +1,41 @@
 import prisma from '../Database/PrismaClient.js';
 import {Car} from '@prisma/client';
 
-export default class CarRepository implements IPagination<Car> {
+export default class CarRepository {
     constructor() {}
 
-    public async getAllItemsPagination(
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string
-    ): Promise<ResultPagination<Car>> {
-        const result: ResultPagination<Car> = {};
-
-        result.data = await prisma.car.findMany({
-            skip: offset,
-            take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-        });
-
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.car.count(),
-
-        };
-
-        return result;
-    }
-
-    public async getAllItemsSearchPagination(
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string,
-        searchValue: string
-    ): Promise<ResultPagination<Car>> {
-        const result: ResultPagination<Car> = {};
-
-        result.data = await prisma.car.findMany({
-            skip: offset,
-            take: limit,
-            orderBy: {
-                [sortBy]: sortDir.toLowerCase(),
-            },
-            where: {
+    public async getAllCars(limit: number, offset: number, sortBy: string, sortDir: string, searchValue: string | undefined) {
+        const whereClause = {
+            ...(searchValue && {
                 OR: [
-                    {
-                        registrationNumber: {
-                            contains: searchValue,
-                        },
-                    },
-                    {
-                        vinNumber: {
-                            contains: searchValue,
-                        },
-                    },
-                    {
-                        model: {
-                            contains: searchValue,
-                        },
-                    },
+                    {registrationNumber: {contains: searchValue}},
+                    {vinNumber: {contains: searchValue}},
+                    {brand: {contains: searchValue}},
+                    {model: {contains: searchValue}},
                 ],
-            },
-        });
-
-        result.metaData = {
-            limit,
-            offset,
-            totalCount: await prisma.car.count({
-                where: {
-                    OR: [
-                        {
-                            registrationNumber: {
-                                contains: searchValue,
-                            },
-                        },
-                        {
-                            vinNumber: {
-                                contains: searchValue,
-                            },
-                        },
-                        {
-                            model: {
-                                contains: searchValue,
-                            },
-                        },
-                    ],
-                }
             }),
         };
 
-        return result;
+        const cars: Car[] = await prisma.car.findMany({
+            skip: offset,
+            take: limit,
+            orderBy: {[sortBy]: sortDir.toLowerCase()},
+            where: whereClause,
+            // include: {
+            //     customer: {
+            //         select: {
+            //             firstName: true,
+            //             lastName: true,
+            //             email: true,
+            //             phone: true,
+            //         },
+            //     },
+            // },
+        });
+
+        const totalCount = await prisma.car.count({where: whereClause});
+
+        return {data: cars, metaData: {limit, offset, totalCount}};
     }
 
     public async getSingleCar(id: number) {
@@ -120,6 +63,14 @@ export default class CarRepository implements IPagination<Car> {
             }
 
         });
+    }
+
+    public async getAllCarsByCustomerId(id: string) {
+        return prisma.car.findMany({
+            where: {
+                customerId: id
+            }
+        })
     }
 
     public async createCar(newCar: NewCar): Promise<Car> {
@@ -156,4 +107,6 @@ export default class CarRepository implements IPagination<Car> {
             })
         ]);
     }
+
+
 }

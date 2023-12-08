@@ -10,8 +10,6 @@ export default class EmployeeController {
         const { sortDir, sortBy, pageNum, pageSize, searchValue, filterBy } = request.query;
 
         try {
-            if (!sortDir || !sortBy || !pageNum || !pageSize) throw new Error("Queries missing");
-
             const queries = {
                 sortBy,
                 sortDir,
@@ -38,8 +36,6 @@ export default class EmployeeController {
         const id = request.params.id;
 
         try {
-            if (!id) throw new Error("Id missing");
-
             const employeeService = new EmployeeService();
             const result = await employeeService.getSingleEmployee(id);
 
@@ -57,11 +53,13 @@ export default class EmployeeController {
         const { department, role, firstName, lastName, id } = request.body;
         
         try {
-            if (!department || !role || !firstName || !lastName || !id) throw new Error("Employee property is missing")
-            
-
             const employeeService = new EmployeeService();
             const result = await employeeService.createEmployee(firstName, lastName, department, role, id)
+
+            if (!result) {
+                response.status(400).json({ message: "Employee already exists in the system" });
+                return;
+            }
 
             response.status(201).json(result);
         } catch (error: any) {
