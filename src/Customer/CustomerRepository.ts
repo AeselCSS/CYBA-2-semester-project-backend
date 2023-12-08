@@ -83,7 +83,7 @@ export default class CustomerRepository {
         });
 
         await prisma.$transaction(async (prisma) => {
-            
+
             await prisma.order.updateMany({
                 where: {
                     customerId: id,
@@ -93,7 +93,7 @@ export default class CustomerRepository {
                     carId: 1
                 },
             });
-            
+
             await prisma.car.deleteMany({
                 where: {
                     customerId: id,
@@ -105,6 +105,7 @@ export default class CustomerRepository {
                     id: id,
                 },
             });
+
         });
     }
 
