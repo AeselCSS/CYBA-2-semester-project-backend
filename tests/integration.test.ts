@@ -193,7 +193,7 @@ describe("INTEGRATION TESTS", () => {
     /*
      ===========================================================================================================================================
      ===========================================================================================================================================
-     CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS
+     CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS CUSTOMERS
      ===========================================================================================================================================
      ===========================================================================================================================================
      */
@@ -657,17 +657,165 @@ describe("INTEGRATION TESTS", () => {
                 expect(statusCode).toBe(201);
             })
 
-            it.skip("should fail to create a new car if mileage is of type string", async () => {
+            it("should fail to create a new car if mileage is of type string", async () => {
+                const payloadCarTwo: Record<string, string | Date | number> = {
+                    registrationNumber: "NEWCAR11",
+                    model: "Civic",
+                    modelVariant: "1.5 i-VTEC (180 HK) Sedan, 4 dørs Front-wheel Drive Automatisk",
+                    firstRegistration: new Date("2023-05-20"),
+                    mileage: "30000",
+                    lastInspectionDate: new Date("2023-02-28"),
+                    lastInspectionKind: "Omsyn",
+                    customerId: "8c081169f97e42479b136a6a",
+                    brand: "Honda",
+                    lastInspectionResult: "Ikke Godkendt",
+                    vinNumber: "XYZ789CBA1231333",
+                }
 
+                const {statusCode} = await supertest(app).post(`/cars`).send(payloadCarTwo).set("Content-Type", "application/json");
+
+                expect(statusCode).toBe(400);
             })
 
             it.skip("should fail to create a new car if a car with same registration nr. and vin number exists already", async () => {
+                const payloadThree = cars[1];
+
+                const {statusCode} = await supertest(app).post(`/cars`).send(payloadThree).set("Content-Type", "application/json");
+
+                expect(statusCode).toBe(400);
+            })
+        })
+
+
+        describe("Update car", () => {
+
+            it("should update the customer successfully", async () => {
+
+            })
+
+            it("should fail to update a customer which does not exist", async () => {
+
+            })
+
+            it("should fail to update a customer if a property is missing", async () => {
+
+            })
+        })
+
+        describe("Delete car", () => {
+
+            it("should fail to delete a car which does not exist", async () => {
+
+            })
+
+            it("should delete the car successfully and replace all their relations with 'order' with carId=1", () => {
 
             })
         })
     })
 
 
+
+    /*
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS ORDERS
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     */
+
+
+    describe("Orders", () => {
+
+
+
+        describe("Get many orders", () => {
+
+        })
+
+        describe("Get single order", () => {
+
+        })
+
+        describe("Create a new order", () => {
+
+        })
+
+        describe("Update order", () => {
+
+        })
+
+        describe("Delete order", () => {
+
+        })
+
+    })
+
+
+    /*
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     */
+
+
+    describe("Employees", () => {
+
+
+        describe("Get many employees", () => {
+
+        })
+
+        describe("Get single employee", () => {
+
+        })
+
+        describe("Create a new employee", () => {
+
+        })
+
+        describe("Update employee", () => {
+
+        })
+
+        describe("Delete employee", () => {
+
+        })
+
+
+    })
+
+
+    /*
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     */
+
+    describe("Tasks", () => {
+
+    })
+
+
+
+
+
+    /*
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     */
+
+
+    describe("Subtasks", () => {
+
+    })
 
 
 })

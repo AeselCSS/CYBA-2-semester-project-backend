@@ -36,6 +36,20 @@ export const validateCarQuery = [
     },
 ];
 
+/*
+ query('searchValue').optional().custom((value) => {
+ // Check if the value is an integer
+ if (!isNaN(value) && parseInt(value) == value) {
+ return true; // It's a valid integer
+ }
+ // Check if the value is a string
+ if (typeof value === 'string') {
+ return true; // It's a valid string
+ }
+ throw new Error('Search Value must be either a string or an integer');
+ }),
+ */
+
 export const validateCreateCar = [
     body("registrationNumber").isString().withMessage("registrationNumber must be a string"),
     body("vinNumber").isString().withMessage("vinNumber must be a string"),
@@ -44,7 +58,14 @@ export const validateCreateCar = [
     body("modelVariant").isString().withMessage("modelVariant must be a string"),
     body("customerId").isString().withMessage("customerId must be a string"),
     body("firstRegistration").isString().withMessage("firstRegistration must be a string"),
-    body("mileage").isInt({ min: 1 }).withMessage("mileage must be a positive integer"),
+    body("mileage").isInt({ min: 1 }).custom((value) => {
+
+        if (typeof value === "number"){
+            return true;
+        }
+
+        throw new Error("mileage must be of type number")
+    }),
     body("lastInspectionDate")
         .custom((value) => typeof value === "string" || value === null)
         .withMessage("lastInspectionDate must be a string or null"),
