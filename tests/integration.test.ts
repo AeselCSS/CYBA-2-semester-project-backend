@@ -3,7 +3,7 @@ import prisma from "../src/Database/PrismaClient";
 // @ts-ignore
 import {app} from "../src/server";
 import supertest from "supertest";
-import {Car, Customer, Department, Order, Role, Status} from "@prisma/client";
+import {Car, Customer, Department, Employee, Order, Role, Status} from "@prisma/client";
 
 
 describe("INTEGRATION TESTS", () => {
@@ -148,7 +148,7 @@ describe("INTEGRATION TESTS", () => {
             role: "EMPLOYEE" as Role,
             department: "ADMINISTRATION" as Department,
             firstName: "Emma",
-            lastName: "Smith"
+            lastName: "Brown"
         },
         {
             id: "3",
@@ -158,6 +158,16 @@ describe("INTEGRATION TESTS", () => {
             lastName: "Brown"
         }
     ]
+
+    const orders = [
+        {
+            status: "AWAITING_CUSTOMER" as Status,
+            orderStartDate: new Date(),
+
+        }
+    ]
+
+    console.log(orders)
 
 
     beforeAll(async () => {
@@ -713,6 +723,179 @@ describe("INTEGRATION TESTS", () => {
     })
 
 
+    /*
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     */
+
+
+    describe("Employees", () => {
+
+        describe("Get many employees", () => {
+
+            it("should return 2 employees when searching for 'Brown'", async () => {
+                const {body, statusCode} = await supertest(app).get("/employees?sortDir=asc&sortBy=firstName&pageNum=1&pageSize=10&searchValue=Brown");
+
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 2,
+                    },
+                });
+                expect(body.data.length).toBe(2);
+                expect(statusCode).toBe(200);
+                expect(body.data[0].firstName).toEqual("Daniel");
+                expect(body.data[0].lastName).toEqual("Brown");
+                expect(body.data[1].firstName).toEqual("Emma");
+                expect(body.data[1].lastName).toEqual("Brown");
+            })
+
+            it("should return employees sorted with firstName asc", async () => {
+                const sortedEmployees = employees.sort((a,b) => a.firstName.localeCompare(b.firstName))
+
+                const {body, statusCode} = await supertest(app).get("/employees?sortDir=asc&sortBy=firstName&pageNum=1&pageSize=10");
+
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 3,
+                    },
+                });
+                expect(body.data.length).toBe(3);
+                expect(statusCode).toBe(200);
+
+                sortedEmployees.forEach((localEmployee, index) => {
+                    expect(body.data[index].firstName).toEqual(localEmployee.firstName);
+                });
+            })
+
+            it("should return employees sorted with lastName desc", async () => {
+                const sortedEmployees = employees.sort((a,b) => b.lastName.localeCompare(a.lastName))
+
+                const {body, statusCode} = await supertest(app).get("/employees?sortDir=desc&sortBy=lastName&pageNum=1&pageSize=10");
+
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 3,
+                    },
+                });
+                expect(body.data.length).toBe(3);
+                expect(statusCode).toBe(200);
+
+                sortedEmployees.forEach((localEmployee, index) => {
+                    expect(body.data[index].lastName).toEqual(localEmployee.lastName);
+                });
+            })
+
+            it("should return 0 employees when there is no search match", async () => {
+                const {body, statusCode} = await supertest(app).get("/employees?sortDir=desc&sortBy=firstName&pageNum=1&pageSize=10&searchValue=blabla");
+
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 0,
+                    },
+                });
+                expect(body.data.length).toBe(0);
+                expect(statusCode).toBe(200);
+            })
+
+            it("should return 2 employees when filtering for PAINT_SHOP", async () => {
+                const {body, statusCode} = await supertest(app).get("/employees?sortDir=desc&sortBy=firstName&pageNum=1&pageSize=10&filterBy=PAINT_SHOP");
+
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 2,
+                    },
+                });
+                expect(body.data.length).toBe(2);
+                body.data.forEach((employee: Employee,) => {
+                    expect(employee.department).toEqual(Department.PAINT_SHOP);
+                })
+                expect(statusCode).toBe(200);
+            })
+
+            it("should return 1 employee when searching for 'Olesen' and filtering by PAINT_SHOP", async () => {
+                const {body, statusCode} = await supertest(app).get("/employees?sortDir=desc&sortBy=firstName&pageNum=1&pageSize=10&filterBy=PAINT_SHOP&searchValue=Olesen");
+
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 1,
+                    },
+                });
+                expect(body.data.length).toBe(1);
+                expect(statusCode).toBe(200);
+                body.data.forEach((employee: Employee,) => {
+                    expect(employee.department).toEqual(Department.PAINT_SHOP);
+                    expect(employee.lastName).toEqual("Olesen");
+                })
+            })
+
+            it("should return an error if sortDir query is missing", async () => {
+                const {statusCode} = await supertest(app).get("/employees?sortBy=firstName&pageNum=1&pageSize=10");
+
+                expect(statusCode).toBe(400);
+            });
+
+            it("should return an error if sortBy query is missing", async () => {
+                const {statusCode} = await supertest(app).get("/employees?sortDir=desc&pageNum=1&pageSize=10");
+
+                expect(statusCode).toBe(400);
+            });
+
+            it("should return an error if pageSize query is missing", async () => {
+                const {statusCode} = await supertest(app).get("/employees?sortDir=desc&sortBy=firstName&pageNum=1");
+
+                expect(statusCode).toBe(400);
+            });
+
+            it("should return an error if pageNum query is missing", async () => {
+                const {statusCode} = await supertest(app).get("/employees?sortDir=desc&sortBy=firstName&pageSize=10");
+
+                expect(statusCode).toBe(400);
+            });
+        })
+
+        describe("Get single employee", () => {
+            it("should return the correct employee when specifying correct id", () => {
+
+            })
+
+            it("should return an error when an employee could not be found by the specified id", () => {
+
+            })
+        })
+
+        describe("Create a new employee", () => {
+            it("should successfully create a new employee", () => {
+
+            })
+
+            it("should fail to create an employee that is missing one property", () => {
+
+            })
+        })
+
+    })
+
 
     /*
      ===========================================================================================================================================
@@ -745,42 +928,6 @@ describe("INTEGRATION TESTS", () => {
         describe("Delete order", () => {
 
         })
-
-    })
-
-
-    /*
-     ===========================================================================================================================================
-     ===========================================================================================================================================
-     EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES EMPLOYEES
-     ===========================================================================================================================================
-     ===========================================================================================================================================
-     */
-
-
-    describe("Employees", () => {
-
-
-        describe("Get many employees", () => {
-
-        })
-
-        describe("Get single employee", () => {
-
-        })
-
-        describe("Create a new employee", () => {
-
-        })
-
-        describe("Update employee", () => {
-
-        })
-
-        describe("Delete employee", () => {
-
-        })
-
 
     })
 
