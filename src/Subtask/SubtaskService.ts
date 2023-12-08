@@ -17,12 +17,6 @@ export default class SubtaskService {
         const taskInstance = await taskRepository.getSingleTaskInstance(subtaskInstance.taskInstanceId);
 
 
-        console.log("TASKINSTANCE OBJECT");
-        
-        console.log(taskInstance);
-        console.log("============");
-        
-
         //Update the subtaskInstance- and taskInstance- and order status if necessary in this transaction
         await subtaskRepository.completeSubtask(id, taskInstance.id);
 

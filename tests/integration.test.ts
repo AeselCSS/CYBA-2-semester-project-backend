@@ -198,7 +198,6 @@ describe("INTEGRATION TESTS", () => {
      ===========================================================================================================================================
      */
 
-
     describe("Costumer", () => {
 
         describe("Get Many Customers", () => {
@@ -477,7 +476,6 @@ describe("INTEGRATION TESTS", () => {
      ===========================================================================================================================================
      */
 
-
     describe("Car", () => {
 
         describe("Get many cars", () => {
@@ -724,7 +722,6 @@ describe("INTEGRATION TESTS", () => {
      ===========================================================================================================================================
      */
 
-
     describe("Orders", () => {
 
 
@@ -797,11 +794,22 @@ describe("INTEGRATION TESTS", () => {
      */
 
     describe("Tasks", () => {
+        it("should get all possible tasks (form)", () => {
 
+        })
+
+        it("should get a single task(instance) by id", () => {
+
+        })
+
+        it("should update a single task(instance)'s status to IN_PROGRESS by id and the first subtask(instance) to IN_PROGRESS", () => {
+
+        })
+
+        it("should create a new comment to a single task(instance)", () => {
+
+        })
     })
-
-
-
 
 
     /*
@@ -811,10 +819,19 @@ describe("INTEGRATION TESTS", () => {
      ===========================================================================================================================================
      ===========================================================================================================================================
      */
-
-
     describe("Subtasks", () => {
 
+        it("should update a subtask(instance)'s status to COMPLETED by id", () => {
+
+        })
+
+        it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance)", () => {
+
+        })
+
+        it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance) and order", () => {
+
+        })
     })
 
 
