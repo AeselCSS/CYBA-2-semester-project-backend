@@ -73,7 +73,14 @@ export const validateCreateCar = [
 
 export const validateUpdateMileageOnCar = [
     param("id").isInt({ min: 1 }).withMessage("id must be a positive integer"),
-    body("mileage").isInt({ min: 1 }).withMessage("mileage must be a positive integer"),
+    body("mileage").isInt({ min: 1 }).custom((value) => {
+
+        if (typeof value === "number"){
+            return true;
+        }
+
+        throw new Error("mileage must be of type number")
+    }),
     (request: Request, response: Response, next: NextFunction): Response | void => {
         const errors = validationResult(request);
         if (!errors.isEmpty()) {
