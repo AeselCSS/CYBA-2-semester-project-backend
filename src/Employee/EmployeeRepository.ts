@@ -9,7 +9,7 @@ export default class EmployeeRepository {
             ...(searchValue && {
                 OR: [
                     { firstName: { contains: searchValue } },
-                    { lastName: { contains: searchValue } },
+                    { lastName: { contains: searchValue } }
                 ],
             }),
             ...(filterBy && { department: filterBy }),

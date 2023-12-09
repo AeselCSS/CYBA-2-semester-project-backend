@@ -13,6 +13,7 @@ export default class CustomerRepository {
                     { firstName: { contains: searchValue } },
                     { lastName: { contains: searchValue } },
                     { email: { contains: searchValue } },
+                    { address: { contains: searchValue } }
                 ],
             }),
         };
@@ -83,7 +84,7 @@ export default class CustomerRepository {
         });
 
         await prisma.$transaction(async (prisma) => {
-            
+
             await prisma.order.updateMany({
                 where: {
                     customerId: id,
@@ -93,7 +94,7 @@ export default class CustomerRepository {
                     carId: 1
                 },
             });
-            
+
             await prisma.car.deleteMany({
                 where: {
                     customerId: id,
