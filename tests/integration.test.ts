@@ -666,7 +666,6 @@ describe("INTEGRATION TESTS", () => {
                 expect(statusCode).toBe(201);
             })
 
-            //TODO Should be able to create a new car with missing inspection properties
             it("should successfully create a new car without inspectionDate,-Kind and -Result defined", async () => {
                 const payloadCar: Record<string, string | Date | number | null> = {
                     registrationNumber: "NEWCAR10",
