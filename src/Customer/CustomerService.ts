@@ -3,6 +3,7 @@ import CustomerRepository from "./CustomerRepository.js";
 import {singleCustomerDTO} from "./CustomerDTO.js";
 import OrderRepository from "../Order/OrderRepository.js";
 import CarRepository from "../Car/CarRepository.js";
+import {Car} from "@prisma/client";
 
 
 export default class CustomerService extends Pagination {
@@ -31,18 +32,10 @@ export default class CustomerService extends Pagination {
         const orderRepository = new OrderRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        const customerCars = this.getAllCarsByCustomerId(id);
-        const customerOrders = await orderRepository.getAllOrdersByCustomerId(id, pageSize, this.offset, "createdAt", "asc");
+        const customerCars: Car[] = await this.getAllCarsByCustomerId(id);
+        const customerCarsIds: number[] = customerCars.map(car => car.id);
 
-        // filter out orders that are not related to the customer's cars
-        // NB: this could result in empty pages since the filteris applied after the pagination
-        const customerCarsIds = (await customerCars).map(car => car.id);
-        const filteredOrders = customerOrders.data.filter(order => customerCarsIds.includes(order.carId));
-        return {
-            data: filteredOrders,
-            metaData: customerOrders.metaData
-        }
-
+        return await orderRepository.getAllOrdersByCustomerId(id, customerCarsIds, pageSize, this.offset, "createdAt", "asc");
     }
 
     public async getAllCarsByCustomerId(id: string) {
