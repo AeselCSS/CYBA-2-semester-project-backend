@@ -315,22 +315,24 @@ export default class OrderRepository {
 
 
 
-    public async getAllOrdersByCustomerId(customerId: string, limit: number, offset: number, sortBy: string, sortDir: string) {
-        const orders: Order[]  = await prisma.order.findMany({
+    public async getAllOrdersByCustomerId(customerId: string, carIds: number[], limit: number, offset: number, sortBy: string, sortDir: string) {
+        const orders: Order[] = await prisma.order.findMany({
             skip: offset,
             take: limit,
             orderBy: {[sortBy]: sortDir.toLowerCase()},
             where: {
-                customerId: customerId
+                customerId: customerId,
+                carId: { in: carIds } // Filter based on car IDs
             }
         });
 
         const totalCount = await prisma.order.count({
             where: {
-                customerId: customerId
+                customerId: customerId,
+                carId: { in: carIds }
             }
         });
 
-        return {data: orders, metaData: {limit, offset, totalCount}};
+        return { data: orders, metaData: { limit, offset, totalCount } };
     }
 }
