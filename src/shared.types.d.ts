@@ -1,4 +1,3 @@
-
 interface IPagination<T> {
     getAllItemsPagination: (
         limit: number,
@@ -110,9 +109,9 @@ type NewCar = {
     customerId: string;
     firstRegistration: string | Date;
     mileage: number;
-    lastInspectionDate: string | Date;
-    lastInspectionKind: string;
-    lastInspectionResult: string;
+    lastInspectionDate: string | Date | null;
+    lastInspectionKind: string | null;
+    lastInspectionResult: string | null;
 };
 
 // Order
@@ -220,33 +219,173 @@ type SingleOrderDTO = {
     }[];
 };
 
-
 type SingleTaskInstance = {
-    id: number,
-    status: Status
-    taskId: number,
-    employeeId: string | null,
-    updatedAt: Date,
+    id: number;
+    status: Status;
+    taskId: number;
+    employeeId: string | null;
+    updatedAt: Date;
     subtaskInstances: {
-        id: number,
-        status: Status,
-        updatedAt: Date,
+        id: number;
+        status: Status;
+        updatedAt: Date;
         subtask: {
-            name: string,
-            time: number,
-            description: string
-        }
-    }[],
+            name: string;
+            time: number;
+            description: string;
+        };
+    }[];
     taskInstanceComments: {
-        id: number,
-        comment: string,
-        createdAt: Date,
+        id: number;
+        comment: string;
+        createdAt: Date;
         employee: {
-            id: string,
-            role: Role,
-            department: Department,
-            firstName: string,
-            lastName: string
-        }
-    }[]
-}
+            id: string;
+            role: Role;
+            department: Department;
+            firstName: string;
+            lastName: string;
+        };
+    }[];
+};
+
+type SingleCustomer = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    address: string;
+    city: string;
+    zip: number;
+    phone: number;
+    email: string;
+    createdAt: Date;
+    role: Role;
+    orders: {
+        id: number;
+        status: Status;
+        orderStartDate: Date;
+        carId: number;
+        customerId: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }[];
+    cars: {
+        id: number;
+        customerId: string;
+        registrationNumber: string;
+        vinNumber: string;
+        brand: string;
+        model: string;
+        modelVariant: string;
+        firstRegistration: Date;
+        mileage: number;
+        lastInspectionDate: Date | null;
+        lastInspectionKind: string | null;
+        lastInspectionResult: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }[];
+};
+
+type SingleCustomerDTO = {
+    customer: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        address: string;
+        city: string;
+        zip: number;
+        phone: number;
+        email: string;
+        role: Role;
+        createdAt: Date;
+    };
+    orders: {
+        id: number;
+        status: Status;
+        orderStartDate: Date;
+        carId: number;
+        customerId: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }[];
+    cars: {
+        id: number;
+        customerId: string;
+        registrationNumber: string;
+        vinNumber: string;
+        brand: string;
+        model: string;
+        modelVariant: string;
+        firstRegistration: Date;
+        mileage: number;
+        lastInspectionDate: Date | null;
+        lastInspectionKind: string | null;
+        lastInspectionResult: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+    }[];
+};
+
+type Tasks = {
+    id: number;
+    name: string;
+    description: string;
+    taskSubtasks: {
+        subtask: {
+            time: number;
+        };
+    }[];
+};
+
+type SynsBasenAPI = {
+    registration: string;
+    vin: string;
+    brand: string;
+    model: string;
+    variant: string;
+    first_registration_date: string;
+    last_inspection_date: string;
+    last_inspection_result: string;
+    last_inspection_kind: string;
+};
+
+type singleCar = {
+    id: number;
+    registrationNumber: string;
+    vinNumber: string;
+    brand: string;
+    model: string;
+    modelVariant: string;
+    mileage: number;
+    firstRegistration: Date;
+    lastInspectionDate: Date | null;
+    customer: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: number;
+    };
+};
+
+type singleCarDTO = {
+    car: {
+        id: number;
+        registrationNumber: string;
+        vinNumber: string;
+        brand: string;
+        model: string;
+        modelVariant: string;
+        mileage: number;
+        firstRegistration: Date;
+        lastInspectionDate: Date | null;
+    };
+    customer: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: number;
+    };
+};

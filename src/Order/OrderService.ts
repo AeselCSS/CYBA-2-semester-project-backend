@@ -1,6 +1,6 @@
 import { Status, Task } from '@prisma/client';
 import Pagination from '../Utility/Pagination.js';
-import { orderDTO, ordersDTO } from './OrderDTO.js';
+import {orderDTO, ordersDTO, ordersStartDatesDTO} from './OrderDTO.js';
 import OrderRepository from './OrderRepository.js';
 
 export default class OrderService extends Pagination {
@@ -8,87 +8,13 @@ export default class OrderService extends Pagination {
         super();
     }
 
-    public async getAllOrders({
-        pageNum,
-        pageSize,
-        sortBy,
-        sortDir,
-        filterBy,
-        searchValue,
-    }: OrderQueryType) {
+    public async getAllOrders(queries: OrderQueryType) {
+        const { sortBy, sortDir, pageSize, pageNum, searchValue, filterBy } = queries;
+
         const orderRepository = new OrderRepository();
         this.calculateOffset(pageSize, pageNum);
-        const numericRegex: RegExp = /^[0-9]+$/;
 
-        let orderResult: ResultPagination<any> = {};
-
-        if (searchValue && filterBy) {
-            if (numericRegex.test(searchValue)) {
-                const searchValueInt = parseInt(searchValue);
-                orderResult =
-                    await orderRepository.getAllItemsNumberAllPagination(
-                        pageSize,
-                        this.offset,
-                        sortBy,
-                        sortDir,
-                        searchValueInt,
-                        filterBy
-                    );
-            } else {
-                orderResult = await orderRepository.getAllItemsAllPagination(
-                    pageSize,
-                    this.offset,
-                    sortBy,
-                    sortDir,
-                    searchValue,
-                    filterBy
-                );
-            }
-
-            return ordersDTO(orderResult);
-        }
-
-        if (searchValue) {
-            if (numericRegex.test(searchValue)) {
-                const searchValueInt = parseInt(searchValue);
-                orderResult =
-                    await orderRepository.getAllItemsSearchNumberPagination(
-                        pageSize,
-                        this.offset,
-                        sortBy,
-                        sortDir,
-                        searchValueInt
-                    );
-            } else {
-                orderResult = await orderRepository.getAllItemsSearchPagination(
-                    pageSize,
-                    this.offset,
-                    sortBy,
-                    sortDir,
-                    searchValue
-                );
-            }
-
-            return ordersDTO(orderResult);
-        }
-
-        if (filterBy) {
-            orderResult = await orderRepository.getAllItemsFilterPagination(
-                pageSize,
-                this.offset,
-                sortBy,
-                sortDir,
-                filterBy
-            );
-            return ordersDTO(orderResult);
-        }
-
-        orderResult = await orderRepository.getAllItemsPagination(
-            pageSize,
-            this.offset,
-            sortBy,
-            sortDir
-        );
+        const orderResult = await orderRepository.getAllOrders(pageSize, this.offset, sortBy, sortDir, searchValue, filterBy);
         return ordersDTO(orderResult);
     }
 
@@ -119,7 +45,7 @@ export default class OrderService extends Pagination {
         // check status guard
         const orderStatus = await orderRepository.getOrderStatus(id);
 
-        if (orderStatus.status === "COMPLETED" || orderStatus.status === "IN_PROGRESS" || orderStatus.status === "CANCELED") {
+        if (orderStatus.status === "COMPLETED" || orderStatus.status === "IN_PROGRESS" || orderStatus.status === "CANCELLED") {
             throw new Error(`Order is ${orderStatus.status.toLowerCase()}`);
         }
 
@@ -153,6 +79,14 @@ export default class OrderService extends Pagination {
 
         const updatedOrder = await orderRepository.getSingleOrder(id);
         return orderDTO(updatedOrder);
+    }
+
+
+    public async getAllOrdersStartDates() {
+        const orderRepository = new OrderRepository();
+
+        const rawDates = await orderRepository.getAllOrdersStartDates();
+        return ordersStartDatesDTO(rawDates)
     }
 
     public async createOrder(order: NewOrder) {

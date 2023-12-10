@@ -1,18 +1,23 @@
 import express from 'express';
 import CarController from './CarController.js';
+import {validateCarQuery, validateCreateCar, validateUpdateMileageOnCar} from "../Utility/validation/carValidation.js";
+import {validateIdParamsInt} from "../Utility/validation/validateIdParams.js";
 const carController = new CarController();
 
 const carRouter = express.Router();
 
 carRouter
     .route('/cars')
-    .get(carController.getAllCarsExecuter)
-    .post(carController.createCarExecuter);
+    .get(validateCarQuery, carController.getAllCarsExecuter)
+    .post(validateCreateCar, carController.createCarExecuter);
 
 carRouter
     .route('/cars/:id')
-    .get(carController.getSingleCarExecuter)
-    .patch(carController.updateMileageOnCarExecuter)
-    .delete(carController.deleteCarExecuter);
+    .get(validateIdParamsInt, carController.getSingleCarExecuter)
+    .patch(validateUpdateMileageOnCar, carController.updateMileageOnCarExecuter)
+    .delete(validateIdParamsInt, carController.deleteCarExecuter);
 
+carRouter
+    .route("/cars/registration/:registrationNumber")
+    .get(carController.getCarDetailsSynsbasenExecutor)
 export default carRouter;

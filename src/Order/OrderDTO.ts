@@ -8,6 +8,7 @@ async function ordersDTO(orders: ResultPagination<any>) {
             createdAt: rawOrder.createdAt,
             updatedAt: rawOrder.updatedAt,
             registrationNumber: rawOrder.car.registrationNumber,
+            vinNumber: rawOrder.car.vinNumber,
         };
     });
 
@@ -15,6 +16,15 @@ async function ordersDTO(orders: ResultPagination<any>) {
         data: newData,
         metaData: orders.metaData,
     };
+}
+
+async function ordersStartDatesDTO(startDates: {orderStartDate: Date}[]) {
+    const datesArr = startDates.map((item) => {
+        return item.orderStartDate.toISOString().split("T")[0]
+    })
+
+    //return only unique values (dates) in an array
+    return [...new Set(datesArr)]
 }
 
 async function orderDTO(order: SingleOrder) {
@@ -75,4 +85,4 @@ async function orderDTO(order: SingleOrder) {
     return DTO;
 }
 
-export { ordersDTO, orderDTO };
+export { ordersDTO, orderDTO, ordersStartDatesDTO};

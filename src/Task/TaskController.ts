@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import TaskService from "./TaskService.js";
+import errorHandler from "../Utility/errorHandler.js";
 
 export default class TaskController {
     constructor() {}
@@ -9,14 +10,8 @@ export default class TaskController {
         const {employeeId} = request.body;
 
         try {
-            if (!taskInstanceId || !employeeId) {
-                response.status(400).json({ error: "One or more ids are missing" });
-                return;
-            }
-
             const taskService = new TaskService();
             const result = await taskService.initiateTask(taskInstanceId, employeeId);
-            console.log(result);
 
             if (!result) {
                 response.status(400).json({ message: 'Task instance status is not "PENDING" AND/OR order status is not IN_PROGRESS' });
@@ -25,11 +20,7 @@ export default class TaskController {
 
             response.status(200).json(result);
         } catch (error: any) {
-            if (error instanceof Error) {
-                response.status(404).json({ message: error.message });
-            } else {
-                response.status(500).json({ message: error.message });
-            }
+            errorHandler(error, response);
         }
     }
 
@@ -37,13 +28,10 @@ export default class TaskController {
         try {
             const taskService = new TaskService();
             const result = await taskService.getTasks();
+
             response.status(200).json(result);
         } catch (error: any) {
-            if (error instanceof Error) {
-                response.status(404).json({ message: error.message });
-            } else {
-                response.status(500).json({ message: error.message });
-            }
+            errorHandler(error, response);
         }
     }
 
@@ -52,20 +40,12 @@ export default class TaskController {
         const { comment, employeeId } = request.body;
 
         try {
-            if (!taskInstanceId || !comment || !employeeId) {
-                response.status(400).json({ error: "One or more props are missing" });
-                return;
-            }
-
             const taskService = new TaskService();
             const createdComment = await taskService.createComment(taskInstanceId, comment, employeeId);
+
             response.status(200).json(createdComment);
         } catch (error: any) {
-            if (error instanceof Error) {
-                response.status(404).json({ message: error.message });
-            } else {
-                response.status(500).json({ message: error.message });
-            }
+            errorHandler(error, response);
         }
     }
 
@@ -73,20 +53,12 @@ export default class TaskController {
         const taskInstanceId = parseInt(request.params.id);
 
         try {
-            if (!taskInstanceId) {
-                response.status(400).json({ error: "Task instance id is missing" });
-                return;
-            }
-
             const taskService = new TaskService();
             const result = await taskService.getSingleTask(taskInstanceId);
+            
             response.status(200).json(result);
         } catch (error: any) {
-            if (error instanceof Error) {
-                response.status(404).json({ message: error.message });
-            } else {
-                response.status(500).json({ message: error.message });
-            }
+            errorHandler(error, response);
         }
     }
 }

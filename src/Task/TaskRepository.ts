@@ -16,9 +16,22 @@ export default class TaskRepository {
         });
     }
 
-    public async initiateTaskInstance(taskInstance: TaskInstance, employeeId: string) {
+    public async initiateTaskInstance(taskInstance: TaskInstance, employeeId: string, order: {status: Status, id: number}) {
 
         return prisma.$transaction(async (prisma) => {
+        
+            if (order.status === Status.PENDING) {
+                
+                await prisma.order.update({
+                where: {
+                    id: order.id
+                },
+                data: {
+                    status: Status.IN_PROGRESS
+                }
+            })
+        }
+
             //Update the taskInstance status to IN_PROGRESS
             await this.updateTaskInstanceStatus(taskInstance.id, employeeId, Status.IN_PROGRESS);
 
@@ -60,26 +73,22 @@ export default class TaskRepository {
     }
 
     public async getTasks() {
-        return prisma.task.findMany();
-    }
-
-    public async getOrderIdByTaskInstanceId(taskInstanceId: number) {
-        const taskInstance = await prisma.taskInstance.findFirstOrThrow({
-            where: {
-                id: taskInstanceId
+        return prisma.task.findMany({
+            select: {
+                id: true,
+                name: true,
+                description: true,
+                taskSubtasks: {
+                    select: {
+                        subtask: {
+                            select: {
+                                time: true
+                            }
+                        }
+                    }
+                }
             }
-        })
-
-        return taskInstance.orderId;
-    }
-
-    public async getTaskInstancesInSingleOrder(orderId: number) {
-
-        return prisma.taskInstance.findMany({
-            where: {
-                orderId: orderId
-            }
-        })
+        });
     }
 
     public async createComment(taskInstanceId: number, comment: string, employeeId: string) {
@@ -93,21 +102,6 @@ export default class TaskRepository {
     }
 
     public async getSingleTask(taskId: number) {
-        /*return prisma.taskInstance.findUnique({
-            where: {
-                id: taskId
-            },
-            include: {
-                taskInstanceComments: true,
-                subtaskInstances: {
-                    include: {
-                        subtask: true,
-
-                    }
-                }
-            }
-        })*/
-
         return prisma.taskInstance.findUniqueOrThrow({
             where: {
                 id: taskId

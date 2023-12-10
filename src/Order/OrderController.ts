@@ -7,20 +7,14 @@ export default class OrderController {
     constructor() {}
 
     public async getAllOrdersExecutor(request: Request<{}, {}, {}, ReqQuery>, response: Response) {
-        const { sortDir, sortBy, pageNum, pageSize, searchValue, filterBy } = request.query;
+        const queries: OrderQueryType = {
+            ...request.query,
+            pageSize: parseInt(request.query.pageSize),
+            pageNum: parseInt(request.query.pageNum),
+            filterBy: request.query.filterBy as Status,
+        }
 
         try {
-            if (!sortDir || !sortBy || !pageNum || !pageSize) response.status(400).json({ error: "Queries missing" });
-
-            const queries = {
-                sortBy,
-                sortDir,
-                pageSize: parseInt(pageSize),
-                pageNum: parseInt(pageNum),
-                searchValue: searchValue,
-                filterBy: filterBy,
-            };
-
             const orderService = new OrderService();
             const result = await orderService.getAllOrders(queries);
 
@@ -47,6 +41,17 @@ export default class OrderController {
         }
     }
 
+    public async getAllOrdersStartDatesExecutor(request: Request<{}, {}, {}, {}>, response: Response) {
+        try {
+            const orderService = new OrderService();
+            const result = await orderService.getAllOrdersStartDates();
+
+            response.status(200).json(result);
+        } catch (error: any) {
+            errorHandler(error, response);
+        }
+    }
+
     public async updateOrderStatusExecutor(request: Request<ReqParams, {}, { status: Status }, {}>, response: Response) {
         const id = parseInt(request.params.id);
         const { status } = request.body;
@@ -54,9 +59,6 @@ export default class OrderController {
         try {
             if (!id) {
                 response.status(400).json({ error: "id is not a number" });
-                return;
-            } else if (!status) {
-                response.status(400).json({ error: "status is missing" });
                 return;
             }
 
@@ -99,11 +101,6 @@ export default class OrderController {
         const { orderStartDate, carId, customerId, tasks } = request.body;
 
         try {
-            if (!orderStartDate || !carId || !customerId || !tasks) {
-                response.status(400).json({ error: "order parameters are missing" });
-                return;
-            }
-
             const newOrder: NewOrder = {
                 status: Status.AWAITING_CUSTOMER,
                 orderStartDate: new Date(orderStartDate),

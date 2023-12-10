@@ -351,3 +351,4 @@ $RECYCLE.BIN/
 /.env.development
 /.env.test
 !/.env
+/.vscode/

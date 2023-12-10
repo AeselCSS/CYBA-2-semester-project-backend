@@ -1,5 +1,9 @@
 import Pagination from "../Utility/Pagination.js";
 import CustomerRepository from "./CustomerRepository.js";
+import {singleCustomerDTO} from "./CustomerDTO.js";
+import OrderRepository from "../Order/OrderRepository.js";
+import CarRepository from "../Car/CarRepository.js";
+import {Car} from "@prisma/client";
 
 
 export default class CustomerService extends Pagination {
@@ -8,22 +12,36 @@ export default class CustomerService extends Pagination {
         super();
     }
 
-    public async getAllCustomers({ sortBy, sortDir, pageSize, pageNum, searchValue }: QueryType) {
+    public async getAllCustomers(queryParams: QueryType) {
+        const { sortBy, sortDir, pageSize, pageNum, searchValue } = queryParams;
         const customerRepository = new CustomerRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        //If searchValue is defined
-        if (searchValue) {
-            return customerRepository.getAllItemsSearchPagination(pageSize, this.offset, sortBy, sortDir, searchValue);
-        }
+        return customerRepository.getAllCustomers(pageSize, this.offset, sortBy, sortDir, searchValue);
 
-        return customerRepository.getAllItemsPagination(pageSize, this.offset, sortBy, sortDir);
     }
 
     public async getSingleCustomer(id: string) {
         const customerRepository = new CustomerRepository();
+        const customerDate = await customerRepository.getSingleCustomer(id);
 
-        return customerRepository.getSingleCustomer(id);
+        return singleCustomerDTO(customerDate);
+    }
+
+    public async getAllOrdersByCustomerId(id: string, pageNum: number, pageSize: number) {
+        const orderRepository = new OrderRepository();
+        this.calculateOffset(pageSize, pageNum);
+
+        const customerCars: Car[] = await this.getAllCarsByCustomerId(id);
+        const customerCarsIds: number[] = customerCars.map(car => car.id);
+
+        return await orderRepository.getAllOrdersByCustomerId(id, customerCarsIds, pageSize, this.offset, "createdAt", "asc");
+    }
+
+    public async getAllCarsByCustomerId(id: string) {
+        const carRepository = new CarRepository();
+
+        return carRepository.getAllCarsByCustomerId(id)
     }
 
     public async updateCustomer(id: string, customerReqBody: CustomerReqBody) {

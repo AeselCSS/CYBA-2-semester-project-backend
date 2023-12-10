@@ -8,23 +8,12 @@ export default class EmployeeService extends Pagination {
         super();
     }
 
-    public async getAllEmployees({ sortBy, sortDir, pageSize, pageNum, searchValue, filterBy }: EmployeeQueryType) {
+    public async getAllEmployees(queryParams: EmployeeQueryType) {
+        const { sortBy, sortDir, pageSize, pageNum, searchValue, filterBy } = queryParams;
         const employeeRepository = new EmployeeRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        if (searchValue && filterBy) {
-            return employeeRepository.getAllItemsAllPagination(pageSize, this.offset, sortBy, sortDir, searchValue, filterBy);
-        }
-
-        if (searchValue) {
-            return employeeRepository.getAllItemsSearchPagination(pageSize, this.offset, sortBy, sortDir, searchValue)
-        }
-
-        if (filterBy) {
-            return employeeRepository.getAllItemsFilterPagination(pageSize, this.offset, sortBy, sortDir, filterBy)
-        }
-
-        return employeeRepository.getAllItemsPagination(pageSize, this.offset, sortBy, sortDir)
+        return employeeRepository.getAllEmployees(pageSize, this.offset, sortBy, sortDir, searchValue, filterBy);
     }
 
     public async getSingleEmployee(id: string) {
