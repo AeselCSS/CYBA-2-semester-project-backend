@@ -31,7 +31,18 @@ export default class CustomerService extends Pagination {
         const orderRepository = new OrderRepository();
         this.calculateOffset(pageSize, pageNum);
 
-        return orderRepository.getAllOrdersByCustomerId(id, pageSize, this.offset, "createdAt", "asc");
+        const customerCars = this.getAllCarsByCustomerId(id);
+        const customerOrders = await orderRepository.getAllOrdersByCustomerId(id, pageSize, this.offset, "createdAt", "asc");
+
+        // filter out orders that are not related to the customer's cars
+        // NB: this could result in empty pages since the filteris applied after the pagination
+        const customerCarsIds = (await customerCars).map(car => car.id);
+        const filteredOrders = customerOrders.data.filter(order => customerCarsIds.includes(order.carId));
+        return {
+            data: filteredOrders,
+            metaData: customerOrders.metaData
+        }
+
     }
 
     public async getAllCarsByCustomerId(id: string) {
