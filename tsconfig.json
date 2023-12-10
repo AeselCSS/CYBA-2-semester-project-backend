@@ -1,36 +1,36 @@
 {
-  "compilerOptions": {
-    /* Language and Environment */
-    "target": "ESNext",
+    "compilerOptions":{
+        /*LanguageandEnvironment*/
+        "target":"ESNext",
 
-    /* Modules */
-    "module": "NodeNext",
-     "rootDir": "./src",
+        /*Modules*/
+        "module":"NodeNext",
+        "rootDir":"./src",
 
-    /* Emit */
-     "outDir": "./dist",
-     "removeComments": true,
-     "noEmitOnError": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+        /*Emit*/
+        "outDir":"./dist",
+        "removeComments":true,
+        "noEmitOnError":true,
+        "esModuleInterop":true,
+        "forceConsistentCasingInFileNames":true,
 
-    /* Type Checking */
-    "strict": true,
-     "noImplicitAny": true,
-     "strictNullChecks": true,
-     "noImplicitThis": true,
-     "alwaysStrict": true,
-     "noUnusedLocals": true,
-     "noUnusedParameters": false,
-     "noImplicitReturns": true,
-     "noFallthroughCasesInSwitch": true,
-     "noImplicitOverride": true,
-     "allowUnreachableCode": false,
+        /*TypeChecking*/
+        "strict":true,
+        "noImplicitAny":true,
+        "strictNullChecks":true,
+        "noImplicitThis":true,
+        "alwaysStrict":true,
+        "noUnusedLocals":true,
+        "noUnusedParameters":false,
+        "noImplicitReturns":true,
+        "noFallthroughCasesInSwitch":true,
+        "noImplicitOverride":true,
+        "allowUnreachableCode":false,
 
-    /* Completeness */
-    "skipLibCheck": true
-  },
-    "include": [
+        /*Completeness*/
+        "skipLibCheck":true
+    },
+    "include":[
         "./src/**/*"
     ],
 }

@@ -40,9 +40,6 @@ export default class CustomerController {
         const pageNum = parseInt(request.query.pageNum)
         const id = request.params.id;
 
-        console.log(pageSize)
-        console.log(pageNum)
-
         try {
             const customerService = new CustomerService();
             const result = await customerService.getAllOrdersByCustomerId(id, pageNum, pageSize);

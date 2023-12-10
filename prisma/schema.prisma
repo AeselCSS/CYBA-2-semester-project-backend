@@ -25,21 +25,21 @@ model Customer {
 }
 
 model Car {
-  id                   Int      @id @default(autoincrement())
-  customerId           String   @map(name: "customer_id")
-  registrationNumber   String   @map(name: "registration_number")
-  vinNumber            String   @map(name: "vin_number")
+  id                   Int       @id @default(autoincrement())
+  customerId           String    @map(name: "customer_id")
+  registrationNumber   String    @map(name: "registration_number")
+  vinNumber            String    @map(name: "vin_number")
   brand                String
   model                String
-  modelVariant         String   @map(name: "model_variant")
-  firstRegistration    DateTime @map(name: "first_registration")
+  modelVariant         String    @map(name: "model_variant")
+  firstRegistration    DateTime  @map(name: "first_registration")
   mileage              Int
   lastInspectionDate   DateTime? @map(name: "last_inspection_date")
   lastInspectionResult String?   @map(name: "last_inspection_result")
   lastInspectionKind   String?   @map(name: "last_inspection_kind")
-  createdAt            DateTime @default(now()) @map(name: "created_at")
-  updatedAt            DateTime @updatedAt @map(name: "updated_at")
-  customer             Customer @relation(fields: [customerId], references: [id])
+  createdAt            DateTime  @default(now()) @map(name: "created_at")
+  updatedAt            DateTime  @updatedAt @map(name: "updated_at")
+  customer             Customer  @relation(fields: [customerId], references: [id])
   orders               Order[]
 }
 
