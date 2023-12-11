@@ -3,7 +3,7 @@ import prisma from "../src/Database/PrismaClient";
 // @ts-ignore
 import {app} from "../src/server";
 import supertest from "supertest";
-import {Car, Customer, Department, Employee, Order, Role, Status, SubtaskInstance} from "@prisma/client";
+import {Car, Customer, Department, Employee, Order, Role, Status, SubtaskInstance, TaskInstance} from "@prisma/client";
 
 
 describe("INTEGRATION TESTS", () => {
@@ -1459,10 +1459,12 @@ describe("INTEGRATION TESTS", () => {
 
             beforeAll(async () => {
                 await prisma.order.create({
-                    status: "PENDING" as Status,
-                    orderStartDate: new Date(),
-                    carId: 3,
-                    customerId: "7925557bb8c34013ba1b33d5"
+                    data: {
+                        status: "PENDING" as Status,
+                        orderStartDate: new Date(),
+                        carId: 3,
+                        customerId: "7925557bb8c34013ba1b33d5"
+                    }
                 })
 
                 await prisma.taskInstance.create({
@@ -1501,18 +1503,71 @@ describe("INTEGRATION TESTS", () => {
 
             it("should update the status on a single order from PENDING to IN_PROGRESS", async () => {
 
-                const {body, statusCode} = await supertest(app).patch("/orders/5").send(payload).set("Content-Type", "application/json");
+                const {body, statusCode} = await supertest(app).patch("/orders/5/status").send(payload).set("Content-Type", "application/json");
 
-                expect(body)
+                const taskInstances = await prisma.taskInstance.findMany({
+                    where: {
+                        orderId: 5
+                    }
+                })
+
+                const taskInstancesIds = taskInstances.map((taskInstance: TaskInstance) => taskInstance.id)
+
+                const subtaskInstances = await prisma.subtaskInstance.findMany({
+                    where: {
+                        taskInstanceId: {in: taskInstancesIds}
+                    }
+                })
+
+                taskInstances.forEach((taskInstance: TaskInstance) => {
+                    expect(taskInstance.status).toEqual(("PENDING") as Status)
+                })
+
+                subtaskInstances.forEach((subtaskInstance: SubtaskInstance) => {
+                    expect(subtaskInstance.status).toEqual(("PENDING") as Status);
+                })
+
+
+                expect(body.status).toEqual(("IN_PROGRESS") as Status);
                 expect(statusCode).toBe(200);
             })
 
             it("should give an error if trying to update a status on an order, which does not exist", async () => {
 
-                //TODO expect 404
+                const {statusCode} = await supertest(app).patch("/orders/9999999/status").send(payload).set("Content-Type", "application/json");
+                expect(statusCode).toBe(404);
             })
 
-            it("should fail to update a single order from IN_PROGRESS to COMPLETED")
+            it("should fail to update a single order from IN_PROGRESS to COMPLETED", async () => {
+
+                const order: Order = await prisma.order.create({
+                    data: {
+                        status: "IN_PROGRESS" as Status,
+                        orderStartDate: new Date(),
+                        carId: 3,
+                        customerId: "7925557bb8c34013ba1b33d5"
+                    }
+                })
+
+
+                const {statusCode} = await supertest(app).patch(`/orders/${order.id}/status`).send(payload).set("Content-Type", "application/json");
+                expect(statusCode).toBe(400);
+            })
+
+            it("should fail to update a single order that is status COMPLETED", async() => {
+                const order: Order = await prisma.order.create({
+                    data: {
+                        status: "COMPLETED" as Status,
+                        orderStartDate: new Date(),
+                        carId: 3,
+                        customerId: "7925557bb8c34013ba1b33d5"
+                    }
+                })
+
+
+                const {statusCode} = await supertest(app).patch(`/orders/${order.id}/status`).send(payload).set("Content-Type", "application/json");
+                expect(statusCode).toBe(400);
+            })
 
         })
 
