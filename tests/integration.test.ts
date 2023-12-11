@@ -3,7 +3,7 @@ import prisma from "../src/Database/PrismaClient";
 // @ts-ignore
 import {app} from "../src/server";
 import supertest from "supertest";
-import {Car, Customer, Department, Employee, Order, Role, Status, SubtaskInstance, TaskInstance} from "@prisma/client";
+import {Car, Department, Employee, Order, Role, Status, SubtaskInstance, TaskInstance} from "@prisma/client";
 
 
 describe("INTEGRATION TESTS", () => {
@@ -623,46 +623,7 @@ describe("INTEGRATION TESTS", () => {
 
         describe("Delete customer", () => {
             it.skip('should delete the customer successfully and replace all their relations with "order" and "car" with id=DELETED', async () => {
-                const car: Car = await prisma.car.findFirstOrThrow({
-                    where: {
-                        vinNumber: "XYZ789ABC123",
-                    },
-                });
-
-                //Create new order
-                const order: Order = await prisma.order.create({
-                    data: {
-                        status: Status.AWAITING_CUSTOMER,
-                        orderStartDate: new Date(),
-                        carId: car.id,
-                        customerId: "8c081169f97e42479b136a6a",
-                    },
-                });
-
-                const {statusCode} = await supertest(app).delete("/customers/8c081169f97e42479b136a6a");
-
-                const carAfterDeletion: Car | null = await prisma.car.findUnique({
-                    where: {
-                        id: car.id,
-                    },
-                });
-
-                const orderAfterDeletion: Order = await prisma.order.findFirstOrThrow({
-                    where: {
-                        id: order.id,
-                    },
-                });
-
-                const deletedCustomer: Customer | null = await prisma.customer.findUnique({
-                    where: {
-                        id: "8c081169f97e42479b136a6a",
-                    },
-                });
-
-                expect(orderAfterDeletion.customerId).toEqual("DELETED");
-                expect(carAfterDeletion).toBeFalsy();
-                expect(deletedCustomer).toBeFalsy();
-                expect(statusCode).toBe(204);
+                //TODO
             });
 
             it("should fail to delete a customer which does not exist", async () => {
@@ -908,6 +869,7 @@ describe("INTEGRATION TESTS", () => {
             })
 
             it.skip("should fail to create a new car if a car with same registration nr. and vin number exists already", async () => {
+                //TODO
                 const payloadThree = cars[1];
 
                 const {statusCode} = await supertest(app).post(`/cars`).send(payloadThree).set("Content-Type", "application/json");
@@ -1252,7 +1214,9 @@ describe("INTEGRATION TESTS", () => {
                     },
                 });
                 expect(body.data.length).toBe(2);
-                //TODO loop her og kontroller status
+                body.data.forEach((order: Order) => {
+                    expect(order.status).toEqual(("AWAITING_CUSTOMER" as Status));
+                })
                 expect(statusCode).toBe(200);
             })
 
