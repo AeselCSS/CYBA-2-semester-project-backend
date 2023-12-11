@@ -1239,30 +1239,120 @@ describe("INTEGRATION TESTS", () => {
 
     describe("Orders", () => {
 
-
         describe("Get many orders", () => {
             it("should return all 2 orders when filtering AWAITING_CUSTOMER", async () => {
+                const {body, statusCode} = await supertest(app).get("/orders?sortDir=desc&sortBy=id&pageNum=1&pageSize=10&filterBy=AWAITING_CUSTOMER");
 
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 2,
+                    },
+                });
+                expect(body.data.length).toBe(2);
+                //TODO loop her og kontroller status
+                expect(statusCode).toBe(200);
             })
 
             it("should return the correct order(s) when searching for a car registration number", async () => {
+                const {body, statusCode} = await supertest(app).get("/orders?sortDir=desc&sortBy=id&pageNum=1&pageSize=10&searchValue=L7V9RZ");
 
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 1,
+                    },
+                });
+                expect(body.data.length).toBe(1);
+                expect(body.data[0].registrationNumber).toBe("L7V9RZ")
+                expect(statusCode).toBe(200);
             })
 
             it("should return 0 orders when there is no search match", async () => {
+                const {body, statusCode} = await supertest(app).get("/orders?sortDir=desc&sortBy=id&pageNum=1&pageSize=10&searchValue=AB20069");
 
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 0,
+                    },
+                });
+                expect(body.data.length).toBe(0);
+                expect(statusCode).toBe(200);
             })
 
-            it("should return 1 order when filtering by AWAITING_CUSTOMER and searching 'L7V9RZ' ", async () => {
+            it("should return 1 order when filtering by AWAITING_CUSTOMER and searching 'PDI3QC' ", async () => {
+                const {body, statusCode} = await supertest(app).get("/orders?sortDir=desc&sortBy=id&pageNum=1&pageSize=10&searchValue=PDI3QC&filterBy=AWAITING_CUSTOMER");
 
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 1,
+                    },
+                });
+
+                expect(body.data.length).toBe(1);
+                expect(body.data[0].registrationNumber).toBe("PDI3QC")
+                expect(body.data[0].status).toEqual(("AWAITING_CUSTOMER") as Status)
+                expect(statusCode).toBe(200);
             })
 
             it("should sort orders by order id asc", async () => {
+                const sortedOrders: Order[] = await prisma.order.findMany({
+                    orderBy: {
+                        id: "asc"
+                    }
+                })
 
+                const {body, statusCode} = await supertest(app).get("/orders?sortDir=asc&sortBy=id&pageNum=1&pageSize=10");
+
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 3,
+                    },
+                });
+
+
+                sortedOrders.forEach((localOrder, index) => {
+                    expect(body.data[index].id).toEqual(localOrder.id);
+                });
+                expect(statusCode).toBe(200);
             })
 
             it("should sort orders by order id desc", async () => {
+                const sortedOrders: Order[] = await prisma.order.findMany({
+                    orderBy: {
+                        id: "desc"
+                    }
+                })
 
+                const {body, statusCode} = await supertest(app).get("/orders?sortDir=desc&sortBy=id&pageNum=1&pageSize=10");
+
+                expect(body).toEqual({
+                    data: expect.any(Array),
+                    metaData: {
+                        limit: expect.any(Number),
+                        offset: expect.any(Number),
+                        totalCount: 3,
+                    },
+                });
+
+
+                sortedOrders.forEach((localOrder, index) => {
+                    expect(body.data[index].id).toEqual(localOrder.id);
+                });
+                expect(statusCode).toBe(200);
             })
 
             it("should return an error if sortDir query is missing", async () => {
@@ -1300,10 +1390,6 @@ describe("INTEGRATION TESTS", () => {
         })
 
         describe("Update order", () => {
-
-        })
-
-        describe("Delete order", () => {
 
         })
 
