@@ -34,7 +34,7 @@ export default class OrderService extends Pagination {
         const orderStatus = await orderRepository.getOrderStatus(id);
 
         if (orderStatus.status === 'COMPLETED') {
-            throw new Error('Order is completed');
+            throw new Error(`Order is ${orderStatus.status.toLowerCase()}`);
         }
 
         return orderRepository.updateOrderStatus(id, status);

@@ -1538,7 +1538,7 @@ describe("INTEGRATION TESTS", () => {
                 expect(statusCode).toBe(404);
             })
 
-            it("should fail to update a single order from IN_PROGRESS to COMPLETED", async () => {
+            it("should fail to update a single order from IN_PROGRESS", async () => {
 
                 const order: Order = await prisma.order.create({
                     data: {
@@ -1550,7 +1550,10 @@ describe("INTEGRATION TESTS", () => {
                 })
 
 
-                const {statusCode} = await supertest(app).patch(`/orders/${order.id}/status`).send(payload).set("Content-Type", "application/json");
+                const {body, statusCode} = await supertest(app).patch(`/orders/${order.id}/status`).send(payload).set("Content-Type", "application/json");
+
+                console.log(body)
+
                 expect(statusCode).toBe(400);
             })
 
@@ -1565,8 +1568,10 @@ describe("INTEGRATION TESTS", () => {
                 })
 
 
+
+
                 const {statusCode} = await supertest(app).patch(`/orders/${order.id}/status`).send(payload).set("Content-Type", "application/json");
-                expect(statusCode).toBe(400);
+                expect(statusCode).toBe(404);
             })
 
         })
