@@ -230,6 +230,117 @@ describe("INTEGRATION TESTS", () => {
         subtaskNumberCounter++;
     }
 
+    const orders = [
+        {
+            status: "AWAITING_CUSTOMER" as Status,
+            orderStartDate: new Date(),
+            carId: 2,
+            customerId: "90b6fd6b4b4343ffa05e8278"
+        },
+        {
+            status: "IN_PROGRESS" as Status,
+            orderStartDate: new Date(),
+            carId: 5,
+            customerId: "8c081169f97e42479b136a6a"
+        },
+        {
+            status: "AWAITING_CUSTOMER" as Status,
+            orderStartDate: new Date(),
+            carId: 3,
+            customerId: "7925557bb8c34013ba1b33d5"
+        },
+    ]
+
+    const taskInstances = [
+        {
+            status: "PENDING" as Status,
+            taskId: 1,
+            employeeId: null,
+            orderId: 1
+        },
+        {
+            status: "PENDING" as Status,
+            taskId: 2,
+            employeeId: null,
+            orderId: 1
+        },
+        {
+            status: "IN_PROGRESS" as Status,
+            taskId: 4,
+            employeeId: null,
+            orderId: 2
+        },
+        {
+            status: "PENDING" as Status,
+            taskId: 5,
+            employeeId: null,
+            orderId: 3
+        }
+    ]
+
+    const subtaskInstances = [
+        {
+            status: "PENDING" as Status,
+            taskInstanceId: 1,
+            subtaskId: 1,
+        },
+        {
+            status: "PENDING" as Status,
+            taskInstanceId: 1,
+            subtaskId: 2,
+        },
+        {
+            status: "PENDING" as Status,
+            taskInstanceId: 1,
+            subtaskId: 3,
+        },
+        {
+            status: "PENDING" as Status,
+            taskInstanceId: 2,
+            subtaskId: 4,
+        },
+        {
+            status: "PENDING" as Status,
+            taskInstanceId: 2,
+            subtaskId: 5,
+        },
+        {
+            status: "PENDING" as Status,
+            taskInstanceId: 2,
+            subtaskId: 6,
+        },
+        {
+            status: "COMPLETED" as Status,
+            taskInstanceId: 3,
+            subtaskId: 10,
+        },
+        {
+            status: "COMPLETED" as Status,
+            taskInstanceId: 3,
+            subtaskId: 11,
+        },
+        {
+            status: "IN_PROGRESS" as Status,
+            taskInstanceId: 3,
+            subtaskId: 12,
+        },
+        {
+            status: "PENDING" as Status,
+            taskInstanceId: 4,
+            subtaskId: 13,
+        },
+        {
+            status: "PENDING" as Status,
+            taskInstanceId: 4,
+            subtaskId: 14,
+        },
+        {
+            status: "PENDING" as Status,
+            taskInstanceId: 4,
+            subtaskId: 15,
+        },
+    ]
+
     beforeAll(async () => {
         const createCustomers = prisma.customer.createMany({
             data: customers,
@@ -255,19 +366,31 @@ describe("INTEGRATION TESTS", () => {
             data: taskSubtaskJunctionTable
         })
 
-        await prisma.$transaction([createCustomers, createCars, createEmployees, createTasks, createSubtasks, createTaskSubtasks]);
+        const createOrders = prisma.order.createMany({
+            data: orders
+        })
+
+        const createTaskInstances = prisma.taskInstance.createMany({
+            data: taskInstances
+        })
+
+        const createSubtaskInstances = prisma.subtaskInstance.createMany({
+            data: subtaskInstances
+        })
+
+        await prisma.$transaction([createCustomers, createCars, createEmployees, createTasks, createSubtasks, createTaskSubtasks, createOrders, createTaskInstances, createSubtaskInstances]);
     });
 
     afterAll(async () => {
         /*const deleteCustomers = prisma.customer.deleteMany();
-        const deleteCars = prisma.car.deleteMany();
+         const deleteCars = prisma.car.deleteMany();
 
-        const deleteEmployees = prisma.employee.deleteMany();
-        const deleteTaskSubtasks = prisma.taskSubtask.deleteMany();
-        const deleteTasks = prisma.task.deleteMany();
-        const deleteSubtasks = prisma.subtask.deleteMany();
+         const deleteEmployees = prisma.employee.deleteMany();
+         const deleteTaskSubtasks = prisma.taskSubtask.deleteMany();
+         const deleteTasks = prisma.task.deleteMany();
+         const deleteSubtasks = prisma.subtask.deleteMany();
 
-        await prisma.$transaction([deleteCars, deleteCustomers, deleteEmployees, deleteTaskSubtasks, deleteTasks, deleteSubtasks]);*/
+         await prisma.$transaction([deleteCars, deleteCustomers, deleteEmployees, deleteTaskSubtasks, deleteTasks, deleteSubtasks]);*/
 
         await prisma.$disconnect();
     });
@@ -1112,210 +1235,81 @@ describe("INTEGRATION TESTS", () => {
      ===========================================================================================================================================
      ===========================================================================================================================================
      */
-    describe("Orders, Tasks, Subtasks", () => {
-        let orders;
-        let taskInstances;
-        let subtaskInstances;
 
-        beforeAll(async () => {
-            orders = await prisma.order.createMany({
-                data: [
-                    {
-                        status: "AWAITING_CUSTOMER" as Status,
-                        orderStartDate: new Date(),
-                        carId: 2,
-                        customerId: "90b6fd6b4b4343ffa05e8278"
-                    },
-                    {
-                        status: "IN_PROGRESS" as Status,
-                        orderStartDate: new Date(),
-                        carId: 5,
-                        customerId: "8c081169f97e42479b136a6a"
-                    },
-                    {
-                        status: "AWAITING_CUSTOMER" as Status,
-                        orderStartDate: new Date(),
-                        carId: 3,
-                        customerId: "7925557bb8c34013ba1b33d5"
-                    },
-                ]
-            })
 
-            taskInstances = await prisma.taskInstance.createMany({
-                data: [
-                    {
-                        status: "PENDING" as Status,
-                        taskId: 1,
-                        employeeId: null,
-                        orderId: 1
-                    },
-                    {
-                        status: "PENDING" as Status,
-                        taskId: 2,
-                        employeeId: null,
-                        orderId: 1
-                    },
-                    {
-                        status: "IN_PROGRESS" as Status,
-                        taskId: 4,
-                        employeeId: null,
-                        orderId: 2
-                    },
-                    {
-                        status: "PENDING" as Status,
-                        taskId: 5,
-                        employeeId: null,
-                        orderId: 3
-                    }
-                ]
-            })
+    describe("Orders", () => {
 
-            subtaskInstances = await prisma.subtaskInstance.createMany({
-                data: [
-                    {
-                        status: "PENDING" as Status,
-                        taskInstanceId: 1,
-                        subtaskId: 1,
-                    },
-                    {
-                        status: "PENDING" as Status,
-                        taskInstanceId: 1,
-                        subtaskId: 2,
-                    },
-                    {
-                        status: "PENDING" as Status,
-                        taskInstanceId: 1,
-                        subtaskId: 3,
-                    },
-                    {
-                        status: "PENDING" as Status,
-                        taskInstanceId: 2,
-                        subtaskId: 4,
-                    },
-                    {
-                        status: "PENDING" as Status,
-                        taskInstanceId: 2,
-                        subtaskId: 5,
-                    },
-                    {
-                        status: "PENDING" as Status,
-                        taskInstanceId: 2,
-                        subtaskId: 6,
-                    },
-                    {
-                        status: "COMPLETED" as Status,
-                        taskInstanceId: 3,
-                        subtaskId: 10,
-                    },
-                    {
-                        status: "COMPLETED" as Status,
-                        taskInstanceId: 3,
-                        subtaskId: 11,
-                    },
-                    {
-                        status: "IN_PROGRESS" as Status,
-                        taskInstanceId: 3,
-                        subtaskId: 12,
-                    },
-                    {
-                        status: "PENDING" as Status,
-                        taskInstanceId: 4,
-                        subtaskId: 13,
-                    },
-                    {
-                        status: "PENDING" as Status,
-                        taskInstanceId: 4,
-                        subtaskId: 14,
-                    },
-                    {
-                        status: "PENDING" as Status,
-                        taskInstanceId: 4,
-                        subtaskId: 15,
-                    },
-                ]
-            })
+
+        describe("Get many orders", () => {
+            
+        })
+
+        describe("Get single order", () => {
 
         })
 
-        console.log(orders)
-        console.log(taskInstances)
-        console.log(subtaskInstances)
-
-
-        describe("Orders", () => {
-
-
-            describe("Get many orders", () => {
-
-            })
-
-            describe("Get single order", () => {
-
-            })
-
-            describe("Create a new order", () => {
-
-            })
-
-            describe("Update order", () => {
-
-            })
-
-            describe("Delete order", () => {
-
-            })
+        describe("Create a new order", () => {
 
         })
 
+        describe("Update order", () => {
 
-        /*
-         ===========================================================================================================================================
-         ===========================================================================================================================================
-         TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS
-         ===========================================================================================================================================
-         ===========================================================================================================================================
-         */
-
-        describe("Tasks", () => {
-            it("should get all possible tasks (form)", () => {
-
-            })
-
-            it("should get a single task(instance) by id", () => {
-
-            })
-
-            it("should update a single task(instance)'s status to IN_PROGRESS by id and the first subtask(instance) to IN_PROGRESS", () => {
-
-            })
-
-            it("should create a new comment to a single task(instance)", () => {
-
-            })
         })
 
+        describe("Delete order", () => {
 
-        /*
-         ===========================================================================================================================================
-         ===========================================================================================================================================
-         SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS
-         ===========================================================================================================================================
-         ===========================================================================================================================================
-         */
-        describe("Subtasks", () => {
-
-            it("should update a subtask(instance)'s status to COMPLETED by id", () => {
-
-            })
-
-            it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance)", () => {
-
-            })
-
-            it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance) and order", () => {
-
-            })
         })
 
     })
+
+
+    /*
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     */
+
+    describe("Tasks", () => {
+        it("should get all possible tasks (form)", () => {
+
+        })
+
+        it("should get a single task(instance) by id", () => {
+
+        })
+
+        it("should update a single task(instance)'s status to IN_PROGRESS by id and the first subtask(instance) to IN_PROGRESS", () => {
+
+        })
+
+        it("should create a new comment to a single task(instance)", () => {
+
+        })
+    })
+
+
+    /*
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS
+     ===========================================================================================================================================
+     ===========================================================================================================================================
+     */
+    describe("Subtasks", () => {
+
+        it("should update a subtask(instance)'s status to COMPLETED by id", () => {
+
+        })
+
+        it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance)", () => {
+
+        })
+
+        it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance) and order", () => {
+
+        })
+    })
+
 })
