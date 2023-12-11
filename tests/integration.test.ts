@@ -159,7 +159,86 @@ describe("INTEGRATION TESTS", () => {
         }
     ]
 
-    //TODO lav tasks, subtasks her
+    //1-5
+    const tasks = [
+        {
+            name: 'Task 1',
+            description: 'Task 1 description',
+        },
+        {
+            name: 'Task 2',
+            description: 'Task 2 description',
+        },
+        {
+            name: 'Task 3',
+            description: 'Task 3 description'
+        },
+        {
+            name: 'Task 4',
+            description: "Task 4 description"
+        },
+        {
+            name: 'Task 5',
+            description: 'Task 5 description',
+        },
+    ];
+
+    const subtasks = [
+        // Delopgaver for Task 1 (1-5)
+        { name: 'Olieudskiftning', time: 0.5, description: 'Dræn og udskift motorolie, og udskift oliefilter.' },
+        { name: 'Filterudskiftning', time: 0.25, description: 'Udskift luft- og kabinefiltre.' },
+        { name: 'Generel Inspektion', time: 0.75, description: 'Udfør en standard inspektion af køretøjets større systemer.' },
+        { name: 'Påfyldning af Væsker', time: 0.25, description: 'Kontroller og påfyld nødvendige væsker som kølervæske, bremsevæske osv.' },
+        { name: 'Afsluttende Inspektion', time: 0.5, description: 'Endelig kontrol for at sikre, at alle grundlæggende serviceopgaver er fuldført.' },
+
+        // Delopgaver for Task 2 (6-10)
+        { name: 'Hjulafmontering', time: 0.25, description: 'Fjern det nuværende sæt hjul fra køretøjet.' },
+        { name: 'Hjulmontering', time: 0.25, description: 'Monter det nye sæt hjul passende til sæsonen.' },
+        { name: 'Dæktrykskontrol', time: 0.2, description: 'Kontroller og juster dæktrykket til anbefalede niveauer.' },
+        { name: 'Dækmønsterinspektion', time: 0.2, description: 'Inspekter dækmønstre for slid og rapporter, hvis udskiftning er nødvendig.' },
+        { name: 'Spænding af Hjulmøtrikker', time: 0.1, description: 'Spænd hjulmøtrikkerne til fabrikantens specifikationer.' },
+
+        // Delopgaver for Task 3 (11-15)
+        { name: 'A/C Ydelsestest', time: 0.5, description: 'Test køleydelsen af A/C-systemet.' },
+        { name: 'Påfyldning af Kølemiddel', time: 0.5, description: 'Genoplad A/C-systemet med passende kølemiddel.' },
+        { name: 'A/C Lækagetest', time: 0.5, description: 'Inspekter A/C-systemet for eventuelle lækager.' },
+        { name: 'Filterrengøring/Udskiftning', time: 0.25, description: 'Rengør eller udskift A/C-systemets luftfilter.' },
+        { name: 'System Deodorisering', time: 0.25, description: 'Deodoriser og saniter A/C-systemet for at eliminere lugte.' },
+
+        // Delopgaver for Task 4 (16-20)
+        { name: 'Inspektion af Bremseklodser', time: 0.25, description: 'Inspekter bremseklodser for slid og bestem, om udskiftning er nødvendig.' },
+        { name: 'Udskiftning af Bremseklodser', time: 0.5, description: 'Udskift slidte bremseklodser.' },
+        { name: 'Rotorinspektion', time: 0.25, description: 'Kontroller rotorer for skader eller slid.' },
+        { name: 'Kontrol af Bremsevæske', time: 0.2, description: 'Inspekter niveau og kvalitet af bremsevæske.' },
+        { name: 'Test af Bremse System', time: 0.3, description: 'Test bremse systemet efter service for at sikre korrekt funktion.' },
+
+        // Delopgaver for Task 5 (21-25)
+        { name: 'Batteritest', time: 0.2, description: 'Test batteriets ladning og evne til at holde ladning.' },
+        { name: 'Batteriinstallation', time: 0.25, description: 'Fjern det gamle batteri og installer et nyt.' },
+        { name: 'Diagnose af Elektrisk System', time: 0.5, description: 'Kør en diagnostik for at kontrollere køretøjets elektriske system.' },
+        { name: 'Generator Kontrol', time: 0.3, description: 'Inspekter generatoren for korrekt funktion.' },
+        { name: 'Starter Kontrol', time: 0.3, description: 'Test starteren for pålidelighed.' },
+    ];
+
+
+    const taskSubtaskJunctionTable: {taskId: number, subtaskId: number, subtaskNumber: number}[] = [];
+
+    let taskCounter = 1; //++
+    let numberCounter = 1; //reset til 1
+    for (let i = 1; i <= subtasks.length; i++){
+        if (numberCounter === 6){
+            numberCounter = 1;
+            taskCounter++;
+        }
+
+        taskSubtaskJunctionTable.push({
+            taskId: taskCounter,
+            subtaskId: i,
+            subtaskNumber: numberCounter
+        })
+
+        numberCounter++;
+    }
 
     const orders = [
         {
@@ -185,7 +264,19 @@ describe("INTEGRATION TESTS", () => {
             data: employees
         })
 
-        await prisma.$transaction([createCustomers, createCars, createEmployees]);
+        const createTasks = prisma.task.createMany({
+            data: tasks
+        })
+
+        const createSubtasks = prisma.subtask.createMany({
+            data: subtasks
+        })
+
+        const createTaskSubtasks = prisma.taskSubtask.createMany({
+            data: taskSubtaskJunctionTable
+        })
+
+        await prisma.$transaction([createCustomers, createCars, createEmployees, createTasks, createSubtasks, createTaskSubtasks]);
     });
 
     afterAll(async () => {
@@ -193,9 +284,11 @@ describe("INTEGRATION TESTS", () => {
         const deleteCars = prisma.car.deleteMany();
         const deleteOrders = prisma.order.deleteMany();
         const deleteEmployees = prisma.employee.deleteMany();
+        const deleteTaskSubtasks = prisma.taskSubtask.deleteMany();
+        const deleteTasks = prisma.task.deleteMany();
+        const deleteSubtasks = prisma.subtask.deleteMany();
 
-        await prisma.$transaction([deleteOrders, deleteCars, deleteCustomers, deleteEmployees]);
-
+        await prisma.$transaction([deleteOrders, deleteCars, deleteCustomers, deleteEmployees, deleteTaskSubtasks, deleteTasks, deleteSubtasks]);
 
         await prisma.$disconnect();
     });
@@ -625,6 +718,9 @@ describe("INTEGRATION TESTS", () => {
                 const createdCar: Car = await prisma.car.create({
                     data: newCar
                 })
+
+                console.log("HALLLOOO")
+                console.log(createdCar.id)
 
                 const {body, statusCode} = await supertest(app).get(`/cars/${createdCar.id}`);
 
