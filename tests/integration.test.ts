@@ -223,21 +223,21 @@ describe("INTEGRATION TESTS", () => {
 
     const taskSubtaskJunctionTable: {taskId: number, subtaskId: number, subtaskNumber: number}[] = [];
 
-    let taskCounter = 1; //++
-    let numberCounter = 1; //reset til 1
+    let taskIdCounter = 1; //++
+    let subtaskNumberCounter = 1; //reset til 1
     for (let i = 1; i <= subtasks.length; i++){
-        if (numberCounter === 6){
-            numberCounter = 1;
-            taskCounter++;
+        if (subtaskNumberCounter === 6){
+            subtaskNumberCounter = 1;
+            taskIdCounter++;
         }
 
         taskSubtaskJunctionTable.push({
-            taskId: taskCounter,
+            taskId: taskIdCounter,
             subtaskId: i,
-            subtaskNumber: numberCounter
+            subtaskNumber: subtaskNumberCounter
         })
 
-        numberCounter++;
+        subtaskNumberCounter++;
     }
 
     const orders = [
