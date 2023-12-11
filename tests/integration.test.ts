@@ -184,49 +184,39 @@ describe("INTEGRATION TESTS", () => {
     ];
 
     const subtasks = [
-        // Delopgaver for Task 1 (1-5)
-        { name: 'Olieudskiftning', time: 0.5, description: 'Dræn og udskift motorolie, og udskift oliefilter.' },
-        { name: 'Filterudskiftning', time: 0.25, description: 'Udskift luft- og kabinefiltre.' },
-        { name: 'Generel Inspektion', time: 0.75, description: 'Udfør en standard inspektion af køretøjets større systemer.' },
-        { name: 'Påfyldning af Væsker', time: 0.25, description: 'Kontroller og påfyld nødvendige væsker som kølervæske, bremsevæske osv.' },
-        { name: 'Afsluttende Inspektion', time: 0.5, description: 'Endelig kontrol for at sikre, at alle grundlæggende serviceopgaver er fuldført.' },
+        // Delopgaver for Task 1 (1-3)
+        {name: 'Olieudskiftning', time: 0.5, description: 'Dræn og udskift motorolie, og udskift oliefilter.'},
+        {name: 'Filterudskiftning', time: 0.25, description: 'Udskift luft- og kabinefiltre.'},
+        {name: 'Generel Inspektion', time: 0.75, description: 'Udfør en standard inspektion af køretøjets større systemer.'},
 
-        // Delopgaver for Task 2 (6-10)
-        { name: 'Hjulafmontering', time: 0.25, description: 'Fjern det nuværende sæt hjul fra køretøjet.' },
-        { name: 'Hjulmontering', time: 0.25, description: 'Monter det nye sæt hjul passende til sæsonen.' },
-        { name: 'Dæktrykskontrol', time: 0.2, description: 'Kontroller og juster dæktrykket til anbefalede niveauer.' },
-        { name: 'Dækmønsterinspektion', time: 0.2, description: 'Inspekter dækmønstre for slid og rapporter, hvis udskiftning er nødvendig.' },
-        { name: 'Spænding af Hjulmøtrikker', time: 0.1, description: 'Spænd hjulmøtrikkerne til fabrikantens specifikationer.' },
+        // Delopgaver for Task 2 (4-6)
+        {name: 'Hjulafmontering', time: 0.25, description: 'Fjern det nuværende sæt hjul fra køretøjet.'},
+        {name: 'Hjulmontering', time: 0.25, description: 'Monter det nye sæt hjul passende til sæsonen.'},
+        {name: 'Dæktrykskontrol', time: 0.2, description: 'Kontroller og juster dæktrykket til anbefalede niveauer.'},
 
-        // Delopgaver for Task 3 (11-15)
-        { name: 'A/C Ydelsestest', time: 0.5, description: 'Test køleydelsen af A/C-systemet.' },
-        { name: 'Påfyldning af Kølemiddel', time: 0.5, description: 'Genoplad A/C-systemet med passende kølemiddel.' },
-        { name: 'A/C Lækagetest', time: 0.5, description: 'Inspekter A/C-systemet for eventuelle lækager.' },
-        { name: 'Filterrengøring/Udskiftning', time: 0.25, description: 'Rengør eller udskift A/C-systemets luftfilter.' },
-        { name: 'System Deodorisering', time: 0.25, description: 'Deodoriser og saniter A/C-systemet for at eliminere lugte.' },
+        // Delopgaver for Task 3 (7-9)
+        {name: 'A/C Ydelsestest', time: 0.5, description: 'Test køleydelsen af A/C-systemet.'},
+        {name: 'Påfyldning af Kølemiddel', time: 0.5, description: 'Genoplad A/C-systemet med passende kølemiddel.'},
+        {name: 'A/C Lækagetest', time: 0.5, description: 'Inspekter A/C-systemet for eventuelle lækager.'},
 
-        // Delopgaver for Task 4 (16-20)
-        { name: 'Inspektion af Bremseklodser', time: 0.25, description: 'Inspekter bremseklodser for slid og bestem, om udskiftning er nødvendig.' },
-        { name: 'Udskiftning af Bremseklodser', time: 0.5, description: 'Udskift slidte bremseklodser.' },
-        { name: 'Rotorinspektion', time: 0.25, description: 'Kontroller rotorer for skader eller slid.' },
-        { name: 'Kontrol af Bremsevæske', time: 0.2, description: 'Inspekter niveau og kvalitet af bremsevæske.' },
-        { name: 'Test af Bremse System', time: 0.3, description: 'Test bremse systemet efter service for at sikre korrekt funktion.' },
+        // Delopgaver for Task 4 (10-12)
+        {name: 'Inspektion af Bremseklodser', time: 0.25, description: 'Inspekter bremseklodser for slid og bestem, om udskiftning er nødvendig.'},
+        {name: 'Udskiftning af Bremseklodser', time: 0.5, description: 'Udskift slidte bremseklodser.'},
+        {name: 'Rotorinspektion', time: 0.25, description: 'Kontroller rotorer for skader eller slid.'},
 
-        // Delopgaver for Task 5 (21-25)
-        { name: 'Batteritest', time: 0.2, description: 'Test batteriets ladning og evne til at holde ladning.' },
-        { name: 'Batteriinstallation', time: 0.25, description: 'Fjern det gamle batteri og installer et nyt.' },
-        { name: 'Diagnose af Elektrisk System', time: 0.5, description: 'Kør en diagnostik for at kontrollere køretøjets elektriske system.' },
-        { name: 'Generator Kontrol', time: 0.3, description: 'Inspekter generatoren for korrekt funktion.' },
-        { name: 'Starter Kontrol', time: 0.3, description: 'Test starteren for pålidelighed.' },
+        // Delopgaver for Task 5 (13-15)
+        {name: 'Batteritest', time: 0.2, description: 'Test batteriets ladning og evne til at holde ladning.'},
+        {name: 'Batteriinstallation', time: 0.25, description: 'Fjern det gamle batteri og installer et nyt.'},
+        {name: 'Diagnose af Elektrisk System', time: 0.5, description: 'Kør en diagnostik for at kontrollere køretøjets elektriske system.'},
     ];
 
 
-    const taskSubtaskJunctionTable: {taskId: number, subtaskId: number, subtaskNumber: number}[] = [];
+    const taskSubtaskJunctionTable: { taskId: number, subtaskId: number, subtaskNumber: number }[] = [];
 
     let taskIdCounter = 1; //++
     let subtaskNumberCounter = 1; //reset til 1
-    for (let i = 1; i <= subtasks.length; i++){
-        if (subtaskNumberCounter === 6){
+    for (let i = 1; i <= subtasks.length; i++) {
+        if (subtaskNumberCounter === 4) {
             subtaskNumberCounter = 1;
             taskIdCounter++;
         }
@@ -239,17 +229,6 @@ describe("INTEGRATION TESTS", () => {
 
         subtaskNumberCounter++;
     }
-
-    const orders = [
-        {
-            status: "AWAITING_CUSTOMER" as Status,
-            orderStartDate: new Date(),
-
-        }
-    ]
-
-    console.log(orders)
-
 
     beforeAll(async () => {
         const createCustomers = prisma.customer.createMany({
@@ -280,15 +259,15 @@ describe("INTEGRATION TESTS", () => {
     });
 
     afterAll(async () => {
-        const deleteCustomers = prisma.customer.deleteMany();
+        /*const deleteCustomers = prisma.customer.deleteMany();
         const deleteCars = prisma.car.deleteMany();
-        const deleteOrders = prisma.order.deleteMany();
+
         const deleteEmployees = prisma.employee.deleteMany();
         const deleteTaskSubtasks = prisma.taskSubtask.deleteMany();
         const deleteTasks = prisma.task.deleteMany();
         const deleteSubtasks = prisma.subtask.deleteMany();
 
-        await prisma.$transaction([deleteOrders, deleteCars, deleteCustomers, deleteEmployees, deleteTaskSubtasks, deleteTasks, deleteSubtasks]);
+        await prisma.$transaction([deleteCars, deleteCustomers, deleteEmployees, deleteTaskSubtasks, deleteTasks, deleteSubtasks]);*/
 
         await prisma.$disconnect();
     });
@@ -1093,7 +1072,7 @@ describe("INTEGRATION TESTS", () => {
 
         describe("Create a new employee", () => {
             it("should successfully create a new employee", async () => {
-                const payload : Record<string, string>= {
+                const payload: Record<string, string> = {
                     id: "testPayload2",
                     role: "EMPLOYEE" as Role,
                     department: "ADMINISTRATION" as Department,
@@ -1110,7 +1089,7 @@ describe("INTEGRATION TESTS", () => {
             })
 
             it("should fail to create an employee that is missing one property", async () => {
-                const payload : Record<string, string>= {
+                const payload: Record<string, string> = {
                     role: "EMPLOYEE" as Role,
                     department: "ADMINISTRATION" as Department,
                     firstName: "payloadFirstName2",
@@ -1133,81 +1112,210 @@ describe("INTEGRATION TESTS", () => {
      ===========================================================================================================================================
      ===========================================================================================================================================
      */
+    describe("Orders, Tasks, Subtasks", () => {
+        let orders;
+        let taskInstances;
+        let subtaskInstances;
 
-    describe("Orders", () => {
+        beforeAll(async () => {
+            orders = await prisma.order.createMany({
+                data: [
+                    {
+                        status: "AWAITING_CUSTOMER" as Status,
+                        orderStartDate: new Date(),
+                        carId: 2,
+                        customerId: "90b6fd6b4b4343ffa05e8278"
+                    },
+                    {
+                        status: "IN_PROGRESS" as Status,
+                        orderStartDate: new Date(),
+                        carId: 5,
+                        customerId: "8c081169f97e42479b136a6a"
+                    },
+                    {
+                        status: "AWAITING_CUSTOMER" as Status,
+                        orderStartDate: new Date(),
+                        carId: 3,
+                        customerId: "7925557bb8c34013ba1b33d5"
+                    },
+                ]
+            })
 
+            taskInstances = await prisma.taskInstance.createMany({
+                data: [
+                    {
+                        status: "PENDING" as Status,
+                        taskId: 1,
+                        employeeId: null,
+                        orderId: 1
+                    },
+                    {
+                        status: "PENDING" as Status,
+                        taskId: 2,
+                        employeeId: null,
+                        orderId: 1
+                    },
+                    {
+                        status: "IN_PROGRESS" as Status,
+                        taskId: 4,
+                        employeeId: null,
+                        orderId: 2
+                    },
+                    {
+                        status: "PENDING" as Status,
+                        taskId: 5,
+                        employeeId: null,
+                        orderId: 3
+                    }
+                ]
+            })
 
-        describe("Get many orders", () => {
+            subtaskInstances = await prisma.subtaskInstance.createMany({
+                data: [
+                    {
+                        status: "PENDING" as Status,
+                        taskInstanceId: 1,
+                        subtaskId: 1,
+                    },
+                    {
+                        status: "PENDING" as Status,
+                        taskInstanceId: 1,
+                        subtaskId: 2,
+                    },
+                    {
+                        status: "PENDING" as Status,
+                        taskInstanceId: 1,
+                        subtaskId: 3,
+                    },
+                    {
+                        status: "PENDING" as Status,
+                        taskInstanceId: 2,
+                        subtaskId: 4,
+                    },
+                    {
+                        status: "PENDING" as Status,
+                        taskInstanceId: 2,
+                        subtaskId: 5,
+                    },
+                    {
+                        status: "PENDING" as Status,
+                        taskInstanceId: 2,
+                        subtaskId: 6,
+                    },
+                    {
+                        status: "COMPLETED" as Status,
+                        taskInstanceId: 3,
+                        subtaskId: 10,
+                    },
+                    {
+                        status: "COMPLETED" as Status,
+                        taskInstanceId: 3,
+                        subtaskId: 11,
+                    },
+                    {
+                        status: "IN_PROGRESS" as Status,
+                        taskInstanceId: 3,
+                        subtaskId: 12,
+                    },
+                    {
+                        status: "PENDING" as Status,
+                        taskInstanceId: 4,
+                        subtaskId: 13,
+                    },
+                    {
+                        status: "PENDING" as Status,
+                        taskInstanceId: 4,
+                        subtaskId: 14,
+                    },
+                    {
+                        status: "PENDING" as Status,
+                        taskInstanceId: 4,
+                        subtaskId: 15,
+                    },
+                ]
+            })
 
         })
 
-        describe("Get single order", () => {
+        console.log(orders)
+        console.log(taskInstances)
+        console.log(subtaskInstances)
+
+
+        describe("Orders", () => {
+
+
+            describe("Get many orders", () => {
+
+            })
+
+            describe("Get single order", () => {
+
+            })
+
+            describe("Create a new order", () => {
+
+            })
+
+            describe("Update order", () => {
+
+            })
+
+            describe("Delete order", () => {
+
+            })
 
         })
 
-        describe("Create a new order", () => {
 
+        /*
+         ===========================================================================================================================================
+         ===========================================================================================================================================
+         TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS
+         ===========================================================================================================================================
+         ===========================================================================================================================================
+         */
+
+        describe("Tasks", () => {
+            it("should get all possible tasks (form)", () => {
+
+            })
+
+            it("should get a single task(instance) by id", () => {
+
+            })
+
+            it("should update a single task(instance)'s status to IN_PROGRESS by id and the first subtask(instance) to IN_PROGRESS", () => {
+
+            })
+
+            it("should create a new comment to a single task(instance)", () => {
+
+            })
         })
 
-        describe("Update order", () => {
 
-        })
+        /*
+         ===========================================================================================================================================
+         ===========================================================================================================================================
+         SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS
+         ===========================================================================================================================================
+         ===========================================================================================================================================
+         */
+        describe("Subtasks", () => {
 
-        describe("Delete order", () => {
+            it("should update a subtask(instance)'s status to COMPLETED by id", () => {
 
+            })
+
+            it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance)", () => {
+
+            })
+
+            it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance) and order", () => {
+
+            })
         })
 
     })
-
-
-    /*
-     ===========================================================================================================================================
-     ===========================================================================================================================================
-     TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS TASKS
-     ===========================================================================================================================================
-     ===========================================================================================================================================
-     */
-
-    describe("Tasks", () => {
-        it("should get all possible tasks (form)", () => {
-
-        })
-
-        it("should get a single task(instance) by id", () => {
-
-        })
-
-        it("should update a single task(instance)'s status to IN_PROGRESS by id and the first subtask(instance) to IN_PROGRESS", () => {
-
-        })
-
-        it("should create a new comment to a single task(instance)", () => {
-
-        })
-    })
-
-
-    /*
-     ===========================================================================================================================================
-     ===========================================================================================================================================
-     SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS SUBTASKS
-     ===========================================================================================================================================
-     ===========================================================================================================================================
-     */
-    describe("Subtasks", () => {
-
-        it("should update a subtask(instance)'s status to COMPLETED by id", () => {
-
-        })
-
-        it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance)", () => {
-
-        })
-
-        it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance) and order", () => {
-
-        })
-    })
-
-
 })
