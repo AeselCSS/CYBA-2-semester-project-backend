@@ -1241,7 +1241,54 @@ describe("INTEGRATION TESTS", () => {
 
 
         describe("Get many orders", () => {
-            
+            it("should return all 2 orders when filtering AWAITING_CUSTOMER", async () => {
+
+            })
+
+            it("should return the correct order(s) when searching for a car registration number", async () => {
+
+            })
+
+            it("should return 0 orders when there is no search match", async () => {
+
+            })
+
+            it("should return 1 order when filtering by AWAITING_CUSTOMER and searching 'L7V9RZ' ", async () => {
+
+            })
+
+            it("should sort orders by order id asc", async () => {
+
+            })
+
+            it("should sort orders by order id desc", async () => {
+
+            })
+
+            it("should return an error if sortDir query is missing", async () => {
+                const {statusCode} = await supertest(app).get("/orders?sortBy=firstName&pageNum=1&pageSize=10");
+
+                expect(statusCode).toBe(400);
+            });
+
+            it("should return an error if sortBy query is missing", async () => {
+                const {statusCode} = await supertest(app).get("/orders?sortDir=desc&pageNum=1&pageSize=10");
+
+                expect(statusCode).toBe(400);
+            });
+
+            it("should return an error if pageSize query is missing", async () => {
+                const {statusCode} = await supertest(app).get("/orders?sortDir=desc&sortBy=firstName&pageNum=1");
+
+                expect(statusCode).toBe(400);
+            });
+
+            it("should return an error if pageNum query is missing", async () => {
+                const {statusCode} = await supertest(app).get("/orders?sortDir=desc&sortBy=firstName&pageSize=10");
+
+                expect(statusCode).toBe(400);
+            });
+
         })
 
         describe("Get single order", () => {
