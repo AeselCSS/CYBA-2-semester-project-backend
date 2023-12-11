@@ -1382,6 +1382,21 @@ describe("INTEGRATION TESTS", () => {
         })
 
         describe("Get single order", () => {
+            it("should return the correct order when specifying the an id", async () => {
+                const {body, statusCode} = await supertest(app).get("/orders/1");
+
+
+                expect(body).toBeTruthy()
+                expect(body.)
+                expect(statusCode).toBe(200);
+            })
+
+            it("should return an error if no order is found by the specified id", async () => {
+                const {statusCode} = await supertest(app).get("/orders/999999999999999");
+
+                expect(statusCode).toBe(404);
+            })
+
 
         })
 
