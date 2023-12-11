@@ -1580,19 +1580,30 @@ describe("INTEGRATION TESTS", () => {
      */
 
     describe("Tasks", () => {
-        it("should get all possible tasks (form)", () => {
+        it("should get all possible tasks (form)", async () => {
+            const {body, statusCode} = await supertest(app).get(`/tasks`)
+
+            expect(body.length).toBe(tasks.length)
+            expect(statusCode).toBe(200);
+        })
+
+        it("should get a single task(instance) by id", async () => {
+            const taskInstance = taskInstances[2]
+
+            const {body, statusCode} = await supertest(app).get(`/tasks/3`)
+
+            for (const [key] of Object.keys(taskInstance)) {
+                //@ts-ignore
+                expect(body[key]).toEqual(taskInstance[key]);
+            }
+            expect(statusCode).toBe(200);
+        })
+
+        it("should update a single task(instance)'s status to IN_PROGRESS by id and the first subtask(instance) to IN_PROGRESS", async () => {
 
         })
 
-        it("should get a single task(instance) by id", () => {
-
-        })
-
-        it("should update a single task(instance)'s status to IN_PROGRESS by id and the first subtask(instance) to IN_PROGRESS", () => {
-
-        })
-
-        it("should create a new comment to a single task(instance)", () => {
+        it("should create a new comment to a single task(instance)", async () => {
 
         })
     })
@@ -1607,15 +1618,15 @@ describe("INTEGRATION TESTS", () => {
      */
     describe("Subtasks", () => {
 
-        it("should update a subtask(instance)'s status to COMPLETED by id", () => {
+        it("should update a subtask(instance)'s status to COMPLETED by id", async () => {
 
         })
 
-        it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance)", () => {
+        it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance)", async () => {
 
         })
 
-        it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance) and order", () => {
+        it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance) and order", async () => {
 
         })
     })
