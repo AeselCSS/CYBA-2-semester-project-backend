@@ -3,7 +3,7 @@ import prisma from "../src/Database/PrismaClient";
 // @ts-ignore
 import {app} from "../src/server";
 import supertest from "supertest";
-import {Car, Customer, Department, Employee, Order, Role, Status} from "@prisma/client";
+import {Car, Customer, Department, Employee, Order, Role, Status, SubtaskInstance} from "@prisma/client";
 
 
 describe("INTEGRATION TESTS", () => {
@@ -1385,9 +1385,10 @@ describe("INTEGRATION TESTS", () => {
             it("should return the correct order when specifying the an id", async () => {
                 const {body, statusCode} = await supertest(app).get("/orders/1");
 
-
-                expect(body).toBeTruthy()
-                expect(body.)
+                expect(body.customer).toBeTruthy();
+                expect(body.tasks).toBeTruthy();
+                expect(body.tasks[0].subtasks).toBeTruthy();
+                expect(body.id).toBe(1);
                 expect(statusCode).toBe(200);
             })
 
@@ -1396,15 +1397,122 @@ describe("INTEGRATION TESTS", () => {
 
                 expect(statusCode).toBe(404);
             })
-
-
         })
 
         describe("Create a new order", () => {
+            it("should successfully create a new order and its task- and subtask instances", async () => {
+                const orderPayload = {
+                    orderStartDate: "2023-11-23",
+                    carId: 3,
+                    customerId: "7925557bb8c34013ba1b33d5",
+                    tasks: [
+                        {
+                            id: 4
+                        },
+                        {
+                            id: 2
+                        }
+                    ]
+                }
 
+                const {body, statusCode} = await supertest(app).post("/orders").send(orderPayload).set("Content-Type", "application/json");
+
+
+                expect(body.car.id).toBe(3);
+                expect(body.car.vinNumber).toBe("48W08HEBPP73KAXRD");
+                expect(body.customer.id).toBe("7925557bb8c34013ba1b33d5")
+                expect(body.customer.firstName).toBe("Sofie")
+                expect(body.customer.lastName).toBe("Jensen")
+                expect(body.tasks.length).toBe(2);
+                expect(body.tasks[0].subtasks.length).toBe(3);
+                expect(body.tasks[1].subtasks.length).toBe(3);
+                expect(statusCode).toBe(200);
+
+                body.tasks.forEach((task: any) => {
+                    expect(task.status).toEqual(("PENDING") as Status)
+
+                    task.subtasks.forEach((subtask: SubtaskInstance) => {
+                        expect(subtask.status).toEqual(("PENDING") as Status);
+                    })
+                })
+            })
+
+
+            it("should fail to create an order if task ids are passed wrong", async () => {
+                const orderPayload = {
+                    orderStartDate: "2023-11-24",
+                    carId: 3,
+                    customerId: "7925557bb8c34013ba1b33d5",
+                    tasks: [
+                        4,
+                        2
+                    ]
+                }
+
+                const {statusCode} = await supertest(app).post("/orders").send(orderPayload).set("Content-Type", "application/json");
+
+                expect(statusCode).toBe(400)
+            })
         })
 
         describe("Update order", () => {
+
+            beforeAll(async () => {
+                await prisma.order.create({
+                    status: "PENDING" as Status,
+                    orderStartDate: new Date(),
+                    carId: 3,
+                    customerId: "7925557bb8c34013ba1b33d5"
+                })
+
+                await prisma.taskInstance.create({
+                    data: {
+                        status: "PENDING" as Status,
+                        taskId: 1,
+                        employeeId: null,
+                        orderId: 5
+                    },
+                })
+
+                await prisma.subtaskInstance.createMany({
+                    data: [
+                        {
+                            status: "PENDING" as Status,
+                            taskInstanceId: 5,
+                            subtaskId: 1,
+                        },
+                        {
+                            status: "PENDING" as Status,
+                            taskInstanceId: 5,
+                            subtaskId: 2,
+                        },
+                        {
+                            status: "PENDING" as Status,
+                            taskInstanceId: 5,
+                            subtaskId: 3,
+                        },
+                    ]
+                })
+            })
+
+            const payload = {
+                status: "IN_PROGRESS" as Status
+            }
+
+            it("should update the status on a single order from PENDING to IN_PROGRESS", async () => {
+
+                const {body, statusCode} = await supertest(app).patch("/orders/5").send(payload).set("Content-Type", "application/json");
+
+                expect(body)
+                expect(statusCode).toBe(200);
+            })
+
+            it("should give an error if trying to update a status on an order, which does not exist", async () => {
+
+                //TODO expect 404
+            })
+
+            it("should fail to update a single order from IN_PROGRESS to COMPLETED")
 
         })
 
