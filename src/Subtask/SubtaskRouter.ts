@@ -7,4 +7,5 @@ export const subtaskRouter = express.Router();
 const subtaskController = new SubtaskController();
 
 
-subtaskRouter.patch("/subtasks/:id", validateUpdateSubtaskStatus,subtaskController.updateSubtaskStatusExecutor)
+subtaskRouter.route("/subtasks/:id")
+    .patch(validateUpdateSubtaskStatus,subtaskController.updateSubtaskStatusExecutor);

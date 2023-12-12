@@ -6,7 +6,12 @@ import {validateIdParamsInt} from "../Utility/validation/validateIdParams.js";
 export const taskRouter = express.Router();
 const taskController = new TaskController();
 
-taskRouter.patch("/tasks/:id", validateInitiateTask, taskController.initiateTaskExecutor);
-taskRouter.post("/tasks/:id/comments", validateCreateComment, taskController.createCommentExecutor)
-taskRouter.get("/tasks", taskController.getTasksExecutor)
-taskRouter.get("/tasks/:id", validateIdParamsInt, taskController.getSingleTaskExecutor)
+taskRouter.route("/tasks/:id")
+    .get(validateIdParamsInt, taskController.getSingleTaskExecutor)
+    .patch(validateInitiateTask, taskController.initiateTaskExecutor);
+
+taskRouter.route("/tasks")
+    .get(taskController.getTasksExecutor);
+
+taskRouter.route("/tasks/:id/comments")
+    .post(validateCreateComment, taskController.createCommentExecutor);

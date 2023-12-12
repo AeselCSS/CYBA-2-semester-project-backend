@@ -10,10 +10,18 @@ import {validateIdParamsString} from "../Utility/validation/validateIdParams.js"
 export const customerRouter = express.Router();
 const customerController = new CustomerController();
 
-customerRouter.get("/customers", validateCustomerQuery, customerController.getAllCustomersExecutor);
-customerRouter.get("/customers/:id/orders", validateCustomerOrdersQuery,customerController.getAllOrdersByCustomerIdExecutor)
-customerRouter.get("/customers/:id/cars",validateIdParamsString, customerController.getAllCarsByCustomerIdExecutor)
-customerRouter.get("/customers/:id", validateIdParamsString, customerController.getSingleCustomerExecutor);
-customerRouter.put("/customers/:id", validateUpdateCustomer, customerController.updateCustomerExecutor);
-customerRouter.delete("/customers/:id", validateIdParamsString, customerController.deleteCustomerExecutor);
-customerRouter.post("/customers", validateCreateCustomer, customerController.createCustomerExecutor);
+
+customerRouter.route("/customers")
+    .get(validateCustomerQuery, customerController.getAllCustomersExecutor)
+    .post(validateCreateCustomer, customerController.createCustomerExecutor);
+
+customerRouter.route("/customers/:id")
+    .get(validateIdParamsString, customerController.getSingleCustomerExecutor)
+    .put(validateUpdateCustomer, customerController.updateCustomerExecutor)
+    .delete(validateIdParamsString, customerController.deleteCustomerExecutor);
+
+customerRouter.route("/customers/:id/orders")
+    .get(validateCustomerOrdersQuery,customerController.getAllOrdersByCustomerIdExecutor);
+
+customerRouter.route("/customers/:id/cars")
+    .get(validateIdParamsString, customerController.getAllCarsByCustomerIdExecutor);
