@@ -35,12 +35,6 @@ export default class CarService extends Pagination {
             firstRegistration: new Date(car.firstRegistration),
             lastInspectionDate: car.lastInspectionDate ? new Date(car.lastInspectionDate) : null,
         }
-
-        const isCarInDatabase = await carRepository.getSingleCarByRegistrationNrAndVinNumber(newCar.registrationNumber, newCar.vinNumber)
-
-        if (isCarInDatabase) {
-            throw new Error("Køretøj eksisterer allerede i vores database. Prøv igen med et andet køretøj")
-        }
         
         return carRepository.createCar(newCar);
     }

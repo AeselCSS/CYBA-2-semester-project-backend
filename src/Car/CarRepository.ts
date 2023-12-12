@@ -55,7 +55,7 @@ export default class CarRepository {
         });
     }
 
-    public async getSingleCarByRegistrationNrAndVinNumber(registrationNumber: string, vinNumber: string) {
+    /*public async getSingleCarByRegNrAndVinNr(registrationNumber: string, vinNumber: string) {
         return prisma.car.findFirst({
             where: {
                 AND: [
@@ -68,7 +68,7 @@ export default class CarRepository {
                 ]
             }
         })
-    }
+    }*/
 
     public async getAllCarsByCustomerId(id: string) {
         return prisma.car.findMany({
