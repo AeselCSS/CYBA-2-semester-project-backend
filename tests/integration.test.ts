@@ -1516,7 +1516,7 @@ describe("INTEGRATION TESTS", () => {
                 expect(statusCode).toBe(404);
             })
 
-            it("should fail to update a single order that is status COMPLETED", async() => {
+            it("should fail to update a single order that is status COMPLETED", async () => {
                 const order: Order = await prisma.order.create({
                     data: {
                         status: "COMPLETED" as Status,
@@ -1581,7 +1581,7 @@ describe("INTEGRATION TESTS", () => {
             const {body, statusCode} = await supertest(app).patch(`/tasks/4`).send(employeePayload).set("Content-Type", "application/json");
 
 
-            for (const task of body.tasks){
+            for (const task of body.tasks) {
                 if (task.id === 4) {
                     expect(task.status).toEqual(("IN_PROGRESS") as Status)
                     expect(task.employee.firstName).toEqual("Emma")
@@ -1599,7 +1599,17 @@ describe("INTEGRATION TESTS", () => {
         })
 
         it("should create a new comment to a single task(instance)", async () => {
+            const payload = {
+                employeeId: "2",
+                comment: "Test comment"
+            }
 
+            const {body, statusCode} = await supertest(app).post(`/tasks/4/comments`).send(payload).set("Content-Type", "application/json");
+
+            expect(statusCode)
+            expect(body.comment).toEqual(payload.comment)
+            expect(body.employeeId).toEqual(payload.employeeId)
+            expect(body.taskInstanceId).toBe(4)
         })
     })
 
@@ -1613,16 +1623,112 @@ describe("INTEGRATION TESTS", () => {
      */
     describe("Subtasks", () => {
 
-        it("should update a subtask(instance)'s status to COMPLETED by id", async () => {
+        beforeAll(async () => {
 
+            //id 8
+            await prisma.order.create({
+                data: {
+                    status: "IN_PROGRESS" as Status,
+                    orderStartDate: new Date(),
+                    carId: 2,
+                    customerId: "90b6fd6b4b4343ffa05e8278"
+                },
+            })
+
+            //id: 8 og 9
+            await prisma.taskInstance.createMany({
+                data: [
+                    {
+                        status: "IN_PROGRESS" as Status,
+                        taskId: 1,
+                        employeeId: "2",
+                        orderId: 8
+                    },
+                    {
+                        status: "IN_PROGRESS" as Status,
+                        taskId: 2,
+                        employeeId: "2",
+                        orderId: 8
+                    },
+                ]
+            })
+
+            //id 22-27
+            await prisma.subtaskInstance.createMany({
+                data: [
+                    {
+                        status: "COMPLETED" as Status,
+                        taskInstanceId: 8,
+                        subtaskId: 1,
+                    },
+                    {
+                        status: "IN_PROGRESS" as Status,
+                        taskInstanceId: 8,
+                        subtaskId: 2,
+                    },
+                    {
+                        status: "PENDING" as Status,
+                        taskInstanceId: 8,
+                        subtaskId: 3,
+                    },
+                    {
+                        status: "COMPLETED" as Status,
+                        taskInstanceId: 9,
+                        subtaskId: 4,
+                    },
+                    {
+                        status: "COMPLETED" as Status,
+                        taskInstanceId: 9,
+                        subtaskId: 5,
+                    },
+                    {
+                        status: "IN_PROGRESS" as Status,
+                        taskInstanceId: 9,
+                        subtaskId: 6,
+                    },
+                ]
+            })
+
+
+        })
+
+        it("should update a subtask(instance)'s status to COMPLETED by id", async () => {
+            const {body, statusCode} = await supertest(app).patch(`/subtasks/23`);
+
+            expect(statusCode).toBe(200)
+            expect(body.status).toEqual(("IN_PROGRESS") as Status);
+            for (const task of body.tasks) {
+                if (task.id === 8) {
+                    expect(task.status).toEqual(("IN_PROGRESS") as Status);
+                    expect(task.subtasks[0].status).toEqual(("COMPLETED") as Status);
+                    expect(task.subtasks[1].status).toEqual(("COMPLETED") as Status);
+                    expect(task.subtasks[2].status).toEqual(("IN_PROGRESS") as Status);
+                }
+            }
         })
 
         it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance)", async () => {
+            const {body, statusCode} = await supertest(app).patch(`/subtasks/24`);
 
+            expect(statusCode).toBe(200)
+            expect(body.status).toEqual(("IN_PROGRESS") as Status);
+            for (const task of body.tasks) {
+                if (task.id === 8) {
+                    expect(task.status).toEqual(("COMPLETED") as Status);
+                    task.subtasks.forEach((subtask: SubtaskInstance) => expect(subtask.status).toEqual(("COMPLETED") as Status));
+                }
+            }
         })
 
         it("should update a subtask(instance)'s status to COMPLETED by id and finish the task(instance) and order", async () => {
+            const {body, statusCode} = await supertest(app).patch(`/subtasks/27`);
 
+            expect(statusCode).toBe(200)
+            expect(body.status).toEqual(("COMPLETED") as Status);
+            for (const task of body.tasks) {
+                expect(task.status).toEqual(("COMPLETED") as Status);
+                task.subtasks.forEach((subtask: SubtaskInstance) => expect(subtask.status).toEqual(("COMPLETED") as Status));
+            }
         })
     })
 
