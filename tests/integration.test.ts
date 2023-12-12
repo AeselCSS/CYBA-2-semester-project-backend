@@ -909,7 +909,7 @@ describe("INTEGRATION TESTS", () => {
 
             it("should successfully create a new car without inspectionDate,-Kind and -Result defined", async () => {
                 const payloadCar: Record<string, string | Date | number | null> = {
-                    registrationNumber: "NEWCAR10",
+                    registrationNumber: "NEWCAR11",
                     model: "Civic",
                     modelVariant: "1.5 i-VTEC (180 HK) Sedan, 4 dørs Front-wheel Drive Automatisk",
                     firstRegistration: new Date("2023-05-20"),
@@ -919,7 +919,7 @@ describe("INTEGRATION TESTS", () => {
                     lastInspectionResult: null,
                     customerId: "8c081169f97e42479b136a6a",
                     brand: "Honda",
-                    vinNumber: "XYZ789CBA123333",
+                    vinNumber: "XYZ789CBA1233333",
                 }
 
                 const {body, statusCode} = await supertest(app).post(`/cars`).send(payloadCar).set("Content-Type", "application/json");
@@ -950,13 +950,12 @@ describe("INTEGRATION TESTS", () => {
                 expect(statusCode).toBe(400);
             })
 
-            it.skip("should fail to create a new car if a car with same registration nr. and vin number exists already", async () => {
-                //TODO
+            it("should fail to create a new car if a car with same registration nr. and vin number exists already", async () => {
                 const payloadThree = cars[1];
 
                 const {statusCode} = await supertest(app).post(`/cars`).send(payloadThree).set("Content-Type", "application/json");
 
-                expect(statusCode).toBe(400);
+                expect(statusCode).toBe(404);
             })
         })
 
@@ -1054,7 +1053,6 @@ describe("INTEGRATION TESTS", () => {
 
 
             it("should delete the car successfully and replace all their relations with 'order' with carId=1", async () => {
-                //TODO lav færdig
                 const {statusCode} = await supertest(app).delete(`/cars/${car.id}`);
 
                 expect(statusCode).toBe(204)
