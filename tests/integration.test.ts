@@ -3,7 +3,7 @@ import prisma from "../src/Database/PrismaClient";
 // @ts-ignore
 import {app} from "../src/server";
 import supertest from "supertest";
-import {Car, Department, Employee, Order, Role, Status, SubtaskInstance, TaskInstance} from "@prisma/client";
+import {Car, Customer, Department, Employee, Order, Role, Status, SubtaskInstance, TaskInstance} from "@prisma/client";
 
 
 describe("INTEGRATION TESTS", () => {
@@ -622,8 +622,80 @@ describe("INTEGRATION TESTS", () => {
         });
 
         describe("Delete customer", () => {
-            it.skip('should delete the customer successfully and replace all their relations with "order" and "car" with id=DELETED', async () => {
-                //TODO
+            let order: Order;
+            let customer: Customer;
+            let car: Car;
+
+            beforeAll(async() => {
+                customer = await prisma.customer.create({
+                    data: {
+                        id: "customerToDelete",
+                        role: Role.CUSTOMER,
+                        firstName: "Jens",
+                        lastName: "Jensen",
+                        address: "Kongensgade 77",
+                        city: "Odense",
+                        zip: 7018,
+                        phone: 23453234,
+                        email: "Jens.Jensen@post.dk",
+                    }
+                })
+
+                car = await prisma.car.create({
+                    data: {
+                        registrationNumber: "ToDelete",
+                        model: "3 Series",
+                        modelVariant: "2.0 TDI (150 HK) Sedan, 4 dørs Forhjulstræk Automatisk",
+                        firstRegistration: new Date("2023-02-19"),
+                        mileage: 69450,
+                        lastInspectionDate: new Date("2022-11-02"),
+                        lastInspectionKind: "PeriodiskSyn",
+                        customerId: "customerToDelete",
+                        brand: "Tesla",
+                        lastInspectionResult: "Godkendt",
+                        vinNumber: "T7WUE8ZRV232232H9738U1P",
+                    }
+                })
+
+                order = await prisma.order.create({
+                    data: {
+                        status: "AWAITING_CUSTOMER" as Status,
+                        orderStartDate: new Date(),
+                        carId: car.id,
+                        customerId: "customerToDelete"
+                    }
+                })
+
+            })
+
+
+            it('should delete the customer and their cars successfully and replace all their relations with "order" and "car" with id=DELETED', async () => {
+
+                const {statusCode} = await supertest(app).delete("/customers/customerToDelete");
+
+                const updatedOrder = await prisma.order.findFirst({
+                    where: {
+                        id: order.id
+                    }
+                })
+
+                const deletedCar = await prisma.car.findFirst({
+                    where: {
+                        id: car.id
+                    }
+                })
+
+                const deletedCustomer = await prisma.customer.findFirst({
+                    where: {
+                        id: customer.id
+                    }
+                })
+
+                expect(statusCode).toBe(204);
+                expect(updatedOrder?.customerId).toEqual("DELETED")
+                expect(updatedOrder?.carId).toEqual(1);
+                expect(deletedCar).toBeFalsy();
+                expect(deletedCustomer).toBeFalsy();
             });
 
             it("should fail to delete a customer which does not exist", async () => {
@@ -631,6 +703,16 @@ describe("INTEGRATION TESTS", () => {
 
                 expect(statusCode).toBe(404);
             });
+
+            afterAll(async () => {
+
+                await prisma.order.delete({
+                    where: {
+                        id: order.id
+                    }
+                })
+
+            })
         });
     });
 
@@ -933,6 +1015,8 @@ describe("INTEGRATION TESTS", () => {
         })
 
         describe("Delete car", () => {
+            let car: Car;
+            let order: Order;
 
             it("should fail to delete a car which does not exist", async () => {
                 const {statusCode} = await supertest(app).delete(`/cars/12342312324214233`);
@@ -940,28 +1024,67 @@ describe("INTEGRATION TESTS", () => {
                 expect(statusCode).toBe(404)
             })
 
+            beforeAll(async () => {
 
-            it.skip("should delete the car successfully and replace all their relations with 'order' with carId=1", () => {
+                car = await prisma.car.create({
+                    data: {
+                        registrationNumber: "L7V2RI",
+                        model: "X5",
+                        modelVariant: "2.0 TDI (150 HK) Sedan, 4 dørs Forhjulstræk Automatisk",
+                        firstRegistration: new Date("2023-11-02"),
+                        mileage: 114669,
+                        lastInspectionDate: new Date("2022-08-06"),
+                        lastInspectionKind: "PeriodiskSyn",
+                        customerId: "7925557bb8c34013ba1b33d5",
+                        brand: "Tesla",
+                        lastInspectionResult: "Ikke Godkendt",
+                        vinNumber: "48W08HEBrerPP73KAXRD",
+                    }
+                })
+
+                order = await prisma.order.create({
+                    data: {
+                        status: "AWAITING_CUSTOMER" as Status,
+                        orderStartDate: new Date(),
+                        carId: car.id,
+                        customerId: "7925557bb8c34013ba1b33d5"
+                    }
+                })
+            })
+
+
+            it("should delete the car successfully and replace all their relations with 'order' with carId=1", async () => {
                 //TODO lav færdig
-                /*
-                 const payloadCar = {
-                 registrationNumber: "PSIC22",
-                 model: "3 Series",
-                 modelVariant: "2.0 TDI (150 HK) Sedan, 4 dørs Forhjulstræk Automatisk",
-                 firstRegistration: new Date("2023-02-19"),
-                 mileage: 69450,
-                 lastInspectionDate: new Date("2022-11-02"),
-                 lastInspectionKind: "PeriodiskSyn",
-                 customerId: "7925557bb8c34013ba1b33d5",
-                 brand: "Tesla",
-                 lastInspectionResult: "Godkendt",
-                 vinNumber: "T7WUZRVH92212333",
-                 }
+                const {statusCode} = await supertest(app).delete(`/cars/${car.id}`);
 
-                 const payloadOrder = {
+                expect(statusCode).toBe(204)
 
-                 }
-                 */
+                const updatedOrder = await prisma.order.findFirst({
+                    where: {
+                        id: order.id
+                    }
+                })
+
+                const deletedCar = await prisma.car.findFirst({
+                    where: {
+                        id: car.id
+                    }
+                })
+
+                expect(statusCode).toBe(204);
+                expect(updatedOrder?.customerId).toEqual("7925557bb8c34013ba1b33d5")
+                expect(updatedOrder?.carId).toEqual(1);
+                expect(deletedCar).toBeFalsy();
+            })
+
+
+            afterAll(async () => {
+
+                await prisma.order.delete({
+                    where: {
+                        id: order.id
+                    }
+                })
             })
         })
     })
@@ -1422,10 +1545,11 @@ describe("INTEGRATION TESTS", () => {
         describe("Update order", () => {
 
             beforeAll(async () => {
+                //id 7
                 await prisma.order.create({
                     data: {
                         status: "PENDING" as Status,
-                        orderStartDate: new Date(),
+                        orderStartDate: new Date("1990-12-01"),
                         carId: 3,
                         customerId: "7925557bb8c34013ba1b33d5"
                     }
@@ -1436,7 +1560,7 @@ describe("INTEGRATION TESTS", () => {
                         status: "PENDING" as Status,
                         taskId: 1,
                         employeeId: null,
-                        orderId: 5
+                        orderId: 7
                     },
                 })
 
@@ -1467,11 +1591,11 @@ describe("INTEGRATION TESTS", () => {
 
             it("should update the status on a single order from PENDING to IN_PROGRESS", async () => {
 
-                const {body, statusCode} = await supertest(app).patch("/orders/5/status").send(payload).set("Content-Type", "application/json");
+                const {body, statusCode} = await supertest(app).patch("/orders/7/status").send(payload).set("Content-Type", "application/json");
 
                 const taskInstances = await prisma.taskInstance.findMany({
                     where: {
-                        orderId: 5
+                        orderId: 7
                     }
                 })
 
@@ -1625,11 +1749,11 @@ describe("INTEGRATION TESTS", () => {
 
         beforeAll(async () => {
 
-            //id 8
+            //id 10
             await prisma.order.create({
                 data: {
                     status: "IN_PROGRESS" as Status,
-                    orderStartDate: new Date(),
+                    orderStartDate: new Date("2000-12-03"),
                     carId: 2,
                     customerId: "90b6fd6b4b4343ffa05e8278"
                 },
@@ -1642,13 +1766,13 @@ describe("INTEGRATION TESTS", () => {
                         status: "IN_PROGRESS" as Status,
                         taskId: 1,
                         employeeId: "2",
-                        orderId: 8
+                        orderId: 10
                     },
                     {
                         status: "IN_PROGRESS" as Status,
                         taskId: 2,
                         employeeId: "2",
-                        orderId: 8
+                        orderId: 10
                     },
                 ]
             })
