@@ -864,9 +864,6 @@ describe("INTEGRATION TESTS", () => {
                     data: newCar
                 })
 
-                console.log("HALLLOOO")
-                console.log(createdCar.id)
-
                 const {body, statusCode} = await supertest(app).get(`/cars/${createdCar.id}`);
 
                 expect(body.car.id).toBe(createdCar.id);
