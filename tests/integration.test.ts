@@ -1565,6 +1565,37 @@ describe("INTEGRATION TESTS", () => {
 
         it("should update a single task(instance)'s status to IN_PROGRESS by id and the first subtask(instance) to IN_PROGRESS", async () => {
 
+            const employeePayload = {
+                employeeId: "2"
+            }
+
+            await prisma.order.update({
+                data: {
+                    status: "IN_PROGRESS" as Status
+                },
+                where: {
+                    id: 3
+                }
+            })
+
+            const {body, statusCode} = await supertest(app).patch(`/tasks/4`).send(employeePayload).set("Content-Type", "application/json");
+
+
+            for (const task of body.tasks){
+                if (task.id === 4) {
+                    expect(task.status).toEqual(("IN_PROGRESS") as Status)
+                    expect(task.employee.firstName).toEqual("Emma")
+                    expect(task.employee.lastName).toEqual("Brown")
+                    expect(task.subtasks[0].status).toEqual(("IN_PROGRESS") as Status);
+                    expect(task.subtasks[1].status).toEqual(("PENDING") as Status);
+                    expect(task.subtasks[2].status).toEqual(("PENDING") as Status);
+                } else {
+                    expect(task.status).toEqual(("PENDING") as Status)
+                    task.subtasks.forEach((subtask: SubtaskInstance) => expect(subtask.status).toEqual(("PENDING") as Status))
+                }
+            }
+
+            expect(statusCode).toBe(200)
         })
 
         it("should create a new comment to a single task(instance)", async () => {
