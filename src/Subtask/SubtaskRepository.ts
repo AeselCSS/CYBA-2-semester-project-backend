@@ -18,9 +18,7 @@ export default class SubtaskRepository {
     public async completeSubtask(id: number, taskInstanceId: number) {
 
         return prisma.$transaction(async (prisma) => {
-            console.log("ENTERING TRANSACTION");
-
-            //Finder taskIntance
+            //Get taskIntance
             const taskInstance = await prisma.taskInstance.findUniqueOrThrow({
                 where: {
                     id: taskInstanceId
@@ -31,8 +29,8 @@ export default class SubtaskRepository {
             await this.updateSubtaskStatus(id, Status.COMPLETED)
             
 
-            //initialise the next subtaskInstance with the status "IN_PROGRESS"
 
+            //initialise the next subtaskInstance with the status "IN_PROGRESS"
             //Ordered after asc
             const subtasks = await this.getSubtasksForASingleTask(taskInstance.taskId);
 
@@ -49,8 +47,6 @@ export default class SubtaskRepository {
                         ]
                     },
                 });
-
-                console.log(subtaskInstance);
                 
                 if (subtaskInstance.status === Status.PENDING) {
                     await this.updateSubtaskStatus(subtaskInstance.id, Status.IN_PROGRESS);
@@ -62,7 +58,7 @@ export default class SubtaskRepository {
 
             /*==== TASKINSTANCE  ====*/
 
-            //If the loop above didnt iterate to true, then all subtaskInstances must be status=COMPLETED. 
+            //If the if-statement above didn't iterate to true, then all subtaskInstances must be status=COMPLETED.
             //We update the taskInstance.status to COMPLETED
             await prisma.taskInstance.update({
                 where: {
@@ -90,7 +86,7 @@ export default class SubtaskRepository {
 
             /*==== ORDER  ====*/
 
-            //If you reach here, then all taskInstances are COMPLETED. We update the status on the order itself to COMPLETED
+            //If you reach here, then all taskInstances are COMPLETED. We update the status on the order itself to "COMPLETED"
             await prisma.order.update({
                 where: {
                     id: taskInstance.orderId,

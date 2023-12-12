@@ -106,11 +106,12 @@ export default class CustomerRepository {
                     id: id,
                 },
             });
+
         });
     }
 
     public async createCustomer({ firstName, lastName, address, city, email, phone, zip, id }: CustomerReqBody) {
-        return await prisma.customer.create({
+        return prisma.customer.create({
             data: {
                 id,
                 firstName,

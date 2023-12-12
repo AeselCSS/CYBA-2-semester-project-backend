@@ -6,8 +6,10 @@ import {validateIdParamsString} from "../Utility/validation/validateIdParams.js"
 export const employeeRouter = express.Router()
 const employeeController = new EmployeeController();
 
-employeeRouter.get("/employees", validateEmployeeQuery, employeeController.getAllEmployeesExecutor)
 
-employeeRouter.get("/employees/:id", validateIdParamsString, employeeController.getSingleEmployeeExecutor)
+employeeRouter.route("/employees")
+    .get(validateEmployeeQuery, employeeController.getAllEmployeesExecutor)
+    .post(validateCreateEmployeeBody, employeeController.createEmployeeExecutor);
 
-employeeRouter.post("/employees", validateCreateEmployeeBody, employeeController.createEmployeeExecutor)
+employeeRouter.route("/employees/:id")
+    .get(validateIdParamsString, employeeController.getSingleEmployeeExecutor);

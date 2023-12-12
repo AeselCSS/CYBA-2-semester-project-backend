@@ -2,7 +2,7 @@ import express from 'express';
 import { Request, Response } from 'express';
 import cors from 'cors';
 import { customerRouter } from './Customer/CustomerRouter.js';
-import carRouter from './Car/CarRouter.js';
+import { carRouter } from './Car/CarRouter.js';
 import { employeeRouter } from "./Employee/EmployeeRouter.js";
 import { orderRouter } from './Order/OrderRouter.js';
 import { taskRouter } from './Task/TaskRouter.js';
