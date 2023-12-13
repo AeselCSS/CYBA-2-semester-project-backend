@@ -1,8 +1,9 @@
 import prisma from "../Database/PrismaClient.js";
-import { Status } from "@prisma/client";
+import {Status, Task} from "@prisma/client";
 
 export default class SubtaskRepository {
-    constructor() {}
+    constructor() {
+    }
 
     public async updateSubtaskStatus(id: number, newStatus: Status) {
         return prisma.subtaskInstance.update({
@@ -18,21 +19,17 @@ export default class SubtaskRepository {
     public async completeSubtask(id: number, taskInstanceId: number) {
 
         return prisma.$transaction(async (prisma) => {
-            console.log("ENTERING TRANSACTION");
-
-            //Finder taskIntance
+            //Get taskIntance
             const taskInstance = await prisma.taskInstance.findUniqueOrThrow({
                 where: {
                     id: taskInstanceId
                 }
             })
-            
+
             //Update the given subtaskInstance status to COMPLETED
             await this.updateSubtaskStatus(id, Status.COMPLETED)
-            
 
             //initialise the next subtaskInstance with the status "IN_PROGRESS"
-
             //Ordered after asc
             const subtasks = await this.getSubtasksForASingleTask(taskInstance.taskId);
 
@@ -50,8 +47,6 @@ export default class SubtaskRepository {
                     },
                 });
 
-                console.log(subtaskInstance);
-                
                 if (subtaskInstance.status === Status.PENDING) {
                     await this.updateSubtaskStatus(subtaskInstance.id, Status.IN_PROGRESS);
                     //Exit the transaction and end it here if there is a subtask that has been updated to IN_PROGRESS
@@ -62,7 +57,7 @@ export default class SubtaskRepository {
 
             /*==== TASKINSTANCE  ====*/
 
-            //If the loop above didnt iterate to true, then all subtaskInstances must be status=COMPLETED. 
+            //If the if-statement above didn't iterate to true, then all subtaskInstances must be status=COMPLETED.
             //We update the taskInstance.status to COMPLETED
             await prisma.taskInstance.update({
                 where: {
@@ -90,7 +85,7 @@ export default class SubtaskRepository {
 
             /*==== ORDER  ====*/
 
-            //If you reach here, then all taskInstances are COMPLETED. We update the status on the order itself to COMPLETED
+            //If you reach here, then all taskInstances are COMPLETED. We update the status on the order itself to "COMPLETED"
             await prisma.order.update({
                 where: {
                     id: taskInstance.orderId,
@@ -118,6 +113,16 @@ export default class SubtaskRepository {
             },
             orderBy: {
                 subtaskNumber: "asc",
+            },
+        });
+    }
+
+    public async getTaskSubtasks(tasks: Task[]) {
+        return prisma.taskSubtask.findMany({
+            where: {
+                taskId: {
+                    in: tasks.map((task) => task.id),
+                },
             },
         });
     }

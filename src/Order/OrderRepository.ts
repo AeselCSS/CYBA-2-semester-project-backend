@@ -161,16 +161,6 @@ export default class OrderRepository {
         });
     }
 
-    public async getTaskSubtasks(tasks: Task[]) {
-        return prisma.taskSubtask.findMany({
-            where: {
-                taskId: {
-                    in: tasks.map((task) => task.id),
-                },
-            },
-        });
-    }
-
     public async updateOrderTasks(
         orderId: number,
         tasksToDelete: { id: number }[],

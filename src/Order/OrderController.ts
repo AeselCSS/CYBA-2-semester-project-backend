@@ -95,8 +95,6 @@ export default class OrderController {
         }
     }
 
-    // newOrder status, orderStartDate, carId, customerId, tasks
-
     public async createOrderExecutor(request: Request<{}, {}, NewOrder, {}>, response: Response) {
         const { orderStartDate, carId, customerId, tasks } = request.body;
 

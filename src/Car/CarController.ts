@@ -49,13 +49,13 @@ export default class CarController {
         }
     }
 
-    public async updateMileageOnCarExecuter(request: Request<ReqParams, {}, { mileage: string }, ReqQuery>, response: Response) {
+    public async updateMileageOnCarExecuter(request: Request<ReqParams, {}, { mileage: number }, ReqQuery>, response: Response) {
         const { id } = request.params;
         const { mileage } = request.body;
 
         try {
             const carService = new CarService();
-            const result: Car = await carService.updateCar(parseInt(id), parseInt(mileage));
+            const result: Car = await carService.updateCar(parseInt(id), mileage);
 
             response.status(200).json(result);
         } catch (error: any) {

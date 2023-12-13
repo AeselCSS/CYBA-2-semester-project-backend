@@ -1,34 +1,3 @@
-interface IPagination<T> {
-    getAllItemsPagination: (
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string
-    ) => Promise<ResultPagination<T>>;
-    getAllItemsSearchPagination: (
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string,
-        searchValue: string
-    ) => Promise<ResultPagination<T>>;
-    getAllItemsFilterPagination?: (
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string,
-        filterBy: string | Department | Status
-    ) => Promise<ResultPagination<T>>;
-    getAllItemsAllPagination?: (
-        limit: number,
-        offset: number,
-        sortBy: string,
-        sortDir: string,
-        searchValue: string,
-        filterBy: string | Department | Status
-    ) => Promise<ResultPagination<T>>;
-}
-
 //Controller
 type ReqQuery = {
     sortDir: string;

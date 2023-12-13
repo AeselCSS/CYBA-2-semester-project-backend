@@ -5,7 +5,7 @@
     "main": "server.js",
     "type": "module",
     "scripts": {
-        "test": "dotenv -e .env.test npx prisma migrate deploy && dotenv -e .env.test jest --coverage --detectOpenHandles",
+        "test": "dotenv -e .env.test npx prisma migrate reset --force && dotenv -e .env.test jest --coverage --detectOpenHandles",
         "build": "prisma generate && tsc",
         "build:digitalocean": "npm install --production=false && npm run build && npm ci",
         "dev": "concurrently \"tsc -w\" \"dotenv -e .env.development nodemon dist/server.js\"",

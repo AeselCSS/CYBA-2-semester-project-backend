@@ -28,7 +28,7 @@ model Car {
   id                   Int       @id @default(autoincrement())
   customerId           String    @map(name: "customer_id")
   registrationNumber   String    @map(name: "registration_number")
-  vinNumber            String    @map(name: "vin_number")
+  vinNumber            String    @unique @map(name: "vin_number")
   brand                String
   model                String
   modelVariant         String    @map(name: "model_variant")

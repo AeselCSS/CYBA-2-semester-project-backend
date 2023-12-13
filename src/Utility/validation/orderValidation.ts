@@ -59,7 +59,15 @@ export const validateCreateOrder = [
     body('orderStartDate').isISO8601().withMessage('Order start date must be a valid date.'),
     body('carId').isInt().withMessage('Car ID must be an integer.'),
     body('customerId').isString().withMessage('Customer ID must be an string.'),
-    body('tasks').isArray().withMessage('Tasks must be an array.'),
+    body('tasks')
+        .isArray().withMessage('Tasks must be an array.')
+        .custom((tasks: any[]) => {
+            // Check if every item in the array is an object with an 'id' property
+            if (!tasks.every((task) => typeof task === 'object' && task !== null && 'id' in task)) {
+                throw new Error('Tasks must be an array of objects with an "id" property.');
+            }
+            return true;
+        }),
     body('tasks.*.id').isInt({ min: 1 }).withMessage('Task ID must be an integer.'),
 
     (request: Request, response: Response, next: NextFunction): Response | void => {

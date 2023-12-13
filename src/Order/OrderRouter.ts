@@ -11,10 +11,19 @@ import {validateIdParamsInt} from "../Utility/validation/validateIdParams.js";
 export const orderRouter = express.Router();
 const orderController = new OrderController();
 
-orderRouter.get('/orders', validateOrderQuery, orderController.getAllOrdersExecutor);
-orderRouter.get("/orders/dates", orderController.getAllOrdersStartDatesExecutor)
-orderRouter.get('/orders/:id', validateIdParamsInt, orderController.getSingleOrderExecutor);
-orderRouter.patch(
-    '/orders/:id/status', validateUpdateOrderStatus, orderController.updateOrderStatusExecutor);
-orderRouter.patch('/orders/:id/tasks', validateUpdateOrderTasks, orderController.updateOrderTasksExecutor);
-orderRouter.post('/orders', validateCreateOrder, orderController.createOrderExecutor);
+
+orderRouter.route("/orders")
+    .post(validateCreateOrder, orderController.createOrderExecutor)
+    .get(validateOrderQuery, orderController.getAllOrdersExecutor);
+
+orderRouter.route("/orders/dates")
+    .get(orderController.getAllOrdersStartDatesExecutor);
+
+orderRouter.route("/orders/:id")
+    .get(validateIdParamsInt, orderController.getSingleOrderExecutor);
+
+orderRouter.route("/orders/:id/status")
+    .patch(validateUpdateOrderStatus, orderController.updateOrderStatusExecutor);
+
+orderRouter.route("/orders/:id/tasks")
+    .patch(validateUpdateOrderTasks, orderController.updateOrderTasksExecutor);
