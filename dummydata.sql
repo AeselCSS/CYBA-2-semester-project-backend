@@ -174,10 +174,7 @@ ALTER TABLE `car` MODIFY `last_inspection_date` DATETIME(3) NULL,
     MODIFY `last_inspection_result` VARCHAR(191) NULL,
     MODIFY `last_inspection_kind` VARCHAR(191) NULL;
 
-
 CREATE UNIQUE INDEX `Car_vin_number_key` ON `Car`(`vin_number`);
-
-
 
 -- 3. indsæt dummy data
 INSERT INTO Task(name, description)
@@ -1457,25 +1454,25 @@ INSERT INTO Car (registration_number, model, model_variant, first_registration, 
 -- Dummy Transactions for Orders, Task Instances and Subtask Instances
 INSERT INTO `Order`(status, order_start_date, car_id, customer_id, created_at, updated_at)
 VALUES
-    ('IN_PROGRESS', DATE('2022-03-21'), 2, 'auth0|656498cc022f6b2083b655fc', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 2, 'auth0|656498cc022f6b2083b655fc', NOW(), NOW()),
-    ('AWAITING_CUSTOMER', DATE('2022-03-21'), 3, 'auth0|656498cc022f6b2083b655fc', NOW(), NOW()),
+    ('COMPLETED', DATE('2022-03-21'), 2, 'auth0|656498cc022f6b2083b655fc', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 3, 'auth0|656498cc022f6b2083b655fc', NOW(), NOW()),
-    ('IN_PROGRESS', DATE('2022-03-21'), 4, 'auth0|6565eed956336a62dd8a7e71', NOW(), NOW()),
+    ('COMPLETED', DATE('2022-03-21'), 3, 'auth0|656498cc022f6b2083b655fc', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 4, 'auth0|6565eed956336a62dd8a7e71', NOW(), NOW()),
-    ('AWAITING_CUSTOMER', DATE('2022-03-21'), 5, 'auth0|6565eed956336a62dd8a7e71', NOW(), NOW()),
+    ('COMPLETED', DATE('2022-03-21'), 4, 'auth0|6565eed956336a62dd8a7e71', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 5, 'auth0|6565eed956336a62dd8a7e71', NOW(), NOW()),
-    ('IN_PROGRESS', DATE('2022-03-21'), 6, 'auth0|65684e4197313f3040339450', NOW(), NOW()),
+    ('COMPLETED', DATE('2022-03-21'), 5, 'auth0|6565eed956336a62dd8a7e71', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 6, 'auth0|65684e4197313f3040339450', NOW(), NOW()),
-    ('AWAITING_CUSTOMER', DATE('2022-03-21'), 7, 'auth0|65684e4197313f3040339450', NOW(), NOW()),
+    ('COMPLETED', DATE('2022-03-21'), 6, 'auth0|65684e4197313f3040339450', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 7, 'auth0|65684e4197313f3040339450', NOW(), NOW()),
-    ('IN_PROGRESS', DATE('2022-03-21'), 8, 'auth0|655140942dd07ff7320c0d67', NOW(), NOW()),
+    ('COMPLETED', DATE('2022-03-21'), 7, 'auth0|65684e4197313f3040339450', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 8, 'auth0|655140942dd07ff7320c0d67', NOW(), NOW()),
-    ('AWAITING_CUSTOMER', DATE('2022-03-21'), 9, 'auth0|655140942dd07ff7320c0d67', NOW(), NOW()),
+    ('COMPLETED', DATE('2022-03-21'), 8, 'auth0|655140942dd07ff7320c0d67', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 9, 'auth0|655140942dd07ff7320c0d67', NOW(), NOW()),
-    ('IN_PROGRESS', DATE('2022-03-21'), 10, 'auth0|65684e7997313f3040339496', NOW(), NOW()),
+    ('COMPLETED', DATE('2022-03-21'), 9, 'auth0|655140942dd07ff7320c0d67', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 10, 'auth0|65684e7997313f3040339496', NOW(), NOW()),
-    ('AWAITING_CUSTOMER', DATE('2022-03-21'), 11, 'auth0|65684e7997313f3040339496', NOW(), NOW()),
+    ('COMPLETED', DATE('2022-03-21'), 10, 'auth0|65684e7997313f3040339496', NOW(), NOW()),
+    ('COMPLETED', DATE('2022-03-21'), 11, 'auth0|65684e7997313f3040339496', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 11, 'auth0|65684e7997313f3040339496', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 12, 'f1f5c5eb8ff74887831f213c', NOW(), NOW()),
     ('COMPLETED', DATE('2022-03-21'), 13, 'f098440b782b42fb9f7245c9', NOW(), NOW()),
