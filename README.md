@@ -4,55 +4,92 @@
 
 Project is deployet at [DigitalOcean](https://stingray-app-izet6.ondigitalocean.app/)
 
-# 2nd semester project - auto repair shop - Backend
-
 ## Installation
 
-1. Create a new repository locally on your computer, with a name of your choice.
+### Local database
 
-2. Navigate to directory
+1. Create a local MySQL database
 
-3. Clone repository
+2. Run dummydata.sql from the repository in your database console
+
+### Local backend
+
+1. Clone repository
 
 ```markdown
-git clone https://github.com/YawHB/CYBA-2-semester-project-backend.git .
+git clone https://github.com/AeselCSS/CYBA-2-semester-project-backend.git
 ```
 
-4. install necessary dependencies
+2. Navigate to the cloned repository on your machine
+
+```markdown
+cd CYBA-2-semester-project-backend
+```
+
+3. install necessary dependencies
 
 ```markdown
 npm install
 ```
 
-5. Create an .env file in the root of the directory
-
-6. Copy the API key from the appendix in the report
+4. Create an .env.development file in the root of the directory
 
 ```markdown
-SYNSBASEN_TOKEN = “insert key here”
+touch .env.development
 ```
 
-7. Insert your URL
+5. Copy the API token from the appendix in the report
+
+* Or create and get your own unique token at [https://api.synsbasen.dk/](https://api.synsbasen.dk/)
 
 ```markdown
-DATABASE_URL = "Your URL here"
+SYNSBASEN_TOKEN=“INSERT TOKEN HERE”
 ```
 
-### Local installation
+6. Insert your database URL
 
-8. Create a local database
-
-9. Copy and paste the dummy data from the repository into your database
-
--   Remember to run the data.
--   You should now have populated tables.
-
-. Generate Prisma Client to apply database migrations
+* Follow the prisma format. Schema must be cyba_auto_system:
 
 ```markdown
-npx prisma generate
+DATABASE_URL="mysql://johndoe:password@localhost:3306/cyba_auto_system"
 ```
+
+7. Build the apllication
+
+```markdown
+npm run build
+```
+
+4. Start the backend by running the start script
+
+```markdown
+npm start
+```
+
+### Integration tests
+
+If you want to run our integration tests, you need to create a seperate .env file called .env.test in the same directory as .env.development
+
+```markdown
+touch .env.test
+```
+
+Write the same values in the new .env.test file, but write a schema, that differs from your .env.development
+
+```markdown
+DATABASE_URL="mysql://johndoe:password@localhost:3306/mydb_integration_test"
+SYNSBASEN_TOKEN=“INSERT TOKEN HERE”
+```
+
+Finish by running the test script
+
+```markdown
+npm test
+```
+
 
 ### Postman
+
+Fork our Postman collection to recieve a
 
 [<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://app.getpostman.com/run-collection/29408900-a9691f0f-f14b-4d67-9ee6-043127c59b64?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D29408900-a9691f0f-f14b-4d67-9ee6-043127c59b64%26entityType%3Dcollection%26workspaceId%3D2d50fdb0-768d-4aa4-a40e-39a987c609bb)
