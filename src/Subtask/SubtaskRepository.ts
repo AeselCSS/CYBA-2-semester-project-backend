@@ -1,8 +1,9 @@
 import prisma from "../Database/PrismaClient.js";
-import { Status } from "@prisma/client";
+import {Status, Task} from "@prisma/client";
 
 export default class SubtaskRepository {
-    constructor() {}
+    constructor() {
+    }
 
     public async updateSubtaskStatus(id: number, newStatus: Status) {
         return prisma.subtaskInstance.update({
@@ -24,11 +25,9 @@ export default class SubtaskRepository {
                     id: taskInstanceId
                 }
             })
-            
+
             //Update the given subtaskInstance status to COMPLETED
             await this.updateSubtaskStatus(id, Status.COMPLETED)
-            
-
 
             //initialise the next subtaskInstance with the status "IN_PROGRESS"
             //Ordered after asc
@@ -47,7 +46,7 @@ export default class SubtaskRepository {
                         ]
                     },
                 });
-                
+
                 if (subtaskInstance.status === Status.PENDING) {
                     await this.updateSubtaskStatus(subtaskInstance.id, Status.IN_PROGRESS);
                     //Exit the transaction and end it here if there is a subtask that has been updated to IN_PROGRESS
@@ -114,6 +113,16 @@ export default class SubtaskRepository {
             },
             orderBy: {
                 subtaskNumber: "asc",
+            },
+        });
+    }
+
+    public async getTaskSubtasks(tasks: Task[]) {
+        return prisma.taskSubtask.findMany({
+            where: {
+                taskId: {
+                    in: tasks.map((task) => task.id),
+                },
             },
         });
     }

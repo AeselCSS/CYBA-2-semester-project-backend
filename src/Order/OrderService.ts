@@ -2,6 +2,7 @@ import { Status, Task } from '@prisma/client';
 import Pagination from '../Utility/Pagination.js';
 import {orderDTO, ordersDTO, ordersStartDatesDTO} from './OrderDTO.js';
 import OrderRepository from './OrderRepository.js';
+import SubtaskRepository from "../Subtask/SubtaskRepository.js";
 
 export default class OrderService extends Pagination {
     constructor() {
@@ -42,6 +43,7 @@ export default class OrderService extends Pagination {
 
     public async updateOrderTasks(id: number, tasks: Task[]) {
         const orderRepository = new OrderRepository();
+        const subtaskRepository = new SubtaskRepository();
         // check status guard
         const orderStatus = await orderRepository.getOrderStatus(id);
 
@@ -68,13 +70,13 @@ export default class OrderService extends Pagination {
         );
 
         // SubTasks to add
-        const subTaskstoAdd = await orderRepository.getTaskSubtasks(tasksToAdd);
+        const subTasksToAdd = await subtaskRepository.getTaskSubtasks(tasksToAdd);
 
         await orderRepository.updateOrderTasks(
             id,
             tasksToDelete,
             tasksToAdd,
-            subTaskstoAdd
+            subTasksToAdd
         );
 
         const updatedOrder = await orderRepository.getSingleOrder(id);
@@ -91,11 +93,12 @@ export default class OrderService extends Pagination {
 
     public async createOrder(order: NewOrder) {
         const orderRepository = new OrderRepository();
+        const subtaskRepository = new SubtaskRepository();
 
         const { tasks } = order;
 
         // find all subtasks for each task
-        const subTasks = await orderRepository.getTaskSubtasks(tasks);
+        const subTasks = await subtaskRepository.getTaskSubtasks(tasks);
 
         const orderId = await orderRepository.createOrder(order, subTasks);
         const createdOrder = await orderRepository.getSingleOrder(orderId);
