@@ -2,6 +2,7 @@ import Pagination from '../Utility/Pagination.js';
 import CarRepository from './CarRepository.js';
 import { synsbasenToken, synsbasenURL } from '../server.js';
 import { singleCarDTO, synsbasenCarDetailsDTO } from './CarDTO.js';
+import fetch from 'node-fetch';
 
 export default class CarService extends Pagination {
     constructor() {
@@ -67,8 +68,8 @@ export default class CarService extends Pagination {
                     registrationNumber
             );
         }
-
-        const carDetails = await response.json();
+        const carDetails: any = await response.json();
+        
         return synsbasenCarDetailsDTO(carDetails.data);
     }
 }
