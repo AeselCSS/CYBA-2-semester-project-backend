@@ -18,7 +18,6 @@ export default class CustomerService extends Pagination {
         this.calculateOffset(pageSize, pageNum);
 
         return customerRepository.getAllCustomers(pageSize, this.offset, sortBy, sortDir, searchValue);
-
     }
 
     public async getSingleCustomer(id: string) {
