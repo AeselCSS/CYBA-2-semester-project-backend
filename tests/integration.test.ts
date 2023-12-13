@@ -382,15 +382,29 @@ describe("INTEGRATION TESTS", () => {
     });
 
     afterAll(async () => {
-        /*const deleteCustomers = prisma.customer.deleteMany();
-         const deleteCars = prisma.car.deleteMany();
+        const deleteCustomers = prisma.customer.deleteMany();
+        const deleteCars = prisma.car.deleteMany();
+        const deleteOrders = prisma.order.deleteMany();
+        const deleteEmployees = prisma.employee.deleteMany();
+        const deleteTaskSubtasks = prisma.taskSubtask.deleteMany();
+        const deleteTasks = prisma.task.deleteMany();
+        const deleteSubtasks = prisma.subtask.deleteMany();
+        const deleteSubtaskInstances = prisma.subtaskInstance.deleteMany();
+        const deleteTaskInstances = prisma.taskInstance.deleteMany();
+        const deleteTaskInstanceComments = prisma.taskInstanceComment.deleteMany();
 
-         const deleteEmployees = prisma.employee.deleteMany();
-         const deleteTaskSubtasks = prisma.taskSubtask.deleteMany();
-         const deleteTasks = prisma.task.deleteMany();
-         const deleteSubtasks = prisma.subtask.deleteMany();
-
-         await prisma.$transaction([deleteCars, deleteCustomers, deleteEmployees, deleteTaskSubtasks, deleteTasks, deleteSubtasks]);*/
+        await prisma.$transaction([
+            deleteTaskInstanceComments,
+            deleteSubtaskInstances,
+            deleteTaskInstances,
+            deleteTaskSubtasks,
+            deleteSubtasks,
+            deleteTasks,
+            deleteEmployees,
+            deleteOrders,
+            deleteCars,
+            deleteCustomers,
+        ]);
 
         await prisma.$disconnect();
     });
