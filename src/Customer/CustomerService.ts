@@ -34,7 +34,7 @@ export default class CustomerService extends Pagination {
         const customerCars: Car[] = await this.getAllCarsByCustomerId(id);
         const customerCarsIds: number[] = customerCars.map(car => car.id);
 
-        return await orderRepository.getAllOrdersByCustomerId(id, customerCarsIds, pageSize, this.offset, "createdAt", "asc");
+        return await orderRepository.getAllOrdersByCustomerId(id, customerCarsIds, pageSize, this.offset, "orderStartDate", "desc");
     }
 
     public async getAllCarsByCustomerId(id: string) {
